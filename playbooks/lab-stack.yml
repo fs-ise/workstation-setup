@@ -104,62 +104,6 @@
       - flatpak
       - pdfarranger
 
-    # Python packages from your script (filtered to avoid stdlib like datetime)
-    pip_packages:
-      - yt-dlp
-      - xlsxwriter
-      - httplib2
-      - beautifulsoup4
-      - chardet
-      - openpyxl
-      - python-docx
-      - requests
-      - icalendar
-      - pytz
-      - goldfinch
-      - langdetect
-      - xlrd
-      - yapf
-      - autopep8
-      - bibtexparser
-      - GitPython
-      - html5lib
-      - PyPDF2
-      - pyvirtualdisplay
-      - pandas
-      - ezodf
-      - watchdog
-      - citeproc-py
-      - urlwatch
-      - docker
-      - fuzzywuzzy
-      - python-levenshtein
-      - opencv-python
-      - crossrefapi
-      - Send2Trash
-      - wordsegment
-      - nltk
-      - pyperclip
-      - pylatex
-      - pytablewriter
-      - pdfminer.six
-      - progressbar
-      - daff
-      - pytest
-      - pre-commit
-      - check-manifest
-      - tox
-      - twine
-      - ipython
-      - jupyterlab
-      - folium
-      - pipenv
-      - types-PyYAML
-      - types-requests
-      - mypy
-      - dacite
-      - pipreqs
-
     # Docker images to pull
     docker_images:
       - jbarlow83/ocrmypdf
@@ -176,8 +120,8 @@
         state: present
         update_cache: true
 
-    # ---- Remove “unwanted” packages (best effort) ----
-    - name: Remove unwanted packages (best effort; continue if names not found)
+    # ---- Remove “unwanted” packages ----
+    - name: Remove unwanted packages
       ansible.builtin.dnf:
         name: "{{ item }}"
         state: absent
@@ -185,8 +129,8 @@
       register: remove_pkgs_result
       failed_when: false
 
-    # ---- Install “wanted” packages (best effort) ----
-    - name: Install desired packages (best effort; continue if names not found)
+    # ---- Install “wanted” packages ----
+    - name: Install desired packages
       ansible.builtin.dnf:
         name: "{{ item }}"
         state: present
@@ -332,13 +276,6 @@
         name: org.mozilla.Thunderbird
         state: present
       when: thunderbird_dnf is failed
-
-    # ---- Python packages (pip) ----
-    - name: Install Python packages via pip (system-wide)
-      ansible.builtin.pip:
-        name: "{{ pip_packages }}"
-        executable: pip3
-        state: present
 
     # ---- Optional: remove system sounds (destructive) ----
     - name: Remove system sounds (/usr/share/sounds) - optional and destructive
