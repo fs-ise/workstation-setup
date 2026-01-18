@@ -1,0 +1,4 @@
+lab_user:
+  name: YOURUSER
+  home: /home/YOURUSER
+  email: your.email@example.edu

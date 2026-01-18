@@ -1,0 +1,123 @@
+---
+- name: Lab stack on Fedora (Quarto + Git + Docker)
+  hosts: localhost
+  connection: local
+  become: true
+
+  vars_files:
+    - ../host_vars/localhost.yml
+
+  vars:
+    base_packages:
+      - git
+      - curl
+      - wget
+      - ca-certificates
+      - tar
+      - unzip
+      - python3
+      - python3-pip
+
+    # Docker Engine (official packages, not Fedora's moby/podman defaults)
+    docker_packages:
+      - docker-ce
+      - docker-ce-cli
+      - containerd.io
+      - docker-buildx-plugin
+      - docker-compose-plugin
+
+    quarto_version: "1.6.42"     # pin a version for reproducibility; bump intentionally
+    quarto_install_dir: "/opt/quarto"
+    quarto_tarball: "quarto-{{ quarto_version }}-linux-amd64.tar.gz"
+    quarto_url: "https://github.com/quarto-dev/quarto-cli/releases/download/v{{ quarto_version }}/{{ quarto_tarball }}"
+
+  tasks:
+    - name: Install baseline packages
+      ansible.builtin.dnf:
+        name: "{{ base_packages }}"
+        state: present
+        update_cache: true
+
+    # ---- Docker Engine from Docker repo (recommended by Docker) ----
+    - name: Add Docker CE repo
+      ansible.builtin.command: dnf config-manager addrepo --from-repofile https://download.docker.com/linux/fedora/docker-ce.repo
+      args:
+        creates: /etc/yum.repos.d/docker-ce.repo
+
+    - name: Install Docker Engine packages
+      ansible.builtin.dnf:
+        name: "{{ docker_packages }}"
+        state: present
+        update_cache: true
+
+    - name: Enable and start Docker service
+      ansible.builtin.systemd:
+        name: docker
+        enabled: true
+        state: started
+
+    - name: Ensure docker group exists
+      ansible.builtin.group:
+        name: docker
+        state: present
+
+    - name: Add lab user to docker group
+      ansible.builtin.user:
+        name: "{{ lab_user.name }}"
+        groups: docker
+        append: true
+
+    # ---- Quarto install (tarball -> /opt/quarto) ----
+    - name: Create quarto install directory
+      ansible.builtin.file:
+        path: "{{ quarto_install_dir }}"
+        state: directory
+        mode: "0755"
+
+    - name: Download Quarto tarball
+      ansible.builtin.get_url:
+        url: "{{ quarto_url }}"
+        dest: "/tmp/{{ quarto_tarball }}"
+        mode: "0644"
+
+    - name: Unpack Quarto to /opt
+      ansible.builtin.unarchive:
+        src: "/tmp/{{ quarto_tarball }}"
+        dest: "/opt"
+        remote_src: true
+
+    - name: Symlink /opt/quarto -> extracted folder
+      ansible.builtin.file:
+        src: "/opt/quarto-{{ quarto_version }}"
+        dest: "{{ quarto_install_dir }}"
+        state: link
+        force: true
+
+    - name: Add Quarto to system PATH
+      ansible.builtin.copy:
+        dest: /etc/profile.d/quarto.sh
+        mode: "0644"
+        content: |
+          export PATH={{ quarto_install_dir }}/bin:$PATH
+
+    - name: Configure Git identity (global)
+      become: false
+      block:
+        - name: git user.name
+          community.general.git_config:
+            name: user.name
+            scope: global
+            value: "{{ lab_user.name }}"
+
+        - name: git user.email
+          community.general.git_config:
+            name: user.email
+            scope: global
+            value: "{{ lab_user.email }}"
+
+        - name: git push.autoSetupRemote
+          community.general.git_config:
+            name: push.autoSetupRemote
+            scope: global
+            value: "true"
+
