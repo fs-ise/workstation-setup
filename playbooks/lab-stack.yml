@@ -17,6 +17,7 @@
       - unzip
       - python3
       - python3-pip
+      - dnf-plugins-core
 
     # Docker Engine (official packages, not Fedora's moby/podman defaults)
     docker_packages:
@@ -114,31 +115,76 @@
         content: |
           export PATH={{ quarto_install_dir }}/bin:$PATH
 
-    - name: Install Thunderbird
-      ansible.builtin.dnf:
-        name: "tunderbird"
-        state: present
-
-
     - name: Import Google Linux signing key (RPM)
       ansible.builtin.rpm_key:
         state: present
         key: https://dl.google.com/linux/linux_signing_key.pub
 
     - name: Add Google Chrome yum repo
-      ansible.builtin.copy:
-        dest: "/etc/yum.repos.d/google-chrome.repo"
-        mode: "0644"
-        content: |
-          [google-chrome]
-          name=google-chrome
-          baseurl=https://dl.google.com/linux/chrome/rpm/stable/x86_64
-          enabled=1
-          gpgcheck=1
-          gpgkey=https://dl.google.com/linux/linux_signing_key.pub
+      ansible.builtin.yum_repository:
+        name: google-chrome
+        description: google-chrome
+        baseurl: https://dl.google.com/linux/chrome/rpm/stable/x86_64
+        enabled: true
+        gpgcheck: true
+        gpgkey: https://dl.google.com/linux/linux_signing_key.pub
 
     - name: Install Google Chrome
       ansible.builtin.dnf:
         name: "google-chrome-stable"
         state: present
         update_cache: true
+
+    # --- gitk ---
+    - name: Install gitk
+      ansible.builtin.dnf:
+        name: gitk
+        state: present
+
+    # --- ownCloud client (prefer dnf, fallback to Flatpak) ---
+    - name: Try to install ownCloud client via dnf
+      ansible.builtin.dnf:
+        name: owncloud-client
+        state: present
+      register: owncloud_dnf
+      failed_when: false
+
+    - name: Ensure Flatpak is installed (fallback path)
+      ansible.builtin.dnf:
+        name: flatpak
+        state: present
+      when: owncloud_dnf is failed
+
+    - name: Ensure Flathub remote exists (fallback path)
+      community.general.flatpak_remote:
+        name: flathub
+        state: present
+        flatpakrepo_url: https://flathub.org/repo/flathub.flatpakrepo
+      when: owncloud_dnf is failed
+
+    - name: Install ownCloud client via Flatpak (fallback path)
+      community.general.flatpak:
+        name: com.owncloud.desktopclient.ownCloud
+        state: present
+      when: owncloud_dnf is failed
+
+    # ---- Thunderbird (dnf if available, otherwise Flatpak) ----
+    - name: Try to install Thunderbird via dnf
+      ansible.builtin.dnf:
+        name: thunderbird
+        state: present
+      register: thunderbird_dnf
+      failed_when: false
+
+    - name: Ensure Flathub remote exists (Thunderbird fallback)
+      community.general.flatpak_remote:
+        name: flathub
+        state: present
+        flatpakrepo_url: https://flathub.org/repo/flathub.flatpakrepo
+      when: thunderbird_dnf is failed
+
+    - name: Install Thunderbird via Flatpak (fallback)
+      community.general.flatpak:
+        name: org.mozilla.Thunderbird
+        state: present
+      when: thunderbird_dnf is failed
