@@ -149,19 +149,6 @@
       register: owncloud_dnf
       failed_when: false
 
-    - name: Ensure Flatpak is installed (fallback path)
-      ansible.builtin.dnf:
-        name: flatpak
-        state: present
-      when: owncloud_dnf is failed
-
-    - name: Ensure Flathub remote exists (fallback path)
-      community.general.flatpak_remote:
-        name: flathub
-        state: present
-        flatpakrepo_url: https://flathub.org/repo/flathub.flatpakrepo
-      when: owncloud_dnf is failed
-
     - name: Install ownCloud client via Flatpak (fallback path)
       community.general.flatpak:
         name: com.owncloud.desktopclient.ownCloud
@@ -175,16 +162,3 @@
         state: present
       register: thunderbird_dnf
       failed_when: false
-
-    - name: Ensure Flathub remote exists (Thunderbird fallback)
-      community.general.flatpak_remote:
-        name: flathub
-        state: present
-        flatpakrepo_url: https://flathub.org/repo/flathub.flatpakrepo
-      when: thunderbird_dnf is failed
-
-    - name: Install Thunderbird via Flatpak (fallback)
-      community.general.flatpak:
-        name: org.mozilla.Thunderbird
-        state: present
-      when: thunderbird_dnf is failed
