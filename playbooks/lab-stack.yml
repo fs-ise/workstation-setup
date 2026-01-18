@@ -72,6 +72,15 @@
         groups: docker
         append: true
 
+    - name: Configure Git identity (global)
+      become: false
+      block:
+        - name: git push.autoSetupRemote
+          community.general.git_config:
+            name: push.autoSetupRemote
+            scope: global
+            value: "true"
+ 
     # ---- Quarto install (tarball -> /opt/quarto) ----
     - name: Create quarto install directory
       ansible.builtin.file:
@@ -105,24 +114,31 @@
         content: |
           export PATH={{ quarto_install_dir }}/bin:$PATH
 
-    - name: Configure Git identity (global)
-      become: false
-      block:
-        - name: git user.name
-          community.general.git_config:
-            name: user.name
-            scope: global
-            value: "{{ lab_user.name }}"
+    - name: Install Thunderbird
+      ansible.builtin.dnf:
+        name: "tunderbird"
+        state: present
 
-        - name: git user.email
-          community.general.git_config:
-            name: user.email
-            scope: global
-            value: "{{ lab_user.email }}"
 
-        - name: git push.autoSetupRemote
-          community.general.git_config:
-            name: push.autoSetupRemote
-            scope: global
-            value: "true"
+    - name: Import Google Linux signing key (RPM)
+      ansible.builtin.rpm_key:
+        state: present
+        key: https://dl.google.com/linux/linux_signing_key.pub
 
+    - name: Add Google Chrome yum repo
+      ansible.builtin.copy:
+        dest: "/etc/yum.repos.d/google-chrome.repo"
+        mode: "0644"
+        content: |
+          [google-chrome]
+          name=google-chrome
+          baseurl=https://dl.google.com/linux/chrome/rpm/stable/x86_64
+          enabled=1
+          gpgcheck=1
+          gpgkey=https://dl.google.com/linux/linux_signing_key.pub
+
+    - name: Install Google Chrome
+      ansible.builtin.dnf:
+        name: "google-chrome-stable"
+        state: present
+        update_cache: true
