@@ -103,6 +103,8 @@
       - keepassxc
       - flatpak
       - pdfarranger
+      - nemo
+      - nemo-fileroller
 
     # Docker images to pull
     docker_images:
@@ -276,6 +278,39 @@
         name: org.mozilla.Thunderbird
         state: present
       when: thunderbird_dnf is failed
+
+    - name: Install Obsidian (Flatpak)
+      community.general.flatpak:
+        name: md.obsidian.Obsidian
+        state: present
+
+    - name: Ensure Nemo desktop file exists (sanity check)
+      ansible.builtin.stat:
+        path: /usr/share/applications/nemo.desktop
+      register: nemo_desktop
+
+    - name: Set Nemo as default handler for directories (xdg-mime)
+      become: false
+      ansible.builtin.command: xdg-mime default nemo.desktop inode/directory
+      when: nemo_desktop.stat.exists
+      changed_when: false
+
+    - name: Set Nemo as default handler for folder scheme (xdg-mime)
+      become: false
+      ansible.builtin.command: xdg-mime default nemo.desktop x-scheme-handler/file
+      when: nemo_desktop.stat.exists
+      changed_when: false
+
+    - name: Create custom keybinding to open Nemo (Super+E)
+      become: false
+      ansible.builtin.shell: |
+        gsettings set org.gnome.settings-daemon.plugins.media-keys custom-keybindings "['/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/']"
+        gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/ name 'Files (Nemo)'
+        gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/ command 'nemo'
+        gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/ binding '<Super>e'
+      args:
+        executable: /bin/bash
+      changed_when: false
 
     # ---- Optional: remove system sounds (destructive) ----
     - name: Remove system sounds (/usr/share/sounds) - optional and destructive
