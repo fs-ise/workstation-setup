@@ -38,6 +38,11 @@
         state: present
         update_cache: true
 
+    - name: Remove podman-docker (conflicts with Docker CE CLI)
+      ansible.builtin.dnf:
+        name: podman-docker
+        state: absent
+
     # ---- Docker Engine from Docker repo (recommended by Docker) ----
     - name: Add Docker CE repo
       ansible.builtin.command: dnf config-manager addrepo --from-repofile https://download.docker.com/linux/fedora/docker-ce.repo
