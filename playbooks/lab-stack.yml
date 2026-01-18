@@ -1,5 +1,5 @@
 ---
-- name: Lab stack on Fedora (Quarto + Git + Docker)
+- name: Lab stack on Fedora (Quarto + Git + Docker + Apps)
   hosts: localhost
   connection: local
   become: true
@@ -8,6 +8,8 @@
     - ../host_vars/localhost.yml
 
   vars:
+    remove_system_sounds: true
+
     base_packages:
       - git
       - curl
@@ -32,6 +34,141 @@
     quarto_tarball: "quarto-{{ quarto_version }}-linux-amd64.tar.gz"
     quarto_url: "https://github.com/quarto-dev/quarto-cli/releases/download/v{{ quarto_version }}/{{ quarto_tarball }}"
 
+    remove_packages_best_effort:
+      - deja-dup
+      - aisleriot
+      - evolution
+      - nautilus-share
+      - gnome-mahjongg
+      - gnome-maps
+      - gnome-mines
+      - orca
+      - gnome-sudoku
+      - gnome-weather
+      - transmission
+      - gnome-calendar
+      - gnome-bluetooth
+      - brasero
+      - cheese
+      - vino
+      - simple-scan
+      - firefox
+      - shotwell
+      - gnome-todo
+      - telnet
+
+    install_packages_best_effort:
+      - gimp
+      - openssh-clients
+      - openssh-server
+      - gnome-commander
+      - audacity
+      - backintime-qt
+      - recoll
+      - libxslt
+      - texstudio
+      - texlive-scheme-full
+      - texlive-latex-extra
+      - texlive-xetex
+      - texlive-lang-german
+      - gitk
+      - vim
+      - clamav
+      - python3-tkinter
+      - pwgen
+      - ruby
+      - rubygem-bundler
+      - xsel
+      - diffpdf
+      - dictd
+      - dict-gcide
+      - dict-wn
+      - autokey-gtk
+      - hplip
+      - hplip-gui
+      - gnome-clocks
+      - artha
+      - xournalpp
+      - poppler-utils
+      - antiword
+      - wv
+      - catdoc
+      - perl-librdf
+      - unrtf
+      - untex
+      - unifont-fonts
+      - git-lfs
+      - obs-studio
+      - nextcloud-client
+      - keepassxc
+      - flatpak
+      - pdfarranger
+
+    # Python packages from your script (filtered to avoid stdlib like datetime)
+    pip_packages:
+      - yt-dlp
+      - xlsxwriter
+      - httplib2
+      - beautifulsoup4
+      - chardet
+      - openpyxl
+      - python-docx
+      - requests
+      - icalendar
+      - pytz
+      - goldfinch
+      - langdetect
+      - xlrd
+      - yapf
+      - autopep8
+      - bibtexparser
+      - GitPython
+      - html5lib
+      - PyPDF2
+      - pyvirtualdisplay
+      - pandas
+      - ezodf
+      - watchdog
+      - citeproc-py
+      - urlwatch
+      - docker
+      - fuzzywuzzy
+      - python-levenshtein
+      - opencv-python
+      - crossrefapi
+      - Send2Trash
+      - wordsegment
+      - nltk
+      - pyperclip
+      - pylatex
+      - pytablewriter
+      - pdfminer.six
+      - progressbar
+      - daff
+      - pytest
+      - pre-commit
+      - check-manifest
+      - tox
+      - twine
+      - ipython
+      - jupyterlab
+      - folium
+      - pipenv
+      - types-PyYAML
+      - types-requests
+      - mypy
+      - dacite
+      - pipreqs
+
+    # Docker images to pull
+    docker_images:
+      - jbarlow83/ocrmypdf
+      - rocker/tidyverse
+      - rocker/verse
+      - python:3
+      - alekzonder/puppeteer
+      - lfoppiano/grobid:0.8.1
+
   tasks:
     - name: Install baseline packages
       ansible.builtin.dnf:
@@ -39,12 +176,32 @@
         state: present
         update_cache: true
 
+    # ---- Remove “unwanted” packages (best effort) ----
+    - name: Remove unwanted packages (best effort; continue if names not found)
+      ansible.builtin.dnf:
+        name: "{{ item }}"
+        state: absent
+      loop: "{{ remove_packages_best_effort }}"
+      register: remove_pkgs_result
+      failed_when: false
+
+    # ---- Install “wanted” packages (best effort) ----
+    - name: Install desired packages (best effort; continue if names not found)
+      ansible.builtin.dnf:
+        name: "{{ item }}"
+        state: present
+      loop: "{{ install_packages_best_effort }}"
+      register: install_pkgs_result
+      failed_when: false
+
+    # ---- Docker: avoid conflicts with docker CLI shim from Podman ----
     - name: Remove podman-docker (conflicts with Docker CE CLI)
       ansible.builtin.dnf:
         name: podman-docker
         state: absent
+      failed_when: false
 
-    # ---- Docker Engine from Docker repo (recommended by Docker) ----
+    # ---- Docker Engine from Docker repo ----
     - name: Add Docker CE repo
       ansible.builtin.command: dnf config-manager addrepo --from-repofile https://download.docker.com/linux/fedora/docker-ce.repo
       args:
@@ -73,6 +230,11 @@
         groups: docker
         append: true
 
+    - name: Note about docker group membership
+      ansible.builtin.debug:
+        msg: "You may need to log out/in (or run: newgrp docker) for docker without sudo."
+
+    # ---- Git config (kept minimal as in your playbook) ----
     - name: Configure Git identity (global)
       become: false
       block:
@@ -81,13 +243,13 @@
             name: push.autoSetupRemote
             scope: global
             value: "true"
- 
+
     # ---- Quarto install (tarball -> /opt/quarto) ----
-    - name: Create quarto install directory
+    - name: Remove /opt/quarto if it exists as a directory (to allow symlink)
       ansible.builtin.file:
         path: "{{ quarto_install_dir }}"
-        state: directory
-        mode: "0755"
+        state: absent
+      when: quarto_install_dir is defined
 
     - name: Download Quarto tarball
       ansible.builtin.get_url:
@@ -115,6 +277,7 @@
         content: |
           export PATH={{ quarto_install_dir }}/bin:$PATH
 
+    # ---- Chrome (official repo) ----
     - name: Import Google Linux signing key (RPM)
       ansible.builtin.rpm_key:
         state: present
@@ -131,15 +294,16 @@
 
     - name: Install Google Chrome
       ansible.builtin.dnf:
-        name: "google-chrome-stable"
+        name: google-chrome-stable
         state: present
         update_cache: true
 
-    # --- gitk ---
-    - name: Install gitk
-      ansible.builtin.dnf:
-        name: gitk
+    # ---- Flatpak + Flathub (needed for reliable Thunderbird/ownCloud fallback) ----
+    - name: Ensure Flathub remote exists
+      community.general.flatpak_remote:
+        name: flathub
         state: present
+        flatpakrepo_url: https://flathub.org/repo/flathub.flatpakrepo
 
     # --- ownCloud client (prefer dnf, fallback to Flatpak) ---
     - name: Try to install ownCloud client via dnf
@@ -149,7 +313,7 @@
       register: owncloud_dnf
       failed_when: false
 
-    - name: Install ownCloud client via Flatpak (fallback path)
+    - name: Install ownCloud client via Flatpak (fallback)
       community.general.flatpak:
         name: com.owncloud.desktopclient.ownCloud
         state: present
@@ -162,3 +326,35 @@
         state: present
       register: thunderbird_dnf
       failed_when: false
+
+    - name: Install Thunderbird via Flatpak (fallback)
+      community.general.flatpak:
+        name: org.mozilla.Thunderbird
+        state: present
+      when: thunderbird_dnf is failed
+
+    # ---- Python packages (pip) ----
+    - name: Install Python packages via pip (system-wide)
+      ansible.builtin.pip:
+        name: "{{ pip_packages }}"
+        executable: pip3
+        state: present
+
+    # ---- Optional: remove system sounds (destructive) ----
+    - name: Remove system sounds (/usr/share/sounds) - optional and destructive
+      ansible.builtin.file:
+        path: /usr/share/sounds
+        state: absent
+      when: remove_system_sounds | bool
+
+    # ---- Docker pulls ----
+    - name: Pull docker images
+      ansible.builtin.command: "docker pull {{ item }}"
+      loop: "{{ docker_images }}"
+      register: docker_pull_result
+      changed_when: false
+
+    # ---- GUI-session-only items ----
+    - name: Mouse speed note (xset requires an active X/Wayland session)
+      ansible.builtin.debug:
+        msg: "Mouse speed change (xset m 2/1 10) is session-specific; do it in your desktop session, not via Ansible."
