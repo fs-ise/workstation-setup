@@ -1,5 +1,5 @@
 ---
-- name: Lab stack on Fedora (Quarto + Git + Docker + Apps)
+- name: Lab stack on Fedora
   hosts: localhost
   connection: local
   become: true
