@@ -312,6 +312,22 @@
         executable: /bin/bash
       changed_when: false
 
+    # ---- Nemo sane defaults (list view, sorting, dates) ----
+    - name: Configure Nemo preferences
+      become: false
+      vars:
+        nemo_settings:
+          - { key: "sort-directories-first", value: "true" }
+          - { key: "default-sort-order", value: "'name'" }
+          - { key: "default-sort-in-reverse-order", value: "false" }
+          - { key: "show-full-path-titles", value: "true" }
+          - { key: "default-folder-viewer", value: "'list-view'" }
+      ansible.builtin.command: >
+        gsettings set org.nemo.preferences {{ item.key }} {{ item.value }}
+      loop: "{{ nemo_settings }}"
+      changed_when: false
+
+
     # ---- Optional: remove system sounds (destructive) ----
     - name: Remove system sounds (/usr/share/sounds) - optional and destructive
       ansible.builtin.file:
@@ -355,7 +371,22 @@
 
         - name: Remove dirs if empty
           ansible.builtin.file:
-            path: "/home/{{ target_user }}/{{ item.item.item }}"
+            path: "/home/{{ target_user }}/{{ item.dir }}"
             state: absent
           loop: "{{ media_find.results }}"
-          when: item.matched | int == 0
+          loop_control:
+            label: "{{ item.item.item }}"
+          vars:
+            item_dir: "{{ item.item.item }}"
+          when:
+            - item is not skipped
+            - item.matched | int == 0
+
+    - name: Set GTK date format to ISO (YYYY-MM-DD)
+      become: false
+      ansible.builtin.command: >
+        gsettings set org.gnome.desktop.interface clock-format '24h'
+      changed_when: false
+
+    - name: Ensure ISO-style date ordering via locale
+      ansible.builtin.command: localectl set-locale LC_TIME=en_DK.UTF-8
