@@ -295,26 +295,12 @@
         xdg-mime default code.desktop application/x-quarto
 
 
-    # ---- Flatpak + Flathub (needed for reliable Thunderbird/ownCloud fallback) ----
+    # ---- Flatpak + Flathub (needed for reliable Thunderbird fallback) ----
     - name: Ensure Flathub remote exists
       community.general.flatpak_remote:
         name: flathub
         state: present
         flatpakrepo_url: https://flathub.org/repo/flathub.flatpakrepo
-
-    # --- ownCloud client (prefer dnf, fallback to Flatpak) ---
-    - name: Try to install ownCloud client via dnf
-      ansible.builtin.dnf:
-        name: owncloud-client
-        state: present
-      register: owncloud_dnf
-      failed_when: false
-
-    - name: Install ownCloud client via Flatpak (fallback)
-      community.general.flatpak:
-        name: com.owncloud.desktopclient.ownCloud
-        state: present
-      when: owncloud_dnf is failed
 
     - name: Install GnuPG and pinentry on Fedora
       become: true
