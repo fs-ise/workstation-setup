@@ -41,6 +41,11 @@ git config --global user.email
 docker version
 docker run --rm hello-world
 
+ssh -V
+ls -la ~/.ssh/*.pub 2>/dev/null || echo "No SSH public keys found"
+ssh-add -l || true
+ssh -T git@github.com
+
 quarto --version
 quarto check
 ```
