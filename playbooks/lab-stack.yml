@@ -34,6 +34,11 @@
     quarto_tarball: "quarto-{{ quarto_version }}-linux-amd64.tar.gz"
     quarto_url: "https://github.com/quarto-dev/quarto-cli/releases/download/v{{ quarto_version }}/{{ quarto_tarball }}"
 
+    # VS Code (vars)
+    vscode_repo_name: "vscode"
+    vscode_rpm_package: "code"
+    vscode_flatpak_id: "com.visualstudio.code"
+
     remove_packages_best_effort:
       - deja-dup
       - aisleriot
@@ -243,6 +248,35 @@
         name: google-chrome-stable
         state: present
         update_cache: true
+
+    # ---- VS Code (Microsoft RPM repo, fallback to Flatpak) ----
+    - name: Import Microsoft signing key (RPM)
+      ansible.builtin.rpm_key:
+        state: present
+        key: https://packages.microsoft.com/keys/microsoft.asc
+
+    - name: Add VS Code yum repo
+      ansible.builtin.yum_repository:
+        name: "{{ vscode_repo_name }}"
+        description: "Visual Studio Code"
+        baseurl: https://packages.microsoft.com/yumrepos/vscode
+        enabled: true
+        gpgcheck: true
+        gpgkey: https://packages.microsoft.com/keys/microsoft.asc
+
+    - name: Try to install VS Code via dnf
+      ansible.builtin.dnf:
+        name: "{{ vscode_rpm_package }}"
+        state: present
+        update_cache: true
+      register: vscode_dnf
+      failed_when: false
+
+    - name: Install VS Code via Flatpak (fallback)
+      community.general.flatpak:
+        name: "{{ vscode_flatpak_id }}"
+        state: present
+      when: vscode_dnf is failed
 
     # ---- Flatpak + Flathub (needed for reliable Thunderbird/ownCloud fallback) ----
     - name: Ensure Flathub remote exists
