@@ -1,0 +1,9 @@
+# Git / CoLRev aliases
+alias 'ga.'='git add .'
+alias ga='git add '
+alias gc='git commit -S -m'
+alias gpp='git stash && git pull --rebase && git push && git stash apply'
+alias gs='git status'
+alias cs='colrev status'
+alias gp='git pull --rebase=merges'
+alias pcr='pre-commit run -a'

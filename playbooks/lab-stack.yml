@@ -479,3 +479,34 @@
         gsettings set org.nemo.preferences date-format 'iso'
       when: "'org.nemo.preferences' in gschemas.stdout_lines"
       changed_when: false
+
+
+    - name: Install dotfiles (aliases)
+      become: false
+      vars:
+        # Use the user who invoked sudo/ansible (important because play has become: true)
+        target_user: "{{ ansible_env.SUDO_USER | default(ansible_user_id) }}"
+        target_home: "{{ lookup('ansible.builtin.env', 'HOME') if (ansible_env.SUDO_USER is not defined) else '/home/' + target_user }}"
+
+        # Put the managed file in the home folder (as you requested)
+        aliases_dest: "{{ target_home }}/.bash_aliases"
+      block:
+        - name: Deploy bash aliases from repo to ~/.bash_aliases
+          ansible.builtin.copy:
+            src: "../files/dotfiles/bash_aliases"
+            dest: "{{ aliases_dest }}"
+            mode: "0644"
+
+        - name: Ensure ~/.bashrc sources ~/.bash_aliases
+          ansible.builtin.lineinfile:
+            path: "{{ target_home }}/.bashrc"
+            line: '[[ -f ~/.bash_aliases ]] && . ~/.bash_aliases'
+            create: true
+            state: present
+
+        - name: Ensure ~/.zshrc sources ~/.bash_aliases (if you use zsh)
+          ansible.builtin.lineinfile:
+            path: "{{ target_home }}/.zshrc"
+            line: '[[ -f ~/.bash_aliases ]] && source ~/.bash_aliases'
+            create: true
+            state: present
