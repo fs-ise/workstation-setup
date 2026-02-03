@@ -309,6 +309,36 @@
         state: present
       when: owncloud_dnf is failed
 
+    # Install Dropbox
+    - name: Enable RPM Fusion free repository
+      ansible.builtin.dnf:
+        name:
+          - "https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-{{ ansible_facts.distribution_major_version }}.noarch.rpm"
+        state: present
+
+    - name: Enable RPM Fusion nonfree repository
+      ansible.builtin.dnf:
+        name:
+          - "https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-{{ ansible_facts.distribution_major_version }}.noarch.rpm"
+        state: present
+
+    - name: Install Dropbox (client daemon)
+      ansible.builtin.dnf:
+        name:
+          - dropbox
+        state: present
+        update_cache: true
+
+    # Optional (GNOME Files / Nautilus integration). If you don't use GNOME Files, skip this.
+    - name: Install Nautilus Dropbox integration (optional)
+      ansible.builtin.dnf:
+        name:
+          - nautilus-dropbox
+        state: present
+      when: ansible_facts.env.XDG_CURRENT_DESKTOP is defined and
+            ('GNOME' in ansible_facts.env.XDG_CURRENT_DESKTOP)
+
+
     # ---- Thunderbird (dnf if available, otherwise Flatpak) ----
     - name: Try to install Thunderbird via dnf
       ansible.builtin.dnf:
