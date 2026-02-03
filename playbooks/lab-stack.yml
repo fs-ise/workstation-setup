@@ -195,6 +195,13 @@
             scope: global
             value: "true"
 
+    - name: Set Vim as default Git editor
+      become: false
+      community.general.git_config:
+        name: core.editor
+        scope: global
+        value: "vim"
+
     # ---- Quarto install (tarball -> /opt/quarto) ----
     - name: Remove /opt/quarto if it exists as a directory (to allow symlink)
       ansible.builtin.file:
