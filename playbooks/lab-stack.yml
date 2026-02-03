@@ -513,3 +513,31 @@
             line: '[[ -f ~/.bash_aliases ]] && source ~/.bash_aliases'
             create: true
             state: present
+
+    - name: Ensure psutil is installed (Fedora)
+      become: true
+      ansible.builtin.dnf:
+        name: python3-psutil
+        state: present
+
+    - name: Bind Ctrl+Alt+T to open terminal via custom keybinding (GNOME)
+      become: true
+      become_user: "{{ ansible_env.SUDO_USER | default(ansible_user_id) }}"
+      ansible.builtin.shell: |
+        set -euo pipefail
+
+        # Ensure custom0 (Nemo) stays registered and add custom1 (Terminal)
+        gsettings set org.gnome.settings-daemon.plugins.media-keys custom-keybindings \
+          "['/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/', \
+            '/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1/']"
+
+        # Define custom1 = Terminal
+        gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1/ \
+          name 'Terminal'
+        gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1/ \
+          command 'kgx'
+        gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1/ \
+          binding '<Control><Alt>t'
+      args:
+        executable: /bin/bash
+      changed_when: false
