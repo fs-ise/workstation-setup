@@ -278,6 +278,16 @@
         state: present
       when: vscode_dnf is failed
 
+
+    - name: Set VS Code as default editor for common text formats
+      become: false
+      ansible.builtin.shell: |
+        xdg-mime default code.desktop text/plain
+        xdg-mime default code.desktop text/markdown
+        xdg-mime default code.desktop text/x-python
+        xdg-mime default code.desktop application/x-quarto
+
+
     # ---- Flatpak + Flathub (needed for reliable Thunderbird/ownCloud fallback) ----
     - name: Ensure Flathub remote exists
       community.general.flatpak_remote:
