@@ -4,6 +4,17 @@
 
 Install Fedora
 
+Advantages of Fedora:
+
+* parallel downloads for faster updates
+* delta RPMs to save bandwidth
+* modular system for version control
+* persistent metadata caching
+* undoable transactions
+* simpler and easier-to-remember commands
+
+There are more but these make DNF much more convenient than APT.
+
 ```sh
 sudo dnf -y install git ansible-core python3-pip
 ansible --version
