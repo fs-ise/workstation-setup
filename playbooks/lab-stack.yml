@@ -51,16 +51,21 @@
       - gnome-sudoku
       - gnome-weather
       - transmission
+      - gnome-tour
+      - gnome-contacts
+      - gnome-characters
+      - gnome-connections
+      - gnome-font-viewer
       - gnome-calendar
-      - gnome-bluetooth
       - brasero
       - cheese
       - vino
       - simple-scan
-      - firefox
       - shotwell
       - gnome-todo
       - telnet
+      - malcontent
+      - malcontent-control
 
     install_packages_best_effort:
       - gimp
@@ -68,7 +73,6 @@
       - openssh-server
       - gnome-commander
       - audacity
-      - backintime-qt
       - recoll
       - libxslt
       - texstudio
@@ -77,6 +81,7 @@
       - texlive-xetex
       - texlive-lang-german
       - gitk
+      - git-lfs
       - vim
       - clamav
       - python3-tkinter
@@ -95,14 +100,12 @@
       - artha
       - xournalpp
       - poppler-utils
-      - antiword
       - wv
       - catdoc
       - perl-librdf
       - unrtf
       - untex
       - unifont-fonts
-      - git-lfs
       - obs-studio
       - nextcloud-client
       - keepassxc
