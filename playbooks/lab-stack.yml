@@ -332,13 +332,11 @@
         msg: "Mouse speed change (xset m 2/1 10) is session-specific; do it in your desktop session, not via Ansible."
 
     - name: Remove default media dirs in home if empty
-      hosts: all
-      become: true
+      become: false
       vars:
-        target_user: "{{ ansible_user_id }}"
+        target_user: "{{ lab_user.name | default(ansible_user_id) }}"
         media_dirs: [Music, Pictures, Videos]
-
-      tasks:
+      block:
         - name: Check whether each dir exists
           ansible.builtin.stat:
             path: "/home/{{ target_user }}/{{ item }}"
