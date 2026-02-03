@@ -330,3 +330,37 @@
     - name: Mouse speed note (xset requires an active X/Wayland session)
       ansible.builtin.debug:
         msg: "Mouse speed change (xset m 2/1 10) is session-specific; do it in your desktop session, not via Ansible."
+
+    - name: Remove default media dirs in home if empty
+      hosts: all
+      become: true
+      vars:
+        target_user: "{{ ansible_user_id }}"   # or set explicitly, e.g. "gerit"
+        media_dirs:
+          - Music
+          - Pictures
+          - Videos
+
+      tasks:
+        - name: Check whether each dir exists
+          ansible.builtin.stat:
+            path: "/home/{{ target_user }}/{{ item }}"
+          loop: "{{ media_dirs }}"
+          register: media_stat
+
+        - name: Count entries inside each dir (including hidden files)
+          ansible.builtin.find:
+            paths: "/home/{{ target_user }}/{{ item.item }}"
+            file_type: any
+            hidden: true
+            recurse: false
+          loop: "{{ media_stat.results }}"
+          when: item.stat.exists and item.stat.isdir
+          register: media_find
+
+        - name: Remove dirs if empty
+          ansible.builtin.file:
+            path: "/home/{{ target_user }}/{{ item.item.item }}"
+            state: absent
+          loop: "{{ media_find.results }}"
+          when: item.matched | int == 0
