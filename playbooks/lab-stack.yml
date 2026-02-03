@@ -309,6 +309,15 @@
         state: present
       when: owncloud_dnf is failed
 
+    - name: Install GnuPG and pinentry on Fedora
+      become: true
+      ansible.builtin.dnf:
+        name:
+          - gnupg2
+          - pinentry
+        state: present
+        update_cache: true
+
     # Install Dropbox
     - name: Enable RPM Fusion free repository
       ansible.builtin.dnf:

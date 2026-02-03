@@ -42,6 +42,18 @@ sudo dnf -y install dnf-plugins-core
 ansible-playbook -K playbooks/lab-stack.yml
 ```
 
+## Manual tasks
+
+- Set up SSH and register on GitHub
+
+```sh
+ssh-keygen -t ed25519 -a 64 -C "your-email@institution.edu"
+ssh-add ~/.ssh/id_ed25519
+cat ~/.ssh/id_ed25519.pub | wl-copy
+# add in GitHub settings/ssh
+```
+
+- Set up GPG and register on GitHub ([instructions](https://docs.github.com/en/authentication/managing-commit-signature-verification/telling-git-about-your-signing-key))
 
 ## Test
 
