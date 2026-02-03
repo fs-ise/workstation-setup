@@ -172,7 +172,7 @@
 
     - name: Add lab user to docker group
       ansible.builtin.user:
-        name: "{{ lab_user.name }}"
+        name: "{{ ansible_user_id }}"
         groups: docker
         append: true
 
