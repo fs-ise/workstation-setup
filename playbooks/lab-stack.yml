@@ -335,11 +335,8 @@
       hosts: all
       become: true
       vars:
-        target_user: "{{ ansible_user_id }}"   # or set explicitly, e.g. "gerit"
-        media_dirs:
-          - Music
-          - Pictures
-          - Videos
+        target_user: "{{ ansible_user_id }}"
+        media_dirs: [Music, Pictures, Videos]
 
       tasks:
         - name: Check whether each dir exists
