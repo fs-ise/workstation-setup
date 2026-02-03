@@ -390,3 +390,16 @@
 
     - name: Ensure ISO-style date ordering via locale
       ansible.builtin.command: localectl set-locale LC_TIME=en_DK.UTF-8
+
+    - name: Check Nemo gsettings schema exists
+      become: false
+      ansible.builtin.command: gsettings list-schemas
+      register: gschemas
+      changed_when: false
+
+    - name: Set Nemo date format to ISO
+      become: false
+      ansible.builtin.command: >
+        gsettings set org.nemo.preferences date-format 'iso'
+      when: "'org.nemo.preferences' in gschemas.stdout_lines"
+      changed_when: false
