@@ -559,3 +559,118 @@
       args:
         executable: /bin/bash
       changed_when: false
+
+    # ---- VS Code: configure user settings (hard-coded paths) + install extensions ----
+
+    - name: Ensure VS Code user settings dir exists (RPM install path)
+      become: true
+      ansible.builtin.file:
+        path: "/home/{{ ansible_env.SUDO_USER | default(ansible_user_id) }}/.config/Code/User"
+        state: directory
+        owner: "{{ ansible_env.SUDO_USER | default(ansible_user_id) }}"
+        group: "{{ ansible_env.SUDO_USER | default(ansible_user_id) }}"
+        mode: "0755"
+
+    - name: Ensure VS Code user settings dir exists (Flatpak install path)
+      become: true
+      ansible.builtin.file:
+        path: "/home/{{ ansible_env.SUDO_USER | default(ansible_user_id) }}/.var/app/com.visualstudio.code/config/Code/User"
+        state: directory
+        owner: "{{ ansible_env.SUDO_USER | default(ansible_user_id) }}"
+        group: "{{ ansible_env.SUDO_USER | default(ansible_user_id) }}"
+        mode: "0755"
+
+    - name: Write VS Code settings.json (RPM path)
+      become: true
+      ansible.builtin.copy:
+        dest: "/home/{{ ansible_env.SUDO_USER | default(ansible_user_id) }}/.config/Code/User/settings.json"
+        owner: "{{ ansible_env.SUDO_USER | default(ansible_user_id) }}"
+        group: "{{ ansible_env.SUDO_USER | default(ansible_user_id) }}"
+        mode: "0644"
+        content: |
+          {
+            "workbench.startupEditor": "none",
+            "workbench.welcomePage.walkthroughs.openOnInstall": false,
+            "workbench.tips.enabled": false,
+            "update.showReleaseNotes": false,
+            "telemetry.telemetryLevel": "off",
+            "workbench.editor.enablePreview": false,
+            "files.trimTrailingWhitespace": true,
+            "editor.formatOnSave": true
+          }
+
+    - name: Write VS Code settings.json (Flatpak path)
+      become: true
+      ansible.builtin.copy:
+        dest: "/home/{{ ansible_env.SUDO_USER | default(ansible_user_id) }}/.var/app/com.visualstudio.code/config/Code/User/settings.json"
+        owner: "{{ ansible_env.SUDO_USER | default(ansible_user_id) }}"
+        group: "{{ ansible_env.SUDO_USER | default(ansible_user_id) }}"
+        mode: "0644"
+        content: |
+          {
+            "workbench.startupEditor": "none",
+            "workbench.welcomePage.walkthroughs.openOnInstall": false,
+            "workbench.tips.enabled": false,
+            "update.showReleaseNotes": false,
+            "telemetry.telemetryLevel": "off",
+            "workbench.editor.enablePreview": false,
+            "files.trimTrailingWhitespace": true,
+            "editor.formatOnSave": true
+          }
+
+    # ---- Extensions (install for both RPM + Flatpak best-effort) ----
+    # Notes:
+    # - "code" CLI works for RPM install (after first launch sometimes, but usually ok).
+    # - Flatpak needs: flatpak run com.visualstudio.code ...
+    # - We run both; whichever exists will succeed.
+
+    - name: Install VS Code extensions (RPM "code" CLI) - best effort
+      become: true
+      become_user: "{{ ansible_env.SUDO_USER | default(ansible_user_id) }}"
+      ansible.builtin.shell: |
+        set -euo pipefail
+        if command -v code >/dev/null 2>&1; then
+          code --install-extension ms-python.python --force
+          code --install-extension ms-toolsai.jupyter --force
+          code --install-extension ms-vscode.makefile-tools --force
+          code --install-extension ms-azuretools.vscode-docker --force
+          code --install-extension eamodio.gitlens --force
+          code --install-extension streetsidesoftware.code-spell-checker --force
+          code --install-extension yzhang.markdown-all-in-one --force
+          code --install-extension davidanson.vscode-markdownlint --force
+          code --install-extension redhat.vscode-yaml --force
+          code --install-extension tamasfe.even-better-toml --force
+          code --install-extension esbenp.prettier-vscode --force
+          code --install-extension jnoortheen.nix-ide --force || true
+        fi
+      args:
+        executable: /bin/bash
+      failed_when: false
+      changed_when: false
+
+    - name: Install VS Code extensions (Flatpak) - best effort
+      become: true
+      become_user: "{{ ansible_env.SUDO_USER | default(ansible_user_id) }}"
+      ansible.builtin.shell: |
+        set -euo pipefail
+        if command -v flatpak >/dev/null 2>&1; then
+          # Only attempt if the app is installed
+          if flatpak info com.visualstudio.code >/dev/null 2>&1; then
+            flatpak run com.visualstudio.code --install-extension ms-python.python --force
+            flatpak run com.visualstudio.code --install-extension ms-toolsai.jupyter --force
+            flatpak run com.visualstudio.code --install-extension ms-vscode.makefile-tools --force
+            flatpak run com.visualstudio.code --install-extension ms-azuretools.vscode-docker --force
+            flatpak run com.visualstudio.code --install-extension eamodio.gitlens --force
+            flatpak run com.visualstudio.code --install-extension streetsidesoftware.code-spell-checker --force
+            flatpak run com.visualstudio.code --install-extension yzhang.markdown-all-in-one --force
+            flatpak run com.visualstudio.code --install-extension davidanson.vscode-markdownlint --force
+            flatpak run com.visualstudio.code --install-extension redhat.vscode-yaml --force
+            flatpak run com.visualstudio.code --install-extension tamasfe.even-better-toml --force
+            flatpak run com.visualstudio.code --install-extension esbenp.prettier-vscode --force
+            flatpak run com.visualstudio.code --install-extension jnoortheen.nix-ide --force || true
+          fi
+        fi
+      args:
+        executable: /bin/bash
+      failed_when: false
+      changed_when: false
