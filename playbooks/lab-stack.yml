@@ -114,6 +114,7 @@
       - nemo
       - nemo-fileroller
       - gnome-terminal
+      - borgbackup
 
     # Docker images to pull
     docker_images:
@@ -559,6 +560,26 @@
       args:
         executable: /bin/bash
       changed_when: false
+
+    - name: Check whether Nemo key open-new-window-focus exists
+      become: false
+      become_user: "{{ ansible_env.SUDO_USER | default(ansible_user_id) }}"
+      ansible.builtin.command: gsettings list-keys org.nemo.preferences
+      register: nemo_pref_keys
+      changed_when: false
+      failed_when: false
+
+    - name: Ensure Nemo opens new windows in foreground (only if supported)
+      become: false
+      become_user: "{{ ansible_env.SUDO_USER | default(ansible_user_id) }}"
+      ansible.builtin.command: gsettings set org.nemo.preferences open-new-window-focus true
+      when: "'open-new-window-focus' in nemo_pref_keys.stdout_lines"
+      changed_when: false
+
+    - name: Install Vorta (Flatpak)
+      community.general.flatpak:
+        name: com.borgbase.Vorta
+        state: present
 
     # ---- VS Code: configure user settings (hard-coded paths) + install extensions ----
 
