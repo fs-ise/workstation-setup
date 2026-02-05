@@ -39,6 +39,18 @@
     vscode_rpm_package: "code"
     vscode_flatpak_id: "com.visualstudio.code"
 
+    # ---- VirtualBox (hard-coded) ----
+    virtualbox_repo_url: "https://download.virtualbox.org/virtualbox/rpm/fedora/virtualbox.repo"
+    virtualbox_gpgkey_url: "https://www.virtualbox.org/download/oracle_vbox_2016.asc"
+    virtualbox_package: "VirtualBox-7.0"
+    virtualbox_build_deps:
+      - gcc
+      - make
+      - perl
+      - kernel-devel
+      - kernel-headers
+      - elfutils-libelf-devel
+
     remove_packages_best_effort:
       - deja-dup
       - aisleriot
@@ -131,6 +143,102 @@
         name: "{{ base_packages }}"
         state: present
         update_cache: true
+
+    # ---- VirtualBox (Oracle repo) ----
+    - name: Import Oracle VirtualBox signing key (RPM)
+      ansible.builtin.rpm_key:
+        state: present
+        key: "https://www.virtualbox.org/download/oracle_vbox_2016.asc"
+
+    - name: Add VirtualBox yum repo (Oracle)
+      ansible.builtin.get_url:
+        url: "https://download.virtualbox.org/virtualbox/rpm/fedora/virtualbox.repo"
+        dest: /etc/yum.repos.d/virtualbox.repo
+        mode: "0644"
+
+    # Remove Fedora-provided VirtualBox variants that conflict with Oracle packages
+    - name: Remove conflicting VirtualBox packages (best effort)
+      ansible.builtin.dnf:
+        name:
+          - VirtualBox-server
+          - VirtualBox
+          - virtualbox
+          - virtualbox-guest-additions
+          - virtualbox-guest-additions-iso
+        state: absent
+      failed_when: false
+
+    - name: Install VirtualBox build dependencies (kernel modules)
+      ansible.builtin.dnf:
+        name:
+          - gcc
+          - make
+          - perl
+          - kernel-devel
+          - kernel-headers
+          - elfutils-libelf-devel
+        state: present
+        update_cache: true
+
+    # ---- VirtualBox (Fedora-native) ----
+    - name: Ensure VirtualBox packages are installed (Fedora)
+      ansible.builtin.dnf:
+        name:
+          - VirtualBox
+          - VirtualBox-server
+          - kernel-devel
+          - kernel-headers
+        state: present
+        update_cache: true
+
+    - name: Ensure vboxusers group exists
+      ansible.builtin.group:
+        name: vboxusers
+        state: present
+
+    - name: Add invoking user to vboxusers group
+      ansible.builtin.user:
+        name: "{{ ansible_env.SUDO_USER | default(ansible_user_id) }}"
+        groups: vboxusers
+        append: true
+
+    - name: Enable and start vboxdrv service if present (best effort)
+      ansible.builtin.systemd:
+        name: vboxdrv
+        enabled: true
+        state: started
+      failed_when: false
+
+    - name: Note about VirtualBox
+      ansible.builtin.debug:
+        msg:
+          - "You may need to log out/in for vboxusers group membership to apply."
+          - "After kernel updates, reboot so the matching modules load."
+          - "If Secure Boot is enabled, VirtualBox kernel modules may require signing or Secure Boot disabled."
+
+    # ---- VirtualBox kernel modules (akmods) ----
+    - name: Install akmods for VirtualBox + matching kernel-devel
+      ansible.builtin.dnf:
+        name:
+          - akmod-VirtualBox
+          - "kernel-devel-{{ ansible_kernel }}"
+        state: present
+        update_cache: true
+      failed_when: false
+
+    - name: Build VirtualBox kernel modules (akmods)
+      ansible.builtin.command: akmods --force
+      register: akmods_result
+      changed_when: false
+      failed_when: false
+
+    - name: Restart vboxdrv service (best effort)
+      ansible.builtin.systemd:
+        name: vboxdrv
+        state: restarted
+        enabled: true
+      failed_when: false
+
 
     # ---- Remove “unwanted” packages ----
     - name: Remove unwanted packages
