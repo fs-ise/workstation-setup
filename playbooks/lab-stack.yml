@@ -10,6 +10,10 @@
   vars:
     remove_system_sounds: true
 
+    # Use the user who invoked sudo/ansible (important because play has become: true)
+    target_user: "{{ ansible_env.SUDO_USER | default(ansible_user_id) }}"
+    target_home: "{{ lookup('ansible.builtin.env', 'HOME') if (ansible_env.SUDO_USER is not defined) else '/home/' + target_user }}"
+
     base_packages:
       - git
       - curl
@@ -50,6 +54,24 @@
       - kernel-devel
       - kernel-headers
       - elfutils-libelf-devel
+
+    ocrmypdf_packages_required:
+      - ocrmypdf
+      - tesseract
+      - tesseract-osd
+      - tesseract-langpack-eng
+      - tesseract-langpack-deu
+
+    ocrmypdf_packages_optional:
+      - jbig2enc
+      - jbig2enc-devel
+      - jbig2
+
+    ocrmypdf_nautilus_action_install: true
+    ocrmypdf_nautilus_action_name: "OCR PDF (ocrmypdf)"
+
+    ocrmypdf_nemo_action_install: true
+    ocrmypdf_nemo_action_name: "OCR PDF (ocrmypdf)"
 
     remove_packages_best_effort:
       - deja-dup
@@ -143,6 +165,176 @@
         name: "{{ base_packages }}"
         state: present
         update_cache: true
+
+    - name: Install OCRmyPDF + Tesseract + OSD (required)
+      ansible.builtin.dnf:
+        name: "{{ ocrmypdf_packages_required }}"
+        state: present
+        update_cache: true
+
+    - name: Install optional JBIG2 encoder packages (best effort)
+      ansible.builtin.dnf:
+        name: "{{ ocrmypdf_packages_optional }}"
+        state: present
+      failed_when: false
+
+    - name: Ensure user-local bin dir exists
+      ansible.builtin.file:
+        path: "/home/{{ target_user }}/.local/bin"
+        state: directory
+        owner: "{{ target_user }}"
+        group: "{{ target_user }}"
+        mode: "0755"
+
+    - name: Ensure user cache dir exists for wrapper logs
+      ansible.builtin.file:
+        path: "/home/{{ target_user }}/.cache"
+        state: directory
+        owner: "{{ target_user }}"
+        group: "{{ target_user }}"
+        mode: "0755"
+
+    - name: Install OCRmyPDF wrapper script (Fedora tessdata dir, interactive feedback + logging)
+      ansible.builtin.copy:
+        dest: "/home/{{ target_user }}/.local/bin/ocrmypdf-wrapper"
+        owner: "{{ target_user }}"
+        group: "{{ target_user }}"
+        mode: "0755"
+        content: |
+          #!/usr/bin/env bash
+          set -euo pipefail
+
+          LOG="${HOME}/.cache/ocrmypdf-wrapper.log"
+          mkdir -p "$(dirname "$LOG")"
+
+          interactive=0
+          if [[ -t 1 ]]; then interactive=1; fi
+
+          log() { echo "$*" >>"$LOG"; }
+          say() { if [[ "$interactive" -eq 1 ]]; then echo "$*"; fi; }
+
+          log "=== $(date -u +"%Y-%m-%dT%H:%M:%SZ") ==="
+          log "PWD=$(pwd)"
+          log "UID=$(id -u) USER=${USER} ARGS=$*"
+
+          # IMPORTANT:
+          # Set to the directory that *contains* eng.traineddata/deu.traineddata,
+          # otherwise tesseract reports languages as 'tessdata/eng' and ocrmypdf won't match 'eng'.
+          export TESSDATA_PREFIX="/usr/share/tesseract/tessdata"
+          log "TESSDATA_PREFIX=${TESSDATA_PREFIX}"
+
+          if command -v tesseract >/dev/null 2>&1; then
+            (tesseract --list-langs || true) | head -n 80 | sed 's/^/[tesseract] /' >>"$LOG"
+          else
+            log "[tesseract] not found in PATH"
+          fi
+
+          if [[ $# -eq 0 ]]; then
+            log "No arguments provided"
+            say "No input file."
+            exit 2
+          fi
+
+          for infile in "$@"; do
+            [[ -n "$infile" ]] || continue
+
+            if [[ ! -f "$infile" ]]; then
+              log "Skipping (not a file): $infile"
+              say "Skipping (not a file): $infile"
+              continue
+            fi
+
+            shopt -s nocasematch
+            if [[ ! "$infile" =~ \.pdf$ ]]; then
+              log "Skipping (not a PDF): $infile"
+              say "Skipping (not a PDF): $infile"
+              shopt -u nocasematch
+              continue
+            fi
+            shopt -u nocasematch
+
+            out="${infile%.[Pp][Dd][Ff]}_ocr.pdf"
+
+            say "OCR: $(basename "$infile") → $(basename "$out") (can take a while)"
+            log "Running: ocrmypdf -l deu+eng --optimize 3 --deskew --rotate-pages --skip-text \"$infile\" \"$out\""
+
+            ocrmypdf -l deu+eng --optimize 3 --deskew --rotate-pages --skip-text "$infile" "$out" >>"$LOG" 2>&1
+
+            if [[ -f "$out" ]]; then
+              say "Done: $(basename "$out")"
+              log "Wrote: $out"
+            else
+              say "Failed (no output). Check log: $LOG"
+              log "Expected output not found: $out"
+              exit 3
+            fi
+          done
+
+    - name: Ensure Nautilus file-manager actions dir exists
+      ansible.builtin.file:
+        path: "/home/{{ target_user }}/.local/share/file-manager/actions"
+        state: directory
+        owner: "{{ target_user }}"
+        group: "{{ target_user }}"
+        mode: "0755"
+      when: ocrmypdf_nautilus_action_install | bool
+
+    - name: Install Nautilus right-click action (.desktop)
+      ansible.builtin.copy:
+        dest: "/home/{{ target_user }}/.local/share/file-manager/actions/ocrmypdf.desktop"
+        owner: "{{ target_user }}"
+        group: "{{ target_user }}"
+        mode: "0644"
+        content: |
+          [Desktop Entry]
+          Type=Action
+          Name={{ ocrmypdf_nautilus_action_name }}
+          Icon=accessories-text-editor
+          Profiles=profile-zero;
+
+          [X-Action-Profile profile-zero]
+          MimeTypes=application/pdf;
+          Exec=/home/{{ target_user }}/.local/bin/ocrmypdf-wrapper "%f"
+      when: ocrmypdf_nautilus_action_install | bool
+
+    - name: Restart Nautilus so the action appears (best effort)
+      become_user: "{{ target_user }}"
+      ansible.builtin.command: nautilus -q
+      changed_when: false
+      failed_when: false
+      when: ocrmypdf_nautilus_action_install | bool
+
+    - name: Ensure Nemo actions dir exists
+      ansible.builtin.file:
+        path: "/home/{{ target_user }}/.local/share/nemo/actions"
+        state: directory
+        owner: "{{ target_user }}"
+        group: "{{ target_user }}"
+        mode: "0755"
+      when: ocrmypdf_nemo_action_install | bool
+
+    - name: Install Nemo right-click action (.nemo_action) (multi-file safe)
+      ansible.builtin.copy:
+        dest: "/home/{{ target_user }}/.local/share/nemo/actions/ocrmypdf.nemo_action"
+        owner: "{{ target_user }}"
+        group: "{{ target_user }}"
+        mode: "0644"
+        content: |
+          [Nemo Action]
+          Name={{ ocrmypdf_nemo_action_name }}
+          Comment=Run OCR on one or more selected PDFs and write *_ocr.pdf next to the originals
+          Exec=/home/{{ target_user }}/.local/bin/ocrmypdf-wrapper %F
+          Icon-Name=accessories-text-editor
+          Selection=any
+          Extensions=pdf;
+      when: ocrmypdf_nemo_action_install | bool
+
+    - name: Restart Nemo so the action appears (best effort)
+      become_user: "{{ target_user }}"
+      ansible.builtin.command: nemo -q
+      changed_when: false
+      failed_when: false
+      when: ocrmypdf_nemo_action_install | bool
 
     # ---- VirtualBox (Oracle repo) ----
     - name: Import Oracle VirtualBox signing key (RPM)
