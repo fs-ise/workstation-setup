@@ -1,0 +1,17 @@
+---
+ocrmypdf_packages_required:
+  - ocrmypdf
+  - tesseract
+  - tesseract-osd
+  - tesseract-langpack-eng
+  - tesseract-langpack-deu
+
+ocrmypdf_packages_optional:
+  - jbig2enc
+  - jbig2enc-devel
+  - jbig2
+
+ocrmypdf_nautilus_action_install: true
+ocrmypdf_nautilus_action_name: "OCR PDF (ocrmypdf)"
+ocrmypdf_nemo_action_install: true
+ocrmypdf_nemo_action_name: "OCR PDF (ocrmypdf)"

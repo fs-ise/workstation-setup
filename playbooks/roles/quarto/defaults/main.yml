@@ -1,0 +1,5 @@
+---
+quarto_version: "1.6.42"
+quarto_install_dir: "/opt/quarto"
+quarto_tarball: "quarto-{{ quarto_version }}-linux-amd64.tar.gz"
+quarto_url: "https://github.com/quarto-dev/quarto-cli/releases/download/v{{ quarto_version }}/{{ quarto_tarball }}"

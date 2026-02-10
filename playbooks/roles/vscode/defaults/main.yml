@@ -1,0 +1,18 @@
+---
+vscode_repo_name: "vscode"
+vscode_rpm_package: "code"
+vscode_flatpak_id: "com.visualstudio.code"
+
+vscode_extensions:
+  - ms-python.python
+  - ms-toolsai.jupyter
+  - ms-vscode.makefile-tools
+  - ms-azuretools.vscode-docker
+  - eamodio.gitlens
+  - streetsidesoftware.code-spell-checker
+  - yzhang.markdown-all-in-one
+  - davidanson.vscode-markdownlint
+  - redhat.vscode-yaml
+  - tamasfe.even-better-toml
+  - esbenp.prettier-vscode
+  - jnoortheen.nix-ide

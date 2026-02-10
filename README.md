@@ -42,6 +42,24 @@ sudo dnf -y install dnf-plugins-core
 ansible-playbook -K playbooks/lab-stack.yml
 ```
 
+
+### Run only one role
+
+Use tags to execute a single modular role:
+
+```sh
+ansible-playbook -K playbooks/lab-stack.yml --tags baseline
+ansible-playbook -K playbooks/lab-stack.yml --tags ocr
+ansible-playbook -K playbooks/lab-stack.yml --tags virtualbox
+ansible-playbook -K playbooks/lab-stack.yml --tags docker
+ansible-playbook -K playbooks/lab-stack.yml --tags quarto
+ansible-playbook -K playbooks/lab-stack.yml --tags chrome
+ansible-playbook -K playbooks/lab-stack.yml --tags vscode
+ansible-playbook -K playbooks/lab-stack.yml --tags desktop
+```
+
+You can also combine tags, e.g. `--tags baseline,docker,vscode`.
+
 ## Manual tasks
 
 - Set up SSH and register on GitHub

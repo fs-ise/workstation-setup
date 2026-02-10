@@ -1,0 +1,83 @@
+---
+- name: Enable RPM Fusion free repository
+  ansible.builtin.dnf:
+    name:
+      - "https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-{{ ansible_facts.distribution_major_version }}.noarch.rpm"
+    state: present
+
+- name: Enable RPM Fusion nonfree repository
+  ansible.builtin.dnf:
+    name:
+      - "https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-{{ ansible_facts.distribution_major_version }}.noarch.rpm"
+    state: present
+
+- name: Install Dropbox and Nautilus extension
+  ansible.builtin.dnf:
+    name:
+      - dropbox
+      - nautilus-dropbox
+    state: present
+    update_cache: true
+  failed_when: false
+
+- name: Try to install Thunderbird via dnf
+  ansible.builtin.dnf:
+    name: thunderbird
+    state: present
+  register: thunderbird_dnf
+  failed_when: false
+
+- name: Install Thunderbird via Flatpak fallback
+  community.general.flatpak:
+    name: org.mozilla.Thunderbird
+    state: present
+  when: thunderbird_dnf is failed
+
+- name: Install Obsidian and Vorta via Flatpak
+  community.general.flatpak:
+    name: "{{ item }}"
+    state: present
+  loop:
+    - md.obsidian.Obsidian
+    - com.borgbase.Vorta
+
+- name: Ensure psutil is installed
+  ansible.builtin.dnf:
+    name: python3-psutil
+    state: present
+
+- name: Remove system sounds (optional)
+  ansible.builtin.file:
+    path: /usr/share/sounds
+    state: absent
+  when: remove_system_sounds | bool
+
+- name: Install dotfiles aliases
+  become: false
+  block:
+    - name: Deploy bash aliases
+      ansible.builtin.copy:
+        src: "{{ playbook_dir }}/../files/dotfiles/bash_aliases"
+        dest: "{{ target_home }}/.bash_aliases"
+        mode: "0644"
+
+    - name: Ensure .bashrc sources aliases
+      ansible.builtin.lineinfile:
+        path: "{{ target_home }}/.bashrc"
+        line: '[[ -f ~/.bash_aliases ]] && . ~/.bash_aliases'
+        create: true
+        state: present
+
+    - name: Ensure .zshrc sources aliases
+      ansible.builtin.lineinfile:
+        path: "{{ target_home }}/.zshrc"
+        line: '[[ -f ~/.bash_aliases ]] && source ~/.bash_aliases'
+        create: true
+        state: present
+
+- name: Set GTK clock format to 24h
+  become: false
+  become_user: "{{ target_user }}"
+  ansible.builtin.command: gsettings set org.gnome.desktop.interface clock-format '24h'
+  changed_when: false
+  failed_when: false

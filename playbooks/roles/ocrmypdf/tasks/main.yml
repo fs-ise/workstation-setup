@@ -1,0 +1,98 @@
+---
+- name: Install OCRmyPDF required packages
+  ansible.builtin.dnf:
+    name: "{{ ocrmypdf_packages_required }}"
+    state: present
+    update_cache: true
+
+- name: Install optional JBIG2 packages (best effort)
+  ansible.builtin.dnf:
+    name: "{{ ocrmypdf_packages_optional }}"
+    state: present
+  failed_when: false
+
+- name: Ensure user-local bin dir exists
+  ansible.builtin.file:
+    path: "{{ target_home }}/.local/bin"
+    state: directory
+    owner: "{{ target_user }}"
+    group: "{{ target_user }}"
+    mode: "0755"
+
+- name: Ensure user cache dir exists for wrapper logs
+  ansible.builtin.file:
+    path: "{{ target_home }}/.cache"
+    state: directory
+    owner: "{{ target_user }}"
+    group: "{{ target_user }}"
+    mode: "0755"
+
+- name: Install OCRmyPDF wrapper script
+  ansible.builtin.copy:
+    dest: "{{ target_home }}/.local/bin/ocrmypdf-wrapper"
+    owner: "{{ target_user }}"
+    group: "{{ target_user }}"
+    mode: "0755"
+    content: |
+      #!/usr/bin/env bash
+      set -euo pipefail
+      export TESSDATA_PREFIX="/usr/share/tesseract/tessdata"
+      LOG="${HOME}/.cache/ocrmypdf-wrapper.log"
+      mkdir -p "$(dirname "$LOG")"
+      for infile in "$@"; do
+        [[ -f "$infile" ]] || continue
+        out="${infile%.[Pp][Dd][Ff]}_ocr.pdf"
+        ocrmypdf -l deu+eng --optimize 3 --deskew --rotate-pages --skip-text "$infile" "$out" >>"$LOG" 2>&1
+      done
+
+- name: Ensure Nautilus file-manager actions dir exists
+  ansible.builtin.file:
+    path: "{{ target_home }}/.local/share/file-manager/actions"
+    state: directory
+    owner: "{{ target_user }}"
+    group: "{{ target_user }}"
+    mode: "0755"
+  when: ocrmypdf_nautilus_action_install | bool
+
+- name: Install Nautilus right-click action
+  ansible.builtin.copy:
+    dest: "{{ target_home }}/.local/share/file-manager/actions/ocrmypdf.desktop"
+    owner: "{{ target_user }}"
+    group: "{{ target_user }}"
+    mode: "0644"
+    content: |
+      [Desktop Entry]
+      Type=Action
+      Name={{ ocrmypdf_nautilus_action_name }}
+      Icon=accessories-text-editor
+      Profiles=profile-zero;
+
+      [X-Action-Profile profile-zero]
+      MimeTypes=application/pdf;
+      Exec={{ target_home }}/.local/bin/ocrmypdf-wrapper "%f"
+  when: ocrmypdf_nautilus_action_install | bool
+
+- name: Ensure Nemo actions dir exists
+  ansible.builtin.file:
+    path: "{{ target_home }}/.local/share/nemo/actions"
+    state: directory
+    owner: "{{ target_user }}"
+    group: "{{ target_user }}"
+    mode: "0755"
+  when: ocrmypdf_nemo_action_install | bool
+
+- name: Install Nemo right-click action
+  ansible.builtin.copy:
+    dest: "{{ target_home }}/.local/share/nemo/actions/ocrmypdf.nemo_action"
+    owner: "{{ target_user }}"
+    group: "{{ target_user }}"
+    mode: "0644"
+    content: |
+      [Nemo Action]
+      Name={{ ocrmypdf_nemo_action_name }}
+      Comment=Run OCR on selected PDFs and write *_ocr.pdf next to originals
+      Exec={{ target_home }}/.local/bin/ocrmypdf-wrapper %F
+      Icon-Name=accessories-text-editor
+      Selection=any
+      Extensions=pdf;
+  when: ocrmypdf_nemo_action_install | bool

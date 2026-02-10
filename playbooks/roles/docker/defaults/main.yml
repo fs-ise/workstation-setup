@@ -1,0 +1,15 @@
+---
+docker_packages:
+  - docker-ce
+  - docker-ce-cli
+  - containerd.io
+  - docker-buildx-plugin
+  - docker-compose-plugin
+
+docker_images:
+  - jbarlow83/ocrmypdf
+  - rocker/tidyverse
+  - rocker/verse
+  - python:3
+  - alekzonder/puppeteer
+  - lfoppiano/grobid:0.8.1

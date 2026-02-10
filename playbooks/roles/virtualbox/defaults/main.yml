@@ -1,0 +1,10 @@
+---
+virtualbox_repo_url: "https://download.virtualbox.org/virtualbox/rpm/fedora/virtualbox.repo"
+virtualbox_gpgkey_url: "https://www.virtualbox.org/download/oracle_vbox_2016.asc"
+virtualbox_build_deps:
+  - gcc
+  - make
+  - perl
+  - kernel-devel
+  - kernel-headers
+  - elfutils-libelf-devel

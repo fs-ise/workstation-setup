@@ -1,0 +1,31 @@
+---
+- name: Remove /opt/quarto if it exists as a directory
+  ansible.builtin.file:
+    path: "{{ quarto_install_dir }}"
+    state: absent
+
+- name: Download Quarto tarball
+  ansible.builtin.get_url:
+    url: "{{ quarto_url }}"
+    dest: "/tmp/{{ quarto_tarball }}"
+    mode: "0644"
+
+- name: Unpack Quarto to /opt
+  ansible.builtin.unarchive:
+    src: "/tmp/{{ quarto_tarball }}"
+    dest: /opt
+    remote_src: true
+
+- name: Symlink /opt/quarto -> extracted folder
+  ansible.builtin.file:
+    src: "/opt/quarto-{{ quarto_version }}"
+    dest: "{{ quarto_install_dir }}"
+    state: link
+    force: true
+
+- name: Add Quarto to system PATH
+  ansible.builtin.copy:
+    dest: /etc/profile.d/quarto.sh
+    mode: "0644"
+    content: |
+      export PATH={{ quarto_install_dir }}/bin:$PATH

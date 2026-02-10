@@ -1,0 +1,40 @@
+---
+- name: Remove Oracle VirtualBox repo file if present
+  ansible.builtin.file:
+    path: /etc/yum.repos.d/virtualbox.repo
+    state: absent
+  failed_when: false
+
+- name: Remove Oracle VirtualBox packages if present (avoid conflicts)
+  ansible.builtin.dnf:
+    name:
+      - VirtualBox-7.2
+      - VirtualBox-7.1
+      - VirtualBox-7.0
+      - VirtualBox-6.1
+      - VirtualBox-qt
+      - VirtualBox-kmodsrc
+    state: absent
+  failed_when: false
+
+- name: Install VirtualBox (Fedora/RPMFusion) + kernel module tooling
+  ansible.builtin.dnf:
+    name:
+      - VirtualBox
+      - VirtualBox-server
+      - akmod-VirtualBox
+      - kernel-devel
+      - kernel-headers
+    state: present
+    update_cache: true
+
+- name: Ensure vboxusers group exists
+  ansible.builtin.group:
+    name: vboxusers
+    state: present
+
+- name: Add invoking user to vboxusers group
+  ansible.builtin.user:
+    name: "{{ target_user }}"
+    groups: vboxusers
+    append: true

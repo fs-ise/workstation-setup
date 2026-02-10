@@ -1,0 +1,117 @@
+---
+- name: Import Microsoft signing key
+  ansible.builtin.rpm_key:
+    state: present
+    key: https://packages.microsoft.com/keys/microsoft.asc
+
+- name: Add VS Code yum repo
+  ansible.builtin.yum_repository:
+    name: "{{ vscode_repo_name }}"
+    description: "Visual Studio Code"
+    baseurl: https://packages.microsoft.com/yumrepos/vscode
+    enabled: true
+    gpgcheck: true
+    gpgkey: https://packages.microsoft.com/keys/microsoft.asc
+
+- name: Try to install VS Code via dnf
+  ansible.builtin.dnf:
+    name: "{{ vscode_rpm_package }}"
+    state: present
+    update_cache: true
+  register: vscode_dnf
+  failed_when: false
+
+- name: Install VS Code via Flatpak fallback
+  community.general.flatpak:
+    name: "{{ vscode_flatpak_id }}"
+    state: present
+  when: vscode_dnf is failed
+
+- name: Ensure VS Code user settings dir exists (RPM path)
+  ansible.builtin.file:
+    path: "{{ target_home }}/.config/Code/User"
+    state: directory
+    owner: "{{ target_user }}"
+    group: "{{ target_user }}"
+    mode: "0755"
+
+- name: Ensure VS Code user settings dir exists (Flatpak path)
+  ansible.builtin.file:
+    path: "{{ target_home }}/.var/app/com.visualstudio.code/config/Code/User"
+    state: directory
+    owner: "{{ target_user }}"
+    group: "{{ target_user }}"
+    mode: "0755"
+
+- name: Write VS Code settings.json (RPM path)
+  ansible.builtin.copy:
+    dest: "{{ target_home }}/.config/Code/User/settings.json"
+    owner: "{{ target_user }}"
+    group: "{{ target_user }}"
+    mode: "0644"
+    content: |
+      {
+        "workbench.startupEditor": "none",
+        "workbench.welcomePage.walkthroughs.openOnInstall": false,
+        "workbench.tips.enabled": false,
+        "update.showReleaseNotes": false,
+        "telemetry.telemetryLevel": "off",
+        "workbench.editor.enablePreview": false,
+        "files.trimTrailingWhitespace": true,
+        "editor.formatOnSave": true
+      }
+
+- name: Write VS Code settings.json (Flatpak path)
+  ansible.builtin.copy:
+    dest: "{{ target_home }}/.var/app/com.visualstudio.code/config/Code/User/settings.json"
+    owner: "{{ target_user }}"
+    group: "{{ target_user }}"
+    mode: "0644"
+    content: |
+      {
+        "workbench.startupEditor": "none",
+        "workbench.welcomePage.walkthroughs.openOnInstall": false,
+        "workbench.tips.enabled": false,
+        "update.showReleaseNotes": false,
+        "telemetry.telemetryLevel": "off",
+        "workbench.editor.enablePreview": false,
+        "files.trimTrailingWhitespace": true,
+        "editor.formatOnSave": true
+      }
+
+- name: Set VS Code as default editor for common text formats
+  become: false
+  ansible.builtin.shell: |
+    xdg-mime default code.desktop text/plain
+    xdg-mime default code.desktop text/markdown
+    xdg-mime default code.desktop text/x-python
+    xdg-mime default code.desktop application/x-quarto
+  changed_when: false
+
+- name: Install VS Code extensions with code CLI (best effort)
+  become: false
+  ansible.builtin.shell: |
+    set -euo pipefail
+    if command -v code >/dev/null 2>&1; then
+      {% for extension in vscode_extensions %}
+      code --install-extension {{ extension }} --force || true
+      {% endfor %}
+    fi
+  args:
+    executable: /bin/bash
+  changed_when: false
+  failed_when: false
+
+- name: Install VS Code extensions for Flatpak (best effort)
+  become: false
+  ansible.builtin.shell: |
+    set -euo pipefail
+    if command -v flatpak >/dev/null 2>&1 && flatpak info {{ vscode_flatpak_id }} >/dev/null 2>&1; then
+      {% for extension in vscode_extensions %}
+      flatpak run {{ vscode_flatpak_id }} --install-extension {{ extension }} --force || true
+      {% endfor %}
+    fi
+  args:
+    executable: /bin/bash
+  changed_when: false
+  failed_when: false
