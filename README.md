@@ -4,6 +4,53 @@
 > **TODO**
 > - “secrets / keys / credentials” source of truth
 > - personal configuration (private keys, password vault)
+> - TBD: emergency USB-stick?
+> - TBD: setup: - workspace: gtd-setup with action, inbox, projects (containing symlinks to repos and nextcloud directories)
+> -> TODO: document backups
+
+
+```mermaid
+flowchart LR
+  %% External infrastructure (outside the subgraphs)
+  GH[(<a href='#github'>GitHub</a>)]
+  BK[(<a href='#hdd-backup'>HDD Backup</a>)]
+  NC[(<a href='#nextcloud'>Nextcloud</a>)]
+  A[("<a href='#workstation-setup'>workstation-setup<br/>(ansible)<br/>this repository</a>")]
+
+  %% Day-to-day flow
+  subgraph Daily["<a href='#day-to-day'>Day-to-day</a>"]
+     AUpd["<a href='#update-software-config'>Update software/config</a>"] <--> S[<a href='#backup-and-sync'>Backup and sync</a>]
+  end
+  A <--> AUpd
+  S -- ~/* --> BK
+  S <-- ~/repos* --> GH
+  S <-- ~/Nextcloud* --> NC
+
+  %% New machine flow
+  subgraph New["<a href='#new-machine'>New machine</a>"]
+    OS[<a href='#preparation'>Install OS</a>]
+    OS --> AInst["<a href='#install'>Install/config software</a>"] --> R
+    R[<a href='#restore'>Restore data</a>]
+  end
+  A --> AInst
+
+  BK --> R
+  GH --> R
+  NC --> R
+
+  %% Styling
+  classDef highlight fill:#ffec99,stroke:#f08c00,stroke-width:3px,color:#1b1b1b;
+  classDef muted fill:#f6f7f9,stroke:#c9ced6,stroke-width:1px,color:#2b2b2b;
+
+  class A highlight;
+  class GH,BK,NC,AUpd,S,OS,AInst,R muted;
+
+  %% Optional: soften subgraph borders
+  style Daily fill:#ffffff,stroke:#d0d5dd,stroke-width:1px;
+  style New fill:#ffffff,stroke:#d0d5dd,stroke-width:1px;
+```
+
+## workstation-setup
 
 Install ansible and clone the repository
 
@@ -53,47 +100,6 @@ ansible-playbook -K playbooks/lab-stack.yml --tags desktop
 ```
 
 You can also combine tags, e.g. `--tags baseline,docker,vscode`.
-
-```mermaid
-flowchart LR
-  %% External infrastructure (outside the subgraphs)
-  GH[(<a href='#github'>GitHub</a>)]
-  BK[(<a href='#hdd-backup'>HDD Backup</a>)]
-  NC[(<a href='#nextcloud'>Nextcloud</a>)]
-  A[("workstation-setup<br/>(ansible)<br/>this repository")]
-
-  %% Day-to-day flow
-  subgraph Daily["<a href='#day-to-day'>Day-to-day</a>"]
-     AUpd["<a href='#update-software-config'>Update software/config</a>"] <--> S[<a href='#backup-and-sync'>Backup and sync</a>]
-  end
-  A <--> AUpd
-  S -- ~/* --> BK
-  S <-- ~/repos* --> GH
-  S <-- ~/Nextcloud* --> NC
-
-  %% New machine flow
-  subgraph New["<a href='#new-machine'>New machine</a>"]
-    OS[<a href='#preparation'>Install OS</a>]
-    OS --> AInst["<a href='#install'>Install/config software</a>"] --> R
-    R[<a href='#restore'>Restore data</a>]
-  end
-  A --> AInst
-
-  BK --> R
-  GH --> R
-  NC --> R
-
-  %% Styling
-  classDef highlight fill:#ffec99,stroke:#f08c00,stroke-width:3px,color:#1b1b1b;
-  classDef muted fill:#f6f7f9,stroke:#c9ced6,stroke-width:1px,color:#2b2b2b;
-
-  class A highlight;
-  class GH,BK,NC,AUpd,S,OS,AInst,R muted;
-
-  %% Optional: soften subgraph borders
-  style Daily fill:#ffffff,stroke:#d0d5dd,stroke-width:1px;
-  style New fill:#ffffff,stroke:#d0d5dd,stroke-width:1px;
-```
 
 ## Day-to-day
 
@@ -188,16 +194,25 @@ ls -la
 
 ### HDD backup
 
-Protects against ransomware / cloud account compromise
-HDD: versioned snapshots
-HDD backups are encrypted
-HDDs are disconnected (different weekly / monthly / annual HDDs)
--> TODO: document backups
+Covers all files in `/home/username` (including Nextcloud and Git repositories)
+
+Based on Vorta/Borg
+
+- Protects against ransomware / cloud account compromise
+- HDD: versioned snapshots
+- HDD backups are encrypted
+- HDDs are disconnected (different weekly / monthly / annual HDDs)
 
 ### GitHub
 
 Serves as a synchronization mechanism. Repositories can be private or public. Git repositories can be local only. Repositories are also backed up on HDD.
 
+Additional "backup copy" (even synced across devices)
+
 ### Nextcloud
 
 Serves as a synchronization mechanism. Nextcloud data is also backed up on HDD.
+
+Files (e.g., PDFs and media files that are not in git repositories or zipped archives of git repositories for completed projects; ideally stable, without symlinks, no unzipped git repositories; shared or personal)
+
+Additional "backup copy"
