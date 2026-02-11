@@ -41,36 +41,17 @@ flowchart LR
   style New fill:#ffffff,stroke:#d0d5dd,stroke-width:1px;
 ```
 
-## Day-to-day {#day-to-day}
+## Day-to-day
 
-### Update software and configuration {#update-software-config}
-
-### Backup and sync {#backup-and-sync}
-
-## New machine {#new-machine}
-
-### Install OS {#preparation}
-
-### Install and configure software {#install}
-
-### Restore data {#restore}
-
-## External data sources {#external-data-sources}
-
-### Ansible setup repository {#ansible-repo}
-
-### HDD backup {#hdd-backup}
-
-### GitHub {#github}
-
-### Nextcloud {#nextcloud}
+### Update software and configuration
 
 
 
+### Backup and sync
 
+## New machine
 
-
-## OS Setup
+### Install OS
 
 Install Fedora
 
@@ -85,6 +66,18 @@ Advantages of Fedora:
 
 There are more but these make DNF much more convenient than APT.
 
+### Install and configure software
+
+### Restore data
+
+## External data sources
+
+### workstation-setup
+
+Ansible setup repository (TODO: explain idempotency).
+
+Install ansible and clone the repository
+
 ```sh
 sudo dnf -y install git ansible-core python3-pip
 ansible --version
@@ -97,10 +90,15 @@ Ansible collections
 ansible-galaxy collection install community.general community.docker
 ```
 
-## Install
+Clone workstation-setup repository
 
 ```sh
 git clone git@github.com:fs-ise/workstation-setup.git
+```
+
+Install/update software
+
+```sh
 cd workstation-setup
 
 # copy host_vars/localhost.yml.example to host_vars/localhost.yml
@@ -112,10 +110,7 @@ sudo dnf -y install dnf-plugins-core
 ansible-playbook -K playbooks/lab-stack.yml
 ```
 
-
-### Run only one role
-
-Use tags to execute a single modular role:
+Run only one role:
 
 ```sh
 ansible-playbook -K playbooks/lab-stack.yml --tags baseline
@@ -130,7 +125,8 @@ ansible-playbook -K playbooks/lab-stack.yml --tags desktop
 
 You can also combine tags, e.g. `--tags baseline,docker,vscode`.
 
-## Manual tasks
+
+**Manual tasks**
 
 - Set up SSH and register on GitHub
 
@@ -143,7 +139,7 @@ cat ~/.ssh/id_ed25519.pub | wl-copy
 
 - Set up GPG and register on GitHub ([instructions](https://docs.github.com/en/authentication/managing-commit-signature-verification/telling-git-about-your-signing-key))
 
-## Test
+**Tests**
 
 ```sh
 git config --global user.name
@@ -181,3 +177,10 @@ EOF
 quarto render test.qmd
 ls -la
 ```
+
+
+### HDD backup
+
+### GitHub
+
+### Nextcloud
