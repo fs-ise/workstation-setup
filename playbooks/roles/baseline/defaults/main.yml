@@ -38,6 +38,7 @@ remove_packages_best_effort:
   - malcontent
   - malcontent-control
   - ibus-typing-booster
+  - ibus-m17n
 
 install_packages_best_effort:
   - gimp
