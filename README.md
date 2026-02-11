@@ -12,14 +12,14 @@
 ```mermaid
 flowchart LR
   %% External infrastructure (outside the subgraphs)
-  GH[(<a href='#github'>GitHub</a>)]
-  BK[(<a href='#hdd-backup'>HDD Backup</a>)]
-  NC[(<a href='#nextcloud'>Nextcloud</a>)]
-  A[("<a href='#workstation-setup'>workstation-setup<br/>(ansible)<br/>this repository</a>")]
+  GH[(<a href='./#github'>GitHub</a>)]
+  BK[(<a href='./#hdd-backup'>HDD Backup</a>)]
+  NC[(<a href='./#nextcloud'>Nextcloud</a>)]
+  A[("<a href='./#workstation-setup'>workstation-setup<br/>(ansible)<br/>this repository</a>")]
 
   %% Day-to-day flow
-  subgraph Daily["<a href='#day-to-day'>Day-to-day</a>"]
-     AUpd["<a href='#update-software-config'>Update software/config</a>"] <--> S[<a href='#backup-and-sync'>Backup and sync</a>]
+  subgraph Daily["<a href='./#day-to-day'>Day-to-day</a>"]
+     AUpd["<a href='./#update-software-and-configuration'>Update software/config</a>"] <--> S[<a href='./#backup-and-sync'>Backup and sync</a>]
   end
   A <--> AUpd
   S -- ~/* --> BK
@@ -27,10 +27,10 @@ flowchart LR
   S <-- ~/Nextcloud* --> NC
 
   %% New machine flow
-  subgraph New["<a href='#new-machine'>New machine</a>"]
-    OS[<a href='#preparation'>Install OS</a>]
-    OS --> AInst["<a href='#install'>Install/config software</a>"] --> R
-    R[<a href='#restore'>Restore data</a>]
+  subgraph New["<a href='./#new-machine'>New machine</a>"]
+    OS[<a href='./#install-os'>Install OS</a>]
+    OS --> AInst["<a href='./#install-and-configure-software'>Install/config software</a>"] --> R
+    R[<a href='./#restore-data'>Restore data</a>]
   end
   A --> AInst
 
@@ -48,6 +48,7 @@ flowchart LR
   %% Optional: soften subgraph borders
   style Daily fill:#ffffff,stroke:#d0d5dd,stroke-width:1px;
   style New fill:#ffffff,stroke:#d0d5dd,stroke-width:1px;
+
 ```
 
 ## workstation-setup
