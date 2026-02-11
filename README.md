@@ -1,80 +1,9 @@
 # Workstation setup
 
-```mermaid
-flowchart LR
-  %% External infrastructure (outside the subgraphs)
-  GH[(<a href='#github'>GitHub</a>)]
-  BK[(<a href='#hdd-backup'>HDD Backup</a>)]
-  NC[(<a href='#nextcloud'>Nextcloud</a>)]
-  A[("<a href='#ansible-repo'>workstation-setup<br/>(ansible)</a>")]
-
-  %% Day-to-day flow
-  subgraph Daily["<a href='#day-to-day'>Day-to-day</a>"]
-     AUpd["<a href='#update-software-config'>Update software/config</a>"] <--> S[<a href='#backup-and-sync'>Backup and sync</a>]
-  end
-  A <--> AUpd
-  S -- ~/* --> BK
-  S <-- ~/repos* --> GH
-  S <-- ~/Nextcloud* --> NC
-
-  %% New machine flow
-  subgraph New["<a href='#new-machine'>New machine</a>"]
-    OS[<a href='#preparation'>Install OS</a>]
-    OS --> AInst["<a href='#install'>Install/config software</a>"] --> R
-    R[<a href='#restore'>Restore data</a>]
-  end
-  A --> AInst
-
-  BK --> R
-  GH --> R
-  NC --> R
-
-  %% Styling
-  classDef highlight fill:#ffec99,stroke:#f08c00,stroke-width:3px,color:#1b1b1b;
-  classDef muted fill:#f6f7f9,stroke:#c9ced6,stroke-width:1px,color:#2b2b2b;
-
-  class A highlight;
-  class GH,BK,NC,AUpd,S,OS,AInst,R muted;
-
-  %% Optional: soften subgraph borders
-  style Daily fill:#ffffff,stroke:#d0d5dd,stroke-width:1px;
-  style New fill:#ffffff,stroke:#d0d5dd,stroke-width:1px;
-```
-
-## Day-to-day
-
-### Update software and configuration
-
-
-
-### Backup and sync
-
-## New machine
-
-### Install OS
-
-Install Fedora
-
-Advantages of Fedora:
-
-* parallel downloads for faster updates
-* delta RPMs to save bandwidth
-* modular system for version control
-* persistent metadata caching
-* undoable transactions
-* simpler and easier-to-remember commands
-
-There are more but these make DNF much more convenient than APT.
-
-### Install and configure software
-
-### Restore data
-
-## External data sources
-
-### workstation-setup
-
-Ansible setup repository (TODO: explain idempotency).
+> [!NOTE]
+> **TODO**
+> - “secrets / keys / credentials” source of truth
+> - personal configuration (private keys, password vault)
 
 Install ansible and clone the repository
 
@@ -125,6 +54,81 @@ ansible-playbook -K playbooks/lab-stack.yml --tags desktop
 
 You can also combine tags, e.g. `--tags baseline,docker,vscode`.
 
+```mermaid
+flowchart LR
+  %% External infrastructure (outside the subgraphs)
+  GH[(<a href='#github'>GitHub</a>)]
+  BK[(<a href='#hdd-backup'>HDD Backup</a>)]
+  NC[(<a href='#nextcloud'>Nextcloud</a>)]
+  A[("workstation-setup<br/>(ansible)<br/>this repository")]
+
+  %% Day-to-day flow
+  subgraph Daily["<a href='#day-to-day'>Day-to-day</a>"]
+     AUpd["<a href='#update-software-config'>Update software/config</a>"] <--> S[<a href='#backup-and-sync'>Backup and sync</a>]
+  end
+  A <--> AUpd
+  S -- ~/* --> BK
+  S <-- ~/repos* --> GH
+  S <-- ~/Nextcloud* --> NC
+
+  %% New machine flow
+  subgraph New["<a href='#new-machine'>New machine</a>"]
+    OS[<a href='#preparation'>Install OS</a>]
+    OS --> AInst["<a href='#install'>Install/config software</a>"] --> R
+    R[<a href='#restore'>Restore data</a>]
+  end
+  A --> AInst
+
+  BK --> R
+  GH --> R
+  NC --> R
+
+  %% Styling
+  classDef highlight fill:#ffec99,stroke:#f08c00,stroke-width:3px,color:#1b1b1b;
+  classDef muted fill:#f6f7f9,stroke:#c9ced6,stroke-width:1px,color:#2b2b2b;
+
+  class A highlight;
+  class GH,BK,NC,AUpd,S,OS,AInst,R muted;
+
+  %% Optional: soften subgraph borders
+  style Daily fill:#ffffff,stroke:#d0d5dd,stroke-width:1px;
+  style New fill:#ffffff,stroke:#d0d5dd,stroke-width:1px;
+```
+
+## Day-to-day
+
+### Update software and configuration
+
+Ansible setup repository (TODO: explain idempotency).
+
+### Backup and sync
+
+Assumes a particular structure of directories
+
+- Nextcloud (shared and personal dirs)
+- repos
+- workstation (local / symlinks / GTD)
+
+## New machine
+
+### Install OS
+
+Install Fedora
+
+Advantages of Fedora:
+
+* parallel downloads for faster updates
+* delta RPMs to save bandwidth
+* modular system for version control
+* persistent metadata caching
+* undoable transactions
+* simpler and easier-to-remember commands
+
+There are more but these make DNF much more convenient than APT.
+
+### Install and configure software
+
+In the workstation-setup repository, run `make lab-stack`.
 
 **Manual tasks**
 
@@ -178,9 +182,22 @@ quarto render test.qmd
 ls -la
 ```
 
+### Restore data
+
+## External data sources
 
 ### HDD backup
 
+Protects against ransomware / cloud account compromise
+HDD: versioned snapshots
+HDD backups are encrypted
+HDDs are disconnected (different weekly / monthly / annual HDDs)
+-> TODO: document backups
+
 ### GitHub
 
+Serves as a synchronization mechanism. Repositories can be private or public. Git repositories can be local only. Repositories are also backed up on HDD.
+
 ### Nextcloud
+
+Serves as a synchronization mechanism. Nextcloud data is also backed up on HDD.
