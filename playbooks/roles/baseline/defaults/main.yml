@@ -37,6 +37,7 @@ remove_packages_best_effort:
   - telnet
   - malcontent
   - malcontent-control
+  - ibus-typing-booster
 
 install_packages_best_effort:
   - gimp
