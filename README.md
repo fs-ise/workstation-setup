@@ -1,6 +1,76 @@
 # Workstation setup
 
-## Preparation
+```mermaid
+flowchart LR
+  %% External infrastructure (outside the subgraphs)
+  GH[(<a href='#github'>GitHub</a>)]
+  BK[(<a href='#hdd-backup'>HDD Backup</a>)]
+  NC[(<a href='#nextcloud'>Nextcloud</a>)]
+  A[("<a href='#ansible-repo'>workstation-setup<br/>(ansible)</a>")]
+
+  %% Day-to-day flow
+  subgraph Daily["<a href='#day-to-day'>Day-to-day</a>"]
+     AUpd["<a href='#update-software-config'>Update software/config</a>"] <--> S[<a href='#backup-and-sync'>Backup and sync</a>]
+  end
+  A <--> AUpd
+  S -- ~/* --> BK
+  S <-- ~/repos* --> GH
+  S <-- ~/Nextcloud* --> NC
+
+  %% New machine flow
+  subgraph New["<a href='#new-machine'>New machine</a>"]
+    OS[<a href='#preparation'>Install OS</a>]
+    OS --> AInst["<a href='#install'>Install/config software</a>"] --> R
+    R[<a href='#restore'>Restore data</a>]
+  end
+  A --> AInst
+
+  BK --> R
+  GH --> R
+  NC --> R
+
+  %% Styling
+  classDef highlight fill:#ffec99,stroke:#f08c00,stroke-width:3px,color:#1b1b1b;
+  classDef muted fill:#f6f7f9,stroke:#c9ced6,stroke-width:1px,color:#2b2b2b;
+
+  class A highlight;
+  class GH,BK,NC,AUpd,S,OS,AInst,R muted;
+
+  %% Optional: soften subgraph borders
+  style Daily fill:#ffffff,stroke:#d0d5dd,stroke-width:1px;
+  style New fill:#ffffff,stroke:#d0d5dd,stroke-width:1px;
+```
+
+## Day-to-day {#day-to-day}
+
+### Update software and configuration {#update-software-config}
+
+### Backup and sync {#backup-and-sync}
+
+## New machine {#new-machine}
+
+### Install OS {#preparation}
+
+### Install and configure software {#install}
+
+### Restore data {#restore}
+
+## External data sources {#external-data-sources}
+
+### Ansible setup repository {#ansible-repo}
+
+### HDD backup {#hdd-backup}
+
+### GitHub {#github}
+
+### Nextcloud {#nextcloud}
+
+
+
+
+
+
+## OS Setup
 
 Install Fedora
 
