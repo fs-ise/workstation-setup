@@ -1,7 +1,7 @@
 ---
 - name: Install baseline packages
   ansible.builtin.dnf:
-    name: "{{ base_packages }}"
+    name: "{{ baseline_base_packages }}"
     state: present
     update_cache: true
 
@@ -9,14 +9,14 @@
   ansible.builtin.dnf:
     name: "{{ item }}"
     state: absent
-  loop: "{{ remove_packages_best_effort }}"
+  loop: "{{ baseline_remove_packages_best_effort }}"
   failed_when: false
 
 - name: Install desired packages (best effort)
   ansible.builtin.dnf:
     name: "{{ item }}"
     state: present
-  loop: "{{ install_packages_best_effort }}"
+  loop: "{{ baseline_install_packages_best_effort }}"
   failed_when: false
 
 - name: Configure global git settings

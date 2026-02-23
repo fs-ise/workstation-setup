@@ -24,14 +24,14 @@
   ansible.builtin.dnf:
     name: thunderbird
     state: present
-  register: thunderbird_dnf
+  register: desktop_gnome_thunderbird_dnf
   failed_when: false
 
 - name: Install Thunderbird via Flatpak fallback
   community.general.flatpak:
     name: org.mozilla.Thunderbird
     state: present
-  when: thunderbird_dnf is failed
+  when: desktop_gnome_thunderbird_dnf is failed
 
 - name: Install Obsidian and Vorta via Flatpak
   community.general.flatpak:
@@ -50,14 +50,14 @@
   ansible.builtin.file:
     path: /usr/share/sounds
     state: absent
-  when: remove_system_sounds | bool
+  when: desktop_gnome_remove_system_sounds | bool
 
 - name: Install dotfiles aliases
   become: false
   block:
     - name: Deploy bash aliases
       ansible.builtin.copy:
-        src: "{{ playbook_dir }}/../files/dotfiles/bash_aliases"
+        src: "{{ role_path }}/files/dotfiles/bash_aliases"
         dest: "{{ target_home }}/.bash_aliases"
         mode: "0644"
 
@@ -66,6 +66,7 @@
         path: "{{ target_home }}/.bashrc"
         line: '[[ -f ~/.bash_aliases ]] && . ~/.bash_aliases'
         create: true
+        mode: "0644"
         state: present
 
     - name: Ensure .zshrc sources aliases
@@ -73,6 +74,7 @@
         path: "{{ target_home }}/.zshrc"
         line: '[[ -f ~/.bash_aliases ]] && source ~/.bash_aliases'
         create: true
+        mode: "0644"
         state: present
 
 - name: Set GTK clock format to 24h

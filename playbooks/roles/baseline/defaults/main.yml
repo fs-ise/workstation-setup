@@ -1,5 +1,5 @@
 ---
-base_packages:
+baseline_base_packages:
   - git
   - curl
   - wget
@@ -10,7 +10,7 @@ base_packages:
   - python3-pip
   - dnf-plugins-core
 
-remove_packages_best_effort:
+baseline_remove_packages_best_effort:
   - deja-dup
   - aisleriot
   - evolution
@@ -40,7 +40,7 @@ remove_packages_best_effort:
   - ibus-typing-booster
   - ibus-m17n
 
-install_packages_best_effort:
+baseline_install_packages_best_effort:
   - gimp
   - openssh-clients
   - openssh-server
