@@ -81,3 +81,10 @@
   ansible.builtin.command: gsettings set org.gnome.desktop.interface clock-format '24h'
   changed_when: false
   failed_when: false
+
+- name: Show week date in GNOME calendar
+  become: false
+  become_user: "{{ target_user }}"
+  ansible.builtin.command: gsettings set org.gnome.desktop.calendar show-weekdate true
+  changed_when: false
+  failed_when: false
