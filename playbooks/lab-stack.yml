@@ -4,9 +4,6 @@
   connection: local
   become: true
 
-  vars_files:
-    - ../host_vars/localhost.yml
-
   vars:
     target_user: "{{ ansible_env.SUDO_USER | default(ansible_user_id) }}"
     target_home: "{{ lookup('ansible.builtin.env', 'HOME') if (ansible_env.SUDO_USER is not defined) else '/home/' + target_user }}"
