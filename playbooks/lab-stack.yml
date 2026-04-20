@@ -35,5 +35,8 @@
     - role: vscode
       tags: [vscode]
 
+    - role: teams_for_linux
+      tags: [teams]
+
     - role: desktop_gnome
       tags: [desktop]

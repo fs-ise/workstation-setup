@@ -101,6 +101,7 @@ ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags languagetool
 ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags quarto
 ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags chrome
 ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags vscode
+ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags teams
 ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags desktop
 ```
 
