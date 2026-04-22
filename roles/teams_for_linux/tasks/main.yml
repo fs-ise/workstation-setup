@@ -1,0 +1,22 @@
+---
+- name: Download Teams for Linux repository signing key
+  ansible.builtin.get_url:
+    url: "{{ teams_for_linux_key_url }}"
+    dest: /tmp/teams-for-linux.asc
+    mode: '0644'
+
+- name: Import Teams for Linux repository signing key
+  ansible.builtin.rpm_key:
+    key: /tmp/teams-for-linux.asc
+    state: present
+
+- name: Download Teams for Linux repository file
+  ansible.builtin.get_url:
+    url: "{{ teams_for_linux_repo_url }}"
+    dest: "{{ teams_for_linux_repo_file }}"
+    mode: '0644'
+
+- name: Install Teams for Linux
+  ansible.builtin.dnf:
+    name: "{{ teams_for_linux_package }}"
+    state: present

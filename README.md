@@ -96,15 +96,60 @@ ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags baseline
 ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags ocr
 ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags virtualbox
 ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags docker
+ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags local_llm
 ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags grobid
 ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags languagetool
 ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags quarto
 ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags chrome
 ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags vscode
+ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags teams
 ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags desktop
 ```
 
 You can also combine tags, e.g. `--tags baseline,docker,grobid,vscode`.
+
+
+## Local LLMs (Ollama + Open WebUI)
+
+This repository includes a `local_llm` role that runs:
+
+- `ollama` (API on `127.0.0.1:11434`)
+- `open-webui` (web UI on `http://127.0.0.1:3000`)
+
+Both services run in Docker with persistent storage under `/opt/local-llm`:
+
+- Ollama models: `/opt/local-llm/ollama`
+- Open WebUI data: `/opt/local-llm/open-webui`
+
+Install only this role:
+
+```sh
+ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags local_llm
+```
+
+Optional model preloading (to avoid manual `ollama pull` after install):
+
+```yaml
+# host_vars/localhost.yml
+local_llm_models:
+  - llama3.2:3b
+```
+
+Optional Open WebUI defaults:
+
+```yaml
+# host_vars/localhost.yml
+local_llm_webui_auth: true
+local_llm_webui_default_models: "llama3.2:3b"
+```
+
+Quick checks:
+
+```sh
+curl -s http://127.0.0.1:11434/api/tags | jq .
+curl -I http://127.0.0.1:3000
+docker ps --format 'table {{.Names}}\t{{.Status}}\t{{.Ports}}' | grep -E 'ollama|open-webui'
+```
 
 ## Day-to-day
 

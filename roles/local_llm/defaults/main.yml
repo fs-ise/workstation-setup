@@ -1,0 +1,30 @@
+---
+local_llm_docker_packages:
+  - docker-ce
+  - docker-ce-cli
+  - containerd.io
+  - docker-buildx-plugin
+  - docker-compose-plugin
+local_llm_python_packages:
+  - python3-docker
+
+local_llm_data_dir: /opt/local-llm
+local_llm_network_name: local-llm
+
+local_llm_ollama_image: ollama/ollama:latest
+local_llm_ollama_container_name: ollama
+local_llm_ollama_port: 11434
+local_llm_ollama_models_dir: "{{ local_llm_data_dir }}/ollama"
+
+local_llm_webui_image: ghcr.io/open-webui/open-webui:main
+local_llm_webui_container_name: open-webui
+local_llm_webui_port: 3000
+local_llm_webui_data_dir: "{{ local_llm_data_dir }}/open-webui"
+local_llm_webui_auth: true
+local_llm_webui_default_models: ""
+
+# Keep empty by default to avoid pulling large models unintentionally.
+# Example:
+# local_llm_models:
+#   - llama3.2:3b
+local_llm_models: []

@@ -20,6 +20,9 @@
     - role: docker
       tags: [docker]
 
+    - role: local_llm
+      tags: [local_llm]
+
     - role: grobid
       tags: [grobid]
 
@@ -34,6 +37,9 @@
 
     - role: vscode
       tags: [vscode]
+
+    - role: teams_for_linux
+      tags: [teams]
 
     - role: desktop_gnome
       tags: [desktop]
