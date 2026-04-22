@@ -20,6 +20,9 @@
     - role: docker
       tags: [docker]
 
+    - role: local_llm
+      tags: [local_llm]
+
     - role: grobid
       tags: [grobid]
 
