@@ -1,0 +1,68 @@
+---
+title: "Ansible setup"
+---
+
+Install ansible and clone the repository
+
+```sh
+sudo dnf -y install git ansible-core python3-pip
+ansible --version
+git --version
+```
+
+Ansible collections
+
+```sh
+ansible-galaxy collection install community.general community.docker
+```
+
+Clone workstation-setup repository
+
+```sh
+git clone git@github.com:fs-ise/workstation-setup.git
+```
+
+Enable SSH server on remote host (by default disabled on Fedora Workstation)
+
+```sh
+# Run this command manually on the remote host
+sudo systemctl enable --now sshd
+```
+
+Install/update software
+
+```sh
+cd workstation-setup
+
+# copy host_vars/localhost.yml.example to host_vars/localhost.yml
+
+cat << EOF > inventory
+[local]
+localhost ansible_connection=local ansible_python_interpreter=/usr/bin/python3
+EOF
+
+ansible-playbook -i inventory -K playbooks/lab-stack.yml
+
+# upon dnf config-manager: command not found
+sudo dnf -y install dnf-plugins-core
+ansible-playbook -i inventory -K playbooks/lab-stack.yml
+```
+
+Run only one role:
+
+```sh
+ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags baseline
+ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags ocr
+ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags virtualbox
+ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags docker
+ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags local_llm
+ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags grobid
+ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags languagetool
+ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags quarto
+ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags chrome
+ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags vscode
+ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags teams
+ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags desktop
+```
+
+You can also combine tags, e.g. `--tags baseline,docker,grobid,vscode`.

@@ -1,0 +1,11 @@
+---
+title: "Backup"
+---
+
+## Backup and sync
+
+Assumes a particular structure of directories
+
+- Nextcloud (shared and personal dirs)
+- repos
+- workstation (local / symlinks / GTD)

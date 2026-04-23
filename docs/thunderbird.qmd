@@ -1,0 +1,23 @@
+---
+title: "Thunderbird"
+---
+
+TODO (extensions (automated?) + shortcuts? - TBD: extract from baseline?)
+TBD: best practices for folder structure and archive?
+
+TBD: JP-addon?
+
+::: {.callout-manual}
+**🔧 Manual setup and configuration**
+
+Install extensions:
+
+- LanguageTool (with config)
+- mailmindr
+- Owl for Exchange
+
+TBD: FiltaQuilly, SmartTemplates??
+
+Set up signature, self-cc
+
+:::

@@ -1,0 +1,5 @@
+---
+title: "Chrome"
+---
+
+TODO (extensions (automated?) + shortcuts? - TBD: extract from baseline?)

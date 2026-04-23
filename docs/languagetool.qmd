@@ -1,0 +1,53 @@
+---
+title: "Languagetool"
+---
+
+::: {.callout-check}
+**✅ Check**
+
+```sh
+curl -s -o /dev/null -w "%{http_code}\n" \
+  -d "text=Test sentence.&language=en-US" \
+  http://localhost:8081/v2/check
+```
+
+Expected:
+
+```text
+200
+```
+
+---
+
+```sh
+curl -s -d "text=This are bad sentence.&language=en-US" \
+  http://localhost:8081/v2/check | jq -r '.matches[].message'
+```
+
+Expected:
+
+```text
+The singular demonstrative pronoun ‘this’ does not agree...
+The verb ‘are’ is plural...
+```
+
+---
+
+```sh
+curl -s -X POST "http://127.0.0.1:8081/v2/check" \
+  -H "Content-Type: application/x-www-form-urlencoded" \
+  --data "text=This is fs-ise and it should not be flagged.&language=en-US" \
+  | jq '.matches'
+```
+
+Expected (not match for `fs-ise`, which should be in the shared dictionary):
+
+```text
+[]
+```
+
+:::
+
+
+Chrome: Advanced settings (only for professional users) - LanguageTool server: Local server
+
