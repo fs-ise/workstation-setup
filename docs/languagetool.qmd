@@ -49,5 +49,34 @@ Expected (not match for `fs-ise`, which should be in the shared dictionary):
 :::
 
 
+```{mermaid}
+flowchart LR
+    spelling["handbook/data/spelling<br/>lab-specific shared dictionaries"]
+
+    subgraph apps["Writing applications"]
+        languagetool["LanguageTool server<br/>local Docker container"]
+        thunderbird["Thunderbird"]
+        chrome["Chrome"]
+        vscode["Visual Studio Code"]
+        obsidian["Obsidian"]
+    end
+
+    spelling --> languagetool
+
+    thunderbird <--> languagetool
+    chrome <--> languagetool
+    vscode <--> languagetool
+    obsidian <--> languagetool
+```
+
 Chrome: Advanced settings (only for professional users) - LanguageTool server: Local server
 
+To update the shared dictionary, edit the [data/spelling.txt](https://github.com/fs-ise/handbook/blob/main/data/spelling.txt).
+
+To update the local instance, run:
+
+```sh
+ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags languagetool
+```
+
+Note: this downloads and includes the `data/spelling.txt` from the handbook. The previous version may be cached and it may take a few minutes until GitHub provisions the new file.
