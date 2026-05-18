@@ -175,7 +175,6 @@ package_audit_managed_packages:
   - unrtf
   - untex
   - vim
-  - virt-manager
   - wv
   - xournalpp
   - xsel

@@ -92,7 +92,6 @@ baseline_install_packages_best_effort:
   - unrtf
   - untex
   - vim
-  - virt-manager
   - wv
   - xournalpp
   - xsel
