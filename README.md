@@ -2,6 +2,16 @@
 
 See the [docs](https://fs-ise.github.io/workstation-setup/)
 
+## Run the main workstation setup
+
+```sh
+ansible-playbook -i inventory -K playbooks/lab-stack.yml
+```
+
+## Audit unmanaged Fedora/DNF packages
+
+See documentation: [Audit unmanaged Fedora/DNF packages](docs/package_audit.qmd).
+
 ## Acknowledgment
 
 This project reflects major contributions by Carlo Tang.

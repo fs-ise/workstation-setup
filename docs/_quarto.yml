@@ -32,6 +32,7 @@ website:
       - section: Operations
         contents:
           - updates.qmd
+          - package_audit.qmd
           - data_management.qmd
           - backup.qmd
           - restore.qmd

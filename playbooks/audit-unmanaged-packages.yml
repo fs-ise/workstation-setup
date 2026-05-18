@@ -1,0 +1,93 @@
+---
+- name: Audit manually installed but unmanaged Fedora packages
+  hosts: local
+  gather_facts: false
+  vars:
+    package_audit_dnf_query_cmd: "dnf repoquery --userinstalled --queryformat '%{name}\n'"
+    package_audit_fallback_cmd: "dnf5 repoquery --userinstalled --queryformat '%{name}\n'"
+  tasks:
+    - name: Collect manually installed packages (preferred)
+      become: true
+      ansible.builtin.command: "{{ package_audit_dnf_query_cmd }}"
+      register: package_audit_userinstalled_primary
+      changed_when: false
+      failed_when: false
+
+    - name: Collect manually installed packages (fallback)
+      become: true
+      ansible.builtin.command: "{{ package_audit_fallback_cmd }}"
+      register: package_audit_userinstalled_fallback
+      changed_when: false
+      when: package_audit_userinstalled_primary.rc != 0
+
+    - name: Build normalized package lists for audit
+      ansible.builtin.set_fact:
+        package_audit_detected_userinstalled: >-
+          {{
+            (
+              package_audit_userinstalled_primary.stdout_lines
+              if package_audit_userinstalled_primary.rc == 0
+              else package_audit_userinstalled_fallback.stdout_lines
+            )
+            | map('trim')
+            | reject('equalto', '')
+            | select('match', '^[A-Za-z0-9._+:-]+$')
+            | list
+            | unique
+            | sort
+          }}
+        package_audit_managed_flat: "{{ package_audit_managed_packages | flatten | map('string') | unique | sort }}"
+        package_audit_allowlist_flat: "{{ package_audit_allowlist | flatten | map('string') | unique | sort }}"
+        package_audit_allowlist_patterns_flat: "{{ package_audit_allowlist_patterns | flatten | map('string') | unique | sort }}"
+
+    - name: Compute unmanaged candidates after exact matching
+      ansible.builtin.set_fact:
+        package_audit_candidates: >-
+          {{
+            package_audit_detected_userinstalled
+            | difference(package_audit_managed_flat + package_audit_allowlist_flat)
+            | unique
+            | sort
+          }}
+
+    - name: Build pattern-ignored package list
+      ansible.builtin.set_fact:
+        package_audit_pattern_ignored: "{{ (package_audit_pattern_ignored | default([])) + (package_audit_candidates | select('match', item) | list) }}"
+      loop: "{{ package_audit_allowlist_patterns_flat }}"
+
+    - name: Compute final unmanaged package list
+      ansible.builtin.set_fact:
+        package_audit_pattern_ignored: "{{ package_audit_pattern_ignored | default([]) | unique | sort }}"
+        package_audit_unmanaged: >-
+          {{
+            package_audit_candidates
+            | difference(package_audit_pattern_ignored | default([]))
+            | unique
+            | sort
+          }}
+
+    - name: Show audit summary
+      ansible.builtin.debug:
+        msg:
+          - "Detected manually installed packages: {{ package_audit_detected_userinstalled | length }}"
+          - "Managed packages (exact): {{ package_audit_managed_flat | length }}"
+          - "Exact allowlisted packages: {{ package_audit_allowlist_flat | length }}"
+          - "Pattern-ignored packages: {{ package_audit_pattern_ignored | length }}"
+          - "Unmanaged packages remaining: {{ package_audit_unmanaged | length }}"
+
+    - name: Print unmanaged packages (if any)
+      ansible.builtin.debug:
+        msg: "{{ package_audit_unmanaged | to_nice_yaml(indent=2) }}"
+      when: package_audit_unmanaged | length > 0
+
+    - name: Fail when unmanaged packages are found (default)
+      ansible.builtin.fail:
+        msg: |-
+          Found unmanaged manually installed packages:
+            - {{ package_audit_unmanaged | join('\n  - ') }}
+
+          Declare expected packages in Ansible-managed package lists or add intentional local/system packages
+          to package_audit_allowlist or package_audit_allowlist_patterns.
+      when:
+        - package_audit_fail_on_unmanaged | bool
+        - package_audit_unmanaged | length > 0
