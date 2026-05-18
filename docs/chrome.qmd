@@ -3,3 +3,10 @@ title: "Chrome"
 ---
 
 TODO (extensions (automated?) + shortcuts? - TBD: extract from baseline?)
+
+Extensions:
+
+- Advanced URL Cleaner
+- Freedom
+- Languagetool
+- Obsidian picker
