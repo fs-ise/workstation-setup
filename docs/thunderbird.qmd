@@ -21,3 +21,12 @@ TBD: FiltaQuilly, SmartTemplates??
 Set up signature, self-cc
 
 :::
+
+
+Key shortcuts:
+
+- `N` next unread message
+- `P` previous unread message
+- `A` archive message
+- `Ctrl+R` respond
+- `Ctrl+Shift+1` tickle message
