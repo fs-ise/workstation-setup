@@ -55,6 +55,14 @@ Expected: helper script exists and at least one action file exists.
 - **Batch behavior:** multiple selected PDFs are processed one-by-one
 - **Timeout behavior:** request timeout is based on role variable `grobid_nfs_timeout_ms`
 
+## Rationale
+
+GROBID is the best performing open-source tools (used in many tools like ResearchGate, Mendeley).
+In particular, it supports the parsing of academic references and output like BibTeX.
+Reference parsing is still a shortcoming of [docling](https://github.com/docling-project/docling) and [marker](https://github.com/datalab-to/marker).
+
+Tkaczyk, D., Collins, A., Sheridan, P., & Beel, J. (2018, May). Machine learning vs. rules and out-of-the-box vs. retrained: An evaluation of open-source bibliographic reference and citation parsers. In Proceedings of the 18th ACM/IEEE on joint conference on digital libraries (pp. 99-108).
+
 ## Best practices and useful links
 
 - [GROBID documentation](https://grobid.readthedocs.io/)
