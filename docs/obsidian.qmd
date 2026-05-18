@@ -1,0 +1,9 @@
+---
+title: "Obsidian"
+---
+
+## Extensions:
+
+- https://github.com/brianpetro/obsidian-smart-connections
+- https://www.youtube.com/watch?v=7Rvl9Sl29Jk
+- https://smartconnections.app/

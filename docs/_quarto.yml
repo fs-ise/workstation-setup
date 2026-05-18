@@ -26,6 +26,7 @@ website:
           - ocr.qmd
           - grobid.qmd
           - languagetool.qmd
+          - obsidian.qmd
           - llm.qmd
 
       - section: Operations
