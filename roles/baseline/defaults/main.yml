@@ -74,6 +74,7 @@ baseline_install_packages_best_effort:
   - openssh-clients
   - openssh-server
   - pdfarranger
+  - sqlitebrowser
   - okular
   - perl-librdf
   - pinentry
