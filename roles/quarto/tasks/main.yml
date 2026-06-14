@@ -31,6 +31,7 @@
     dest: "{{ quarto_install_dir }}"
     state: link
     force: true
+    follow: false
 
 - name: Add {{ quarto_install_dir }}/bin to system PATH
   ansible.builtin.copy:

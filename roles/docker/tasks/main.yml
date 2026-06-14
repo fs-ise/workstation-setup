@@ -50,6 +50,7 @@
   loop: "{{ docker_images }}"
   loop_control:
     loop_var: docker_image
+    label: "{{ docker_image }}"
 
 - name: Pull missing Docker images
   community.docker.docker_image_pull:
@@ -58,4 +59,5 @@
   loop: "{{ docker_image_inspect.results }}"
   loop_control:
     loop_var: image_check
+    label: "{{ image_check.docker_image }}"
   when: image_check.rc != 0
