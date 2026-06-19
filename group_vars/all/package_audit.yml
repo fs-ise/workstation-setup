@@ -166,6 +166,8 @@ package_audit_managed_packages:
   - recoll
   - ruby
   - rubygem-bundler
+  - R
+  - sqlitebrowser
   - texlive-lang-german
   - texlive-latex-extra
   - texlive-xetex

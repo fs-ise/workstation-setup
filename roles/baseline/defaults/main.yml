@@ -74,7 +74,6 @@ baseline_install_packages_best_effort:
   - openssh-clients
   - openssh-server
   - pdfarranger
-  - sqlitebrowser
   - okular
   - perl-librdf
   - pinentry
@@ -85,6 +84,7 @@ baseline_install_packages_best_effort:
   - recoll
   - ruby
   - rubygem-bundler
+  - sqlitebrowser
   - texlive-lang-german
   - texlive-latex-extra
   - texlive-xetex
