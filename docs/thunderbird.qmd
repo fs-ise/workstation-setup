@@ -14,6 +14,7 @@ Install extensions:
 
 - LanguageTool (with config)
 - mailmindr
+- [move-mail-shortcuts](https://services.addons.thunderbird.net/En-us/thunderbird/addon/move-mail-shortcuts/)
 - Owl for Exchange
 
 TBD: FiltaQuilly, SmartTemplates??
@@ -30,3 +31,4 @@ Key shortcuts:
 - `A` archive message
 - `Ctrl+R` respond
 - `Ctrl+Shift+1` tickle message
+- `Alt+W` to move message to waiting-for (based on move-mail-shortcuts extension)
