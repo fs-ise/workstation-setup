@@ -53,7 +53,7 @@ gnome_battery_percentage:
 gnome_mouse_touchpad:
   - key: "/org/gnome/desktop/peripherals/mouse/accel-profile"
     value: "'flat'"
-  
+
   - key: "/org/gnome/desktop/peripherals/touchpad/tap-to-click"
     value: true
 
@@ -64,3 +64,10 @@ gnome_hot_corner:
 german_us_keyboard_layout:
   - key: "/org/gnome/desktop/input-sources/sources"
     value: "[('xkb', 'de'), ('xkb', 'us')]"
+
+gnome_shell_extension_maximize_new_windows_uuid: maximize-new-windows@VitalyOstanin
+gnome_shell_extension_maximize_new_windows_repo: >-
+  https://github.com/VitalyOstanin/maximize-new-windows.git
+gnome_shell_extensions_dir: "{{ target_home }}/.local/share/gnome-shell/extensions"
+gnome_shell_extension_maximize_new_windows_dir: >-
+  {{ gnome_shell_extensions_dir }}/{{ gnome_shell_extension_maximize_new_windows_uuid }}

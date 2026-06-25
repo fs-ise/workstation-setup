@@ -33,13 +33,66 @@
     - md.obsidian.Obsidian
     - com.borgbase.Vorta
 
-- name: Ensure psutil is installed
+- name: Install GNOME Shell extension dependencies
   ansible.builtin.dnf:
-    name: python3-psutil
+    name:
+      - git
+      - dconf
+      - python3-psutil
     state: present
 
+- name: Ensure local GNOME Shell extensions directory exists
+  become: true
+  become_user: "{{ target_user }}"
+  ansible.builtin.file:
+    path: "{{ gnome_shell_extensions_dir }}"
+    state: directory
+    mode: "0755"
+
+- name: Install maximize-new-windows GNOME Shell extension
+  become: true
+  become_user: "{{ target_user }}"
+  ansible.builtin.git:
+    repo: "{{ gnome_shell_extension_maximize_new_windows_repo }}"
+    dest: "{{ gnome_shell_extension_maximize_new_windows_dir }}"
+    update: true
+
+- name: Allow user GNOME Shell extensions
+  become: true
+  become_user: "{{ target_user }}"
+  community.general.dconf:
+    key: /org/gnome/shell/disable-user-extensions
+    value: false
+
+- name: Read currently enabled GNOME Shell extensions
+  become: true
+  become_user: "{{ target_user }}"
+  ansible.builtin.command:
+    cmd: dconf read /org/gnome/shell/enabled-extensions
+  register: gnome_shell_enabled_extensions_read
+  changed_when: false
+  failed_when: false
+
+- name: Build GNOME Shell enabled extensions list
+  ansible.builtin.set_fact:
+    gnome_shell_enabled_extensions_current: >-
+      {{ (gnome_shell_enabled_extensions_read.stdout
+          if (gnome_shell_enabled_extensions_read.stdout | trim | length > 0
+              and (gnome_shell_enabled_extensions_read.stdout | trim)[0] == '[')
+          else '[]') | from_yaml }}
+
+- name: Enable maximize-new-windows GNOME Shell extension
+  become: true
+  become_user: "{{ target_user }}"
+  community.general.dconf:
+    key: /org/gnome/shell/enabled-extensions
+    value: >-
+      {{ (gnome_shell_enabled_extensions_current
+          + [gnome_shell_extension_maximize_new_windows_uuid]) | unique | list | to_json }}
+
 - name: Install dotfiles aliases
-  become: false
+  become: true
+  become_user: "{{ target_user }}"
   block:
     - name: Check if .bash_aliases exists
       ansible.builtin.stat:
@@ -70,7 +123,7 @@
         state: present
 
 - name: Set GNOME time and calendar properties
-  become: false
+  become: true
   become_user: "{{ target_user }}"
   community.general.dconf:
     key: "{{ item.key }}"
@@ -78,42 +131,48 @@
   loop: "{{ gnome_time_and_calendar_properties }}"
 
 - name: Add Ubuntu-like shortcuts
-  become: false
+  become: true
+  become_user: "{{ target_user }}"
   community.general.dconf:
     key: "{{ item.key }}"
     value: "{{ item.value }}"
   loop: "{{ gnome_navigation_shortcuts + gnome_custom_shortcuts }}"
 
 - name: Disable alert sound (terminal 'dingding' noise)
-  become : false
+  become: true
+  become_user: "{{ target_user }}"
   community.general.dconf:
     key: "{{ item.key }}"
     value: "{{ item.value }}"
   loop: "{{ gnome_alert_sound }}"
 
 - name: Enable battery percentage in top bar
-  become: false
+  become: true
+  become_user: "{{ target_user }}"
   community.general.dconf:
     key: "{{ item.key }}"
     value: "{{ item.value }}"
   loop: "{{ gnome_battery_percentage }}"
 
 - name: Set mouse and touchpad settings
-  become: false
+  become: true
+  become_user: "{{ target_user }}"
   community.general.dconf:
     key: "{{ item.key }}"
     value: "{{ item.value }}"
   loop: "{{ gnome_mouse_touchpad }}"
 
 - name: Disable GNOME hot corner (top-left)
-  become: false
+  become: true
+  become_user: "{{ target_user }}"
   community.general.dconf:
     key: "{{ item.key }}"
     value: "{{ item.value }}"
   loop: "{{ gnome_hot_corner }}"
 
 - name: Add both DE and US keyboard layout
-  become: false
+  become: true
+  become_user: "{{ target_user }}"
   community.general.dconf:
     key: "{{ item.key }}"
     value: "{{ item.value | string }}" # filter enforces string representation
