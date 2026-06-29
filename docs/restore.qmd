@@ -2,6 +2,7 @@
 title: "Restore data"
 ---
 
+TODO: adding data repositories in the first place...
 
 - `workstation` and `repos` from HDD
 - `Nextcloud`: through sync

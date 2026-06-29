@@ -2,7 +2,7 @@
 title: "workstation-setup"
 ---
 
-This repository documents a structured, reproducible workstation setup used in the [FS-ISE Lab](https://fs-ise.github.io/handbook/).
+This repository documents a structured, reproducible workstation setup used by [FS-ISE](https://fs-ise.github.io/handbook/).
 It brings together operating system installation, software provisioning, data management, and day-to-day workflows into a single, automated pipeline based on Ansible.
 The goal is twofold: 
 
@@ -12,19 +12,17 @@ The goal is twofold:
 By combining infrastructure-as-code with documented practices (from initial machine setup to ongoing operations),
 the project aims to reduce setup friction, improve consistency across devices, and make workstation configurations easier to share, reproduce, and evolve.
 
-## Overview
-
 ```{mermaid}
 flowchart LR
   %% External infrastructure (outside the subgraphs)
-  GH[(<a href='https://github.com/fs-ise/workstation-setup?tab=readme-ov-file#github'>GitHub</a>)]
-  BK[(<a href='https://github.com/fs-ise/workstation-setup?tab=readme-ov-file#hdd-backup'>HDD Backup</a>)]
-  NC[(<a href='https://github.com/fs-ise/workstation-setup?tab=readme-ov-file#nextcloud'>Nextcloud</a>)]
-  A[("<a href='https://github.com/fs-ise/workstation-setup?tab=readme-ov-file#workstation-setup'>workstation-setup<br/>(ansible)<br/>this repository</a>")]
+  GH[(<a href='backup.html#github'>GitHub</a>)]
+  BK[(<a href='backup.html#hdd-backup'>HDD Backup</a>)]
+  NC[(<a href='backup.html#nextcloud'>Nextcloud</a>)]
+  A[("<a href='https://github.com/fs-ise/workstation-setup'>workstation-setup<br/>(ansible)</a>")]
 
   %% Day-to-day flow
-  subgraph Daily["<a href='https://github.com/fs-ise/workstation-setup?tab=readme-ov-file#day-to-day'>Day-to-day</a>"]
-     AUpd["<a href='https://github.com/fs-ise/workstation-setup?tab=readme-ov-file#update-software-and-configuration'>Update software/config</a>"] <--> S[<a href='https://github.com/fs-ise/workstation-setup?tab=readme-ov-file#backup-and-sync'>Backup and sync</a>]
+  subgraph Daily["<strong>Day-to-day operations</strong>"]
+     AUpd["<a href='update_software.html'>Update software</a>"] <--> S[<a href='backup.html'>Backup and sync</a>]
   end
   A <--> AUpd
   S -- ~/* --> BK
@@ -32,10 +30,10 @@ flowchart LR
   S <-- ~/Nextcloud* --> NC
 
   %% New machine flow
-  subgraph New["<a href='https://github.com/fs-ise/workstation-setup?tab=readme-ov-file#new-machine'>New machine</a>"]
-    OS[<a href='https://github.com/fs-ise/workstation-setup?tab=readme-ov-file#install-os'>Install OS</a>]
-    OS --> AInst["<a href='https://github.com/fs-ise/workstation-setup?tab=readme-ov-file#install-and-configure-software'>Install/config software</a>"] --> R
-    R[<a href='https://github.com/fs-ise/workstation-setup?tab=readme-ov-file#restore-data'>Restore data</a>]
+  subgraph New["<strong>New machine</strong>"]
+    OS[<a href='install_os.html'>Install OS/Ansible</a>]
+    OS --> AInst["<a href='install_software.html'>Install software</a>"] --> R
+    R[<a href='restore.html'>Restore data</a>]
   end
   A --> AInst
 
@@ -56,3 +54,11 @@ flowchart LR
 
 ```
 
+
+::: {.callout-note title="Why Ansible?"}
+Workstation setup is a recurring configuration-management task:
+the same packages, defaults, accounts, and documentation links need to be applied consistently across notebooks and external drives.
+Ansible is useful here because the desired setup can be documented as code, reviewed in Git, rerun after changes, and reused as the setup evolves.
+Large-scale engineering organizations use this pattern for routine configuration enforcement;
+for example, Uber describes Ansible playbooks for daily backup, generation, and push workflows in its corporate network setup: [How Ansible Automation Powers the Uber Corporate Network at a Global Scale](https://www.uber.com/de/en/blog/ansible-automation-powers/).
+:::

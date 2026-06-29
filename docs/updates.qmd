@@ -1,9 +1,0 @@
----
-title: "Update software"
----
-
-### Update software and configuration
-
-In this Ansible setup repository.
-
-Note: runnint `dnf list installed` and using Codex or ChatGTP (with Github repository connected) helps to update ansible efficiently.

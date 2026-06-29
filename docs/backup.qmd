@@ -1,11 +1,46 @@
 ---
-title: "Backup"
+title: "Backup and sync"
 ---
-
-## Backup and sync
 
 Assumes a particular structure of directories
 
 - Nextcloud (shared and personal dirs)
 - repos
 - workstation (local / symlinks / GTD)
+
+## External data sources
+
+### Nextcloud
+
+Serves as a synchronization mechanism. Nextcloud data is also backed up on HDD.
+
+Files (e.g., PDFs and media files that are not in git repositories or zipped archives of git repositories for completed projects; ideally stable, without symlinks, no unzipped git repositories; shared or personal)
+
+Additional "backup copy"
+
+### GitHub
+
+Serves as a synchronization mechanism. Repositories can be private or public. Git repositories can be local only. Repositories are also backed up on HDD.
+
+Additional "backup copy" (even synced across devices)
+
+### HDD backup
+
+Covers all files in `/home/username` (including Nextcloud and Git repositories)
+
+Based on Vorta/Borg
+
+- Protects against ransomware / cloud account compromise
+- HDD: versioned snapshots
+- HDD backups are encrypted
+- HDDs are disconnected (different weekly / monthly / annual HDDs)
+
+
+## Principles of data management
+
+- principles (what to store where/in line with backup strategy)
+- where to store confidential data/encrypt
+- where to store personal dotfiles and sensitive keys (best practices)
+- maybe even data lake + dense vector database (with search/indexing setup?)
+
+Emergency USB Sticks (passwords, keys, setup) - keep one or two copies separate from the laptop (bag)

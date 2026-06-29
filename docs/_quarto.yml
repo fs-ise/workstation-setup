@@ -8,10 +8,16 @@ website:
       - href: index.qmd
         text: Home
 
-      - section: Setup
+      - section: New machine
         contents:
           - install_os.qmd
-          - ansible_setup.qmd
+          - install_software.qmd
+          - restore.qmd
+
+      - section: Day-to-day operations
+        contents:
+          - update_software.qmd
+          - backup.qmd
 
       - section: Configuration
         contents:
@@ -28,15 +34,6 @@ website:
           - languagetool.qmd
           - obsidian.qmd
           - llm.qmd
-
-      - section: Operations
-        contents:
-          - updates.qmd
-          - package_audit.qmd
-          - data_management.qmd
-          - backup.qmd
-          - restore.qmd
-          - migration.qmd
 
       - section: Reference
         contents:

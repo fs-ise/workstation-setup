@@ -1,13 +1,13 @@
 ---
-title: "Install OS"
+title: "Install OS/Ansible"
 ---
 
 Install Fedora Workstation
 
 * Workstation includes the GNOME (vanilla) Desktop Environment
-* Get it [here](https://fedoraproject.org/workstation/download/)
+* Download it [here](https://fedoraproject.org/workstation/download/)
 
-Advantages of Fedora:
+::: {.callout-note title="Advantages of Fedora" collapse=true}
 
 * parallel downloads for faster updates
 * delta RPMs to save bandwidth
@@ -16,4 +16,46 @@ Advantages of Fedora:
 * undoable transactions
 * simpler and easier-to-remember commands
 
-There are more but these make DNF much more convenient than APT.
+There are more advantages, but these make DNF much more convenient than APT.
+:::
+
+Install Ansible and clone the repository
+
+```sh
+sudo dnf -y install git ansible-core python3-pip
+ansible-galaxy collection install community.general community.docker
+ansible --version
+git --version
+```
+
+Clone workstation-setup repository
+
+```sh
+git clone git@github.com:fs-ise/workstation-setup.git
+```
+
+And create the `localhost.yml` file:
+
+```sh
+cd workstation-setup
+
+# copy host_vars/localhost.yml.example to host_vars/localhost.yml
+
+cat << EOF > inventory
+[local]
+localhost ansible_connection=local ansible_python_interpreter=/usr/bin/python3
+EOF
+```
+
+Enable SSH server **only when remote administration is required**
+
+```sh
+# Run this command manually on the remote host
+sudo systemctl enable --now sshd
+```
+
+Continue to [install software](install_software.html).
+
+<!--
+    TODO: migration checklist (optional)
+-->

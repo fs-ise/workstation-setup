@@ -1,10 +1,14 @@
 ---
-title: "Audit unmanaged Fedora/DNF packages"
+title: "Update software"
 ---
 
-Detect package drift on Fedora workstations by listing manually installed packages that are not managed by this repository.
+In this Ansible setup repository.
 
-## Run the audit
+Note: runnint `dnf list installed` and using Codex or ChatGTP (with Github repository connected) helps to update ansible efficiently.
+
+## Run an automated audit
+
+Detect package drift on Fedora workstations by listing manually installed packages that are not managed by this repository.
 
 ```sh
 ansible-playbook -i inventory -K playbooks/audit-unmanaged-packages.yml
