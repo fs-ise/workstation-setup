@@ -1,0 +1,5 @@
+---
+title: "Thunderbird"
+---
+
+Thunderbird profile and extension setup is currently manual. Restore profile data only from trusted backups and prefer normal account sign-in when possible.

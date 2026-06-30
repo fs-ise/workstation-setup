@@ -1,0 +1,70 @@
+---
+title: "GROBID"
+---
+
+Run GROBID as a local Docker service and convert PDFs into TEI XML.
+
+```sh
+ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags grobid
+```
+
+::: {.callout-manual}
+**🔧 Manual setup and configuration**
+
+- Make sure Docker is installed and your user can run Docker commands.
+- Log out and log back in (or restart Nautilus/Nemo) so right-click actions become visible.
+- In **Nautilus**, right-click a PDF and use **Convert PDF to TEI (grobid)**.
+- The action calls `/usr/local/bin/pdf-to-tei` and writes `*.tei.xml` next to each PDF.
+- The helper script sends PDFs to `http://127.0.0.1:8070/api/processFulltextDocument`.
+:::
+
+::: {.callout-check}
+**✅ Check**
+
+```sh
+docker ps --filter "name=grobid" --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"
+```
+
+Expected: container `grobid` is up and exposes port `8070`.
+
+---
+
+```sh
+curl -s -o /dev/null -w "%{http_code}\n" http://127.0.0.1:8070
+```
+
+Expected: an HTTP response (commonly `200` or `404`, but not connection refused).
+
+---
+
+```sh
+ls -l /usr/local/bin/pdf-to-tei
+ls -l ~/.local/share/file-manager/actions/grobid-pdf-to-tei.desktop
+ls -l ~/.local/share/nemo/actions/grobid-pdf-to-tei.nemo_action
+```
+
+Expected: helper script exists and at least one action file exists.
+:::
+
+## Nautilus right-click action behavior
+
+- **Menu entry:** `Convert PDF to TEI (grobid)`
+- **File type:** appears for PDF files (`application/pdf`)
+- **Execution:** runs `/usr/local/bin/pdf-to-tei "%F"`
+- **Output naming:** input `article.pdf` becomes `article.tei.xml`
+- **Batch behavior:** multiple selected PDFs are processed one-by-one
+- **Timeout behavior:** request timeout is based on role variable `grobid_nfs_timeout_ms`
+
+## Rationale
+
+GROBID is the best performing open-source tools (used in many tools like ResearchGate, Mendeley).
+In particular, it supports the parsing of academic references and output like BibTeX.
+Reference parsing is still a shortcoming of [docling](https://github.com/docling-project/docling) and [marker](https://github.com/datalab-to/marker).
+
+Tkaczyk, D., Collins, A., Sheridan, P., & Beel, J. (2018, May). Machine learning vs. rules and out-of-the-box vs. retrained: An evaluation of open-source bibliographic reference and citation parsers. In Proceedings of the 18th ACM/IEEE on joint conference on digital libraries (pp. 99-108).
+
+## Best practices and useful links
+
+- [GROBID documentation](https://grobid.readthedocs.io/)
+- [GROBID GitHub repository](https://github.com/kermitt2/grobid)
+- [Docker post-installation steps for Linux](https://docs.docker.com/engine/install/linux-postinstall/)

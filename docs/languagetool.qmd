@@ -1,0 +1,82 @@
+---
+title: "Languagetool"
+---
+
+::: {.callout-check}
+**✅ Check**
+
+```sh
+curl -s -o /dev/null -w "%{http_code}\n" \
+  -d "text=Test sentence.&language=en-US" \
+  http://localhost:8081/v2/check
+```
+
+Expected:
+
+```text
+200
+```
+
+---
+
+```sh
+curl -s -d "text=This are bad sentence.&language=en-US" \
+  http://localhost:8081/v2/check | jq -r '.matches[].message'
+```
+
+Expected:
+
+```text
+The singular demonstrative pronoun ‘this’ does not agree...
+The verb ‘are’ is plural...
+```
+
+---
+
+```sh
+curl -s -X POST "http://127.0.0.1:8081/v2/check" \
+  -H "Content-Type: application/x-www-form-urlencoded" \
+  --data "text=This is fs-ise and it should not be flagged.&language=en-US" \
+  | jq '.matches'
+```
+
+Expected (not match for `fs-ise`, which should be in the shared dictionary):
+
+```text
+[]
+```
+
+:::
+
+
+```{mermaid}
+flowchart LR
+    spelling["handbook/data/spelling<br/>lab-specific shared dictionaries"]
+
+    subgraph apps["Writing applications"]
+        languagetool["LanguageTool server<br/>local Docker container"]
+        thunderbird["Thunderbird"]
+        chrome["Chrome"]
+        vscode["Visual Studio Code"]
+        obsidian["Obsidian"]
+    end
+
+    spelling --> languagetool
+
+    thunderbird <--> languagetool
+    chrome <--> languagetool
+    vscode <--> languagetool
+    obsidian <--> languagetool
+```
+
+Chrome: Advanced settings (only for professional users) - LanguageTool server: Local server
+
+To update the shared dictionary, edit the [data/spelling.txt](https://github.com/fs-ise/handbook/blob/main/data/spelling.txt).
+
+To update the local instance, run:
+
+```sh
+ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags languagetool
+```
+
+Note: this downloads and includes the `data/spelling.txt` from the handbook. The previous version may be cached and it may take a few minutes until GitHub provisions the new file.

@@ -1,0 +1,55 @@
+---
+title: "Repository structure"
+---
+
+This repository combines a Quarto documentation site with Ansible automation. The documentation explains the workflow; the playbooks and roles perform the repeatable system setup.
+
+## Main directories and files
+
+### `docs/`
+
+Quarto source files for this website. Use these pages as the high-level workstation manual: new-machine setup, day-to-day operations, configuration notes, and concise reference material.
+
+### `playbooks/`
+
+Executable Ansible entry points. The main workstation setup is `playbooks/lab-stack.yml`; the package drift audit is `playbooks/audit-unmanaged-packages.yml`.
+
+### `roles/`
+
+Reusable Ansible configuration units. Roles keep related installation and configuration tasks together so they can be run from the main playbook and documented in the Configuration section.
+
+### `inventory`
+
+Local Ansible inventory file created during setup. It tells Ansible to configure `localhost` with a local connection. This file is intentionally simple for single-workstation use.
+
+### `host_vars/`
+
+Optional location for host-specific variables when a workstation needs local overrides. Keep secrets out of committed variable files.
+
+### `group_vars/`
+
+Shared variables for playbooks, including package audit settings and allowlists.
+
+### `Makefile`
+
+Convenience commands for common workflows. Prefer these commands in day-to-day use when a target exists, and use raw `ansible-playbook` commands when you need full transparency or extra options.
+
+### `.github/`
+
+If present, this directory contains GitHub-specific project automation such as workflows or repository metadata. It is not required for local workstation execution.
+
+## How the pieces fit together
+
+1. Follow the New machine pages in `docs/` to install Fedora, install prerequisites, create `inventory`, and run the lab stack.
+2. Run `make lab-stack`, which calls the main Ansible playbook.
+3. The playbook applies focused roles from `roles/`.
+4. Use Configuration pages for role-specific manual steps and checks.
+5. Use Day-to-day operations pages for updates, package audit, backup, and restore routines.
+
+## Best practices and useful links
+
+- [Install OS/Ansible](install_os.html)
+- [Install software](install_software.html)
+- [Update software](update_software.html)
+- [Ansible playbooks](https://docs.ansible.com/ansible/latest/playbook_guide/playbooks_intro.html)
+- [Quarto websites](https://quarto.org/docs/websites/)

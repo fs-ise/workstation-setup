@@ -1,0 +1,20 @@
+---
+title: "Docker"
+---
+
+Docker is installed by the lab stack when the `docker` tag is run.
+
+::: {.callout-manual}
+**🔧 Manual setup and configuration**
+
+Log out and back in after installation so group membership changes apply to your desktop session.
+:::
+
+::: {.callout-check}
+**✅ Check**
+
+```sh
+docker version
+docker run --rm hello-world
+```
+:::

@@ -1,0 +1,63 @@
+---
+title: "Install software"
+---
+
+Use this page to apply the managed workstation configuration to a new or freshly prepared machine after completing [Install OS/Ansible](install_os.html).
+Installing software through Ansible makes the setup repeatable, reviewable, and easier to share across the team.
+
+```sh
+ansible-playbook -i inventory -K playbooks/lab-stack.yml
+```
+The command applies the desired state for the first time.
+[Update software](update_software.html) reapplies and audits that same state during routine maintenance.
+Both workflows rely on Ansible and documented package policy rather than manual, undocumented changes.
+
+Ansible playbooks are designed to be **idempotent**: 
+they describe the desired final state of the workstation.
+When you rerun the command, Ansible checks what is already installed or configured and only applies missing or changed steps.
+This makes repeated runs safe after an interrupted installation or after changing documented configuration.
+
+::: {.callout-manual}
+**🔧 Manual setup and configuration**
+
+After the automated installation, complete only the manual steps for software you use:
+
+- Set up GitHub SSH/GPG identity and workstation basics in [Baseline](baseline.html).
+- Log out and back in before testing Docker group access; see [Docker](docker.html).
+- Configure browsers and extensions in [Chrome](chrome.html) if needed.
+- Sign in to editors, extensions, and settings sync in [VS Code](vscode.html) if needed.
+- Start or verify local research services in [GROBID](grobid.html) and [LanguageTool](languagetool.html) if you use them.
+- Configure OCR workflows in [OCR](ocr.html) and Quarto publishing in [Quarto](quarto.html) if relevant.
+:::
+
+::: {.callout-note title="Advanced: explicit commands and tags" collapse=true}
+
+Run only one playbook tag when you need to test or reapply a specific area:
+
+```sh
+ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags baseline
+ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags ocr
+ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags virtualbox
+ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags docker
+ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags grobid
+ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags languagetool
+ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags quarto
+ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags chrome
+ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags vscode
+ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags teams
+ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags desktop
+```
+
+You can also combine tags, for example:
+
+```sh
+ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags baseline,docker,grobid,vscode
+```
+:::
+
+## Best practices and useful links
+
+- [Update software](update_software.html)
+- [Ansible playbook guide](https://docs.ansible.com/ansible/latest/playbook_guide/playbooks_intro.html)
+- [Repository structure](repo_structure.html)
+- [Troubleshooting](troubleshooting.html)

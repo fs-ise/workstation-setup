@@ -1,0 +1,32 @@
+.callout-manual,
+.callout-check {
+  border: 1px solid #e0e0e0;
+  border-left: 4px solid;
+  border-radius: 6px;
+  padding: 1rem 1.2rem;
+  margin: 1.5rem 0;
+  background-color: #fafafa;
+}
+
+/* Color accents */
+.callout-manual {
+  border-left-color: #f39c12;
+}
+
+.callout-check {
+  border-left-color: #2ecc71;
+}
+
+/* Title line */
+.callout-manual strong,
+.callout-check strong {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+}
+
+/* Improve code spacing inside */
+.callout pre {
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+}

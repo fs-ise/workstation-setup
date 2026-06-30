@@ -1,0 +1,25 @@
+---
+title: "LLM"
+---
+
+Local LLM tooling is not currently installed by `playbooks/lab-stack.yml`. There is no active `local_llm` tag in the main playbook.
+
+::: {.callout-manual}
+**🔧 Manual setup and configuration**
+
+If a workstation needs Ollama, Open WebUI, or another local LLM service, install and document it as a lab-specific manual step until an Ansible role is added.
+:::
+
+::: {.callout-check}
+**✅ Check**
+
+```sh
+ansible-playbook -i inventory -K playbooks/lab-stack.yml --list-tags
+```
+:::
+
+## Best practices and useful links
+
+- [Ollama documentation](https://github.com/ollama/ollama/tree/main/docs)
+- [Open WebUI documentation](https://docs.openwebui.com/)
+- [Repository structure](repo_structure.html)

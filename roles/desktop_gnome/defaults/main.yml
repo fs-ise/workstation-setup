@@ -53,7 +53,7 @@ gnome_battery_percentage:
 gnome_mouse_touchpad:
   - key: "/org/gnome/desktop/peripherals/mouse/accel-profile"
     value: "'flat'"
-  
+
   - key: "/org/gnome/desktop/peripherals/touchpad/tap-to-click"
     value: true
 
@@ -64,3 +64,12 @@ gnome_hot_corner:
 german_us_keyboard_layout:
   - key: "/org/gnome/desktop/input-sources/sources"
     value: "[('xkb', 'de'), ('xkb', 'us')]"
+
+gnome_shell_extensions_dir: "{{ target_home }}/.local/share/gnome-shell/extensions"
+gnome_shell_extensions:
+  - name: maximize-new-windows
+    uuid: maximize-new-windows@VitalyOstanin
+    repo: https://github.com/VitalyOstanin/maximize-new-windows.git
+  - name: autohide-battery
+    uuid: autohide-battery@sitnik.ru
+    repo: https://github.com/ai/autohide-battery.git

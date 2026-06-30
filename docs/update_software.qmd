@@ -1,0 +1,86 @@
+---
+title: "Update software"
+---
+
+Use this page to keep an existing workstation aligned with this repository.
+Updating is not a separate setup method: it is the recurring re-application and audit of the same Ansible desired state used during [Install software](install_software.html).
+
+## Routine update workflow
+
+Run these commands from the `workstation-setup` repository:
+
+```sh
+git pull
+
+# Re-run the managed lab-stack setup
+ansible-playbook -i inventory -K playbooks/lab-stack.yml
+
+# Audit unmanaged packages
+ansible-playbook -i inventory -K playbooks/audit-unmanaged-packages.yml
+```
+
+The first command updates this repository.
+The second command re-applies the managed workstation configuration.
+The third command checks whether additional local packages are installed outside the managed setup.
+
+::: {.callout-note title="What is an unmanaged package?"}
+
+An unmanaged package is a package that is:
+
+- installed on the workstation,
+- not declared in this repository's Ansible-managed package lists,
+- and not allowlisted by exact name or allowlist pattern.
+:::
+
+## Audit unmanaged packages
+
+Local package changes should not remain invisible. The audit helps identify software that was installed manually or introduced outside the Ansible-managed package lists.
+
+For each audit finding, decide what it means:
+
+- **Unintentional change or unnecessary software:** remove the package.
+- **Software needed on all managed workstations:** add it to the relevant [Ansible role](https://github.com/fs-ise/workstation-setup/tree/main/roles).
+- **Software needed only on this machine:** add a narrow [allowlist entry or allowlist pattern](https://github.com/fs-ise/workstation-setup/blob/main/group_vars/all/package_audit.yml).
+
+AI coding tools such as ChatGPT or Codex can help draft the required Ansible changes, but review package names, repository additions, and role placement before committing.
+
+## Decision workflow
+
+::: {style="text-align: center;"}
+
+```{mermaid}
+flowchart TD
+  A[Package audit] --> F[Unmanaged package found]
+
+  F --> Q{Is the package needed?}
+
+  Q -->|No / not intentional| R[Remove package]
+  Q -->|Yes, for all managed workstations| M["<a href='https://github.com/fs-ise/workstation-setup/tree/main/roles' target=_blank>Add to Ansible role</a>"]
+  Q -->|Yes, only for this machine| L["Add narrow <a href='https://github.com/fs-ise/workstation-setup/blob/main/group_vars/all/package_audit.yml target=_blank'>allowlist</a> entry"]
+
+  M --> DS[Repository desired state updated]
+  L --> DS
+  R --> C[Local drift removed]
+
+  DS --> U[Re-run lab-stack setup]
+  U --> W[Workstation aligned]
+```
+:::
+
+## How filtering works
+
+To keep the audit actionable, this repository supports two filtering mechanisms:
+
+- `package_audit_allowlist` for exact package names
+- `package_audit_allowlist_patterns` for regex-based package families
+
+Use exact [allowlist](https://github.com/fs-ise/workstation-setup/blob/main/group_vars/all/package_audit.yml) entries whenever possible. Use regex patterns only when exact names are too noisy, for example for expected Fedora or system package families.
+
+Keep patterns narrow. Broad patterns can hide real workstation drift.
+
+## Best practices and useful links
+
+- [Install software](install_software.html)
+- [Troubleshooting](troubleshooting.html)
+- [Ansible playbook guide](https://docs.ansible.com/ansible/latest/playbook_guide/playbooks_intro.html)
+- [DNF command reference](https://dnf.readthedocs.io/en/latest/command_ref.html)

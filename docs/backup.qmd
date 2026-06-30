@@ -1,0 +1,58 @@
+---
+title: "Backup and sync"
+---
+
+This page describes the intended roles of GitHub, Nextcloud, and HDD backups.
+
+The workstation setup uses the following default directory conventions:
+
+| Area                   |            Default location | Purpose                                                                       |
+| ---------------------------- | :-------------------------- | ----------------------------------------------------------------------------- |
+| Git repositories       |                   `~/repos` | Source code, documentation, text-based projects, and versioned configuration. |
+| Nextcloud folders      |               `~/Nextcloud` | Synced documents, PDFs, media, and shared project folders.                    |
+| Local workstation data |             `~/workstation` | Local working data that is not managed through Git or Nextcloud.              |
+| HDD backup             | External HDD                | Versioned encrypted backup of local workstation data (via Vorta/Borg).        |
+
+<br>
+
+Avoid storing secrets directly in Git or shared folders. Use a password manager or encrypted storage for credentials and recovery material.
+
+## Daily routine
+
+- Commit or stash important Git work before leaving the workstation.
+- Push active Git branches that should not remain local-only.
+- Check that Nextcloud has finished syncing important files.
+- Keep external backup drives disconnected unless a backup or restore is running.
+
+## Weekly routine
+
+- Connect the weekly backup HDD.
+- Run or verify the Vorta/Borg backup.
+- Check that the backup completed successfully before disconnecting the drive.
+- Review local-only folders and decide whether they should become Git repositories, Nextcloud folders, or remain backup-only.
+
+## Monthly routine
+
+- Test that Vorta/Borg can list archives on the backup drive.
+- Restore a small non-sensitive test file to a temporary location.
+- Review whether important new folders are included in backup sources.
+- Confirm that password manager recovery and disk encryption recovery information are still accessible.
+
+## Emergency and recovery notes
+
+Keep recovery material separate from the laptop and from a single cloud account:
+
+- password manager recovery information,
+- disk encryption recovery keys if used,
+- Borg repository passphrases or key material,
+- GitHub or institution account recovery options,
+- setup media or a tested way to reinstall Fedora.
+
+Do not document actual passwords, private keys, or recovery codes in this repository.
+
+## Best practices and useful links
+
+- [GitHub SSH documentation](https://docs.github.com/en/authentication/connecting-to-github-with-ssh)
+- [Nextcloud desktop client documentation](https://docs.nextcloud.com/desktop/latest/)
+- [Borg documentation](https://borgbackup.readthedocs.io/)
+- [Vorta documentation](https://vorta.borgbase.com/)

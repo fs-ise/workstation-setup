@@ -1,0 +1,70 @@
+---
+title: "workstation-setup"
+---
+
+
+This repository documents a reproducible workstation setup used by [FS-ISE](https://fs-ise.github.io/handbook/).
+It treats a workstation as something that should be installed consistently, configured efficiently, and kept understandable for a small but growing team.
+
+The vision is pragmatic:
+
+- make new machines transparent and reproducible,
+- share setup knowledge as reviewed documentation and code,
+- minimize configuration drift between machines,
+- automate installation and configuration where possible, and
+- keep room for explicit manual steps when accounts, credentials, or lab-specific choices cannot be automated safely.
+
+Research work often depends on fast-moving open-source software, custom tools, and local services.
+Ansible is the mechanism used here to turn that changing setup knowledge into a programmatic desired state: packages, configuration files, services, and checks can be reviewed in Git, applied to a new machine, and reapplied during maintenance.
+The diagram shows how the same repository connects initial setup, recurring updates, backup/sync, and data restoration.
+
+```{mermaid}
+flowchart LR
+  %% External infrastructure (outside the subgraphs)
+  GH[(<a href='backup.html#github'>GitHub</a>)]
+  BK[(<a href='backup.html#hdd-backup'>HDD Backup</a>)]
+  NC[(<a href='backup.html#nextcloud'>Nextcloud</a>)]
+  A[("<a href='https://github.com/fs-ise/workstation-setup'>workstation-setup<br/>(ansible)</a>")]
+
+  %% Day-to-day flow
+  subgraph Daily["<strong>Day-to-day operations</strong>"]
+     AUpd["<a href='update_software.html'>Update software</a>"] <--> S[<a href='backup.html'>Backup and sync</a>]
+  end
+  A <--> AUpd
+  S -- ~/* --> BK
+  S <-- ~/repos* --> GH
+  S <-- ~/Nextcloud* --> NC
+
+  %% New machine flow
+  subgraph New["<strong>New machine</strong>"]
+    OS[<a href='install_os.html'>Install OS/Ansible</a>]
+    OS --> AInst["<a href='install_software.html'>Install software</a>"] --> R
+    R[<a href='restore.html'>Restore data</a>]
+  end
+  A --> AInst
+
+  BK --> R
+  GH --> R
+  NC --> R
+
+  %% Styling
+  classDef highlight fill:#ffec99,stroke:#f08c00,stroke-width:3px,color:#1b1b1b;
+  classDef muted fill:#f6f7f9,stroke:#c9ced6,stroke-width:1px,color:#2b2b2b;
+
+  class A highlight;
+  class GH,BK,NC,AUpd,S,OS,AInst,R muted;
+
+  %% Optional: soften subgraph borders
+  style Daily fill:#ffffff,stroke:#d0d5dd,stroke-width:1px;
+  style New fill:#ffffff,stroke:#d0d5dd,stroke-width:1px;
+
+```
+
+
+::: {.callout-note title="Why Ansible?"}
+Workstation setup is a recurring configuration-management task.
+The same packages, defaults, accounts, and documentation links need to be applied consistently across notebooks and external drives.
+Ansible is useful here because the desired setup can be documented as code, reviewed in Git, rerun after changes, and reused as the setup evolves.
+
+See how Uber uses Ansible playbooks for daily backup, generation, and push workflows in its corporate network setup: [How Ansible Automation Powers the Uber Corporate Network at a Global Scale](https://www.uber.com/de/en/blog/ansible-automation-powers/).
+:::

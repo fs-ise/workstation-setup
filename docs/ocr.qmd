@@ -1,0 +1,65 @@
+---
+title: "OCRmyPDF"
+---
+
+Install OCRmyPDF and Tesseract to create searchable PDFs from scanned documents.
+
+```sh
+ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags ocr
+```
+
+::: {.callout-manual}
+**🔧 Manual setup and configuration**
+
+- Log out and log back in after running the role so Nautilus/Nemo reload user actions.
+- In **Nautilus**, right-click a PDF and use **OCR PDF (ocrmypdf)**.
+- The action runs `~/.local/bin/ocrmypdf-wrapper` and writes `*_ocr.pdf` next to the original file.
+- The wrapper defaults to German + English OCR (`-l deu+eng`) and skips pages that already contain text.
+- Review `~/.cache/ocrmypdf-wrapper.log` if conversion fails.
+:::
+
+::: {.callout-check}
+**✅ Check**
+
+```sh
+ocrmypdf --version
+tesseract --version
+```
+
+Expected: both commands print a version.
+
+---
+
+```sh
+echo "test" > /tmp/ocr-test.txt
+enscript /tmp/ocr-test.txt -o - | ps2pdf - /tmp/ocr-test.pdf
+ocrmypdf -l eng /tmp/ocr-test.pdf /tmp/ocr-test_ocr.pdf
+pdfinfo /tmp/ocr-test_ocr.pdf | sed -n '1,5p'
+```
+
+Expected: `/tmp/ocr-test_ocr.pdf` is created successfully.
+
+---
+
+```sh
+ls -l ~/.local/share/file-manager/actions/ocrmypdf.desktop
+ls -l ~/.local/share/nemo/actions/ocrmypdf.nemo_action
+```
+
+Expected: at least one action file exists (depending on your file manager).
+:::
+
+## Nautilus right-click action behavior
+
+- **Menu entry:** `OCR PDF (ocrmypdf)`
+- **File type:** appears for PDF files (`application/pdf`)
+- **Execution:** calls `~/.local/bin/ocrmypdf-wrapper "%f"`
+- **Output naming:** input `paper.pdf` becomes `paper_ocr.pdf`
+- **Batch behavior:** the wrapper accepts multiple files and processes each one in sequence
+- **Troubleshooting:** if the menu entry does not appear, restart Nautilus (`nautilus -q`) or relogin
+
+## Best practices and useful links
+
+- [OCRmyPDF documentation](https://ocrmypdf.readthedocs.io/)
+- [Tesseract documentation](https://tesseract-ocr.github.io/)
+- [Nautilus file-manager-actions documentation](https://manpages.debian.org/testing/filemanager-actions/)

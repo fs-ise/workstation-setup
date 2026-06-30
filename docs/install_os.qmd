@@ -1,0 +1,95 @@
+---
+title: "Install OS/Ansible"
+---
+
+Use this checklist for a new Fedora Workstation machine before running the full lab software setup.
+
+## 1. Install Fedora Workstation
+
+- Download Fedora Workstation from the [official Fedora website](https://fedoraproject.org/workstation/download/).
+- Install it with the default GNOME desktop unless you have a documented reason to do otherwise.
+- Apply the first system update offered by GNOME Software or `dnf` before installing the lab stack.
+
+::: {.callout-note title="Advantages of Fedora" collapse=true}
+
+- parallel downloads for faster updates
+- delta RPMs to save bandwidth
+- modular system for version control
+- persistent metadata caching
+- undoable transactions
+- simpler and easier-to-remember commands
+
+There are more advantages, but these make DNF much more convenient than APT.
+:::
+
+## 2. Install Git, Ansible, and Python prerequisites
+
+Open a terminal on the new workstation and install the tools needed to run this repository:
+
+```sh
+sudo dnf -y install git ansible-core python3 python3-pip dnf-plugins-core
+ansible --version
+git --version
+python3 --version
+
+ansible-galaxy collection install community.general community.docker
+```
+
+`dnf-plugins-core` provides `dnf config-manager`, which some repository setup tasks need.
+
+## 3. Clone the repository
+
+Clone the workstation setup repository and enter it:
+
+```sh
+git clone git@github.com:fs-ise/workstation-setup.git
+cd workstation-setup
+```
+
+If SSH access to GitHub is not configured yet, use HTTPS for the first clone:
+
+```sh
+git clone https://github.com/fs-ise/workstation-setup.git
+cd workstation-setup
+```
+
+## 4. Create the inventory file
+
+Create the local Ansible inventory used by the documented commands:
+
+```sh
+cat <<'EOF' > inventory
+[local]
+localhost ansible_connection=local ansible_python_interpreter=/usr/bin/python3
+EOF
+```
+
+The `inventory` file tells Ansible to configure the current machine. If a future setup needs host-specific variables, create `host_vars/localhost.yml` separately and do not put secrets in it.
+
+::: {.callout-check}
+**✅ Check**
+
+```sh
+test -f inventory
+ansible-inventory -i inventory --list
+```
+:::
+
+## Optional: Enable SSH if remote administration is needed
+
+Most local workstation setup does not require an SSH server. Enable it only when this machine must be administered remotely:
+
+```sh
+sudo systemctl enable --now sshd
+systemctl status sshd --no-pager
+```
+
+## Continue to software installation
+
+Continue to [install software](install_software.html).
+
+## Best practices and useful links
+
+- [Fedora Workstation downloads](https://fedoraproject.org/workstation/download/)
+- [Ansible collection installation](https://docs.ansible.com/ansible/latest/collections_guide/collections_installing.html)
+- [GitHub SSH documentation](https://docs.github.com/en/authentication/connecting-to-github-with-ssh)

@@ -79,10 +79,12 @@ baseline_install_packages_best_effort:
   - pinentry
   - poppler-utils
   - pwgen
+  - R
   - python3-tkinter
   - recoll
   - ruby
   - rubygem-bundler
+  - sqlitebrowser
   - texlive-lang-german
   - texlive-latex-extra
   - texlive-xetex
@@ -92,7 +94,6 @@ baseline_install_packages_best_effort:
   - unrtf
   - untex
   - vim
-  - virt-manager
   - wv
   - xournalpp
   - xsel

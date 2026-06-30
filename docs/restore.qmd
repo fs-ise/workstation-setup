@@ -1,0 +1,140 @@
+---
+title: "Set up/restore data"
+---
+
+Use this page after the operating system and managed software are installed.
+Software setup and data restoration are related, but separate operations: [Install software](install_software.html) configures the machine through Ansible; restore brings back user data, project state, synced folders, credentials, and backup connections.
+
+| Area | Typical location or service | Role in restore |
+|---|---|---|
+| Git repositories | `~/repos` | Clone active projects or restore local-only repositories from backup. |
+| Nextcloud folders | `~/Nextcloud` | Resync personal or shared folders selected for this workstation. |
+| Local workstation folders | `~/workstation` | Restore local working data that is not managed by Git or sync. |
+| HDD/Vorta/Borg backups | External HDD, Borg repository, Vorta profile | Recover local data and reconnect backup jobs. |
+| Thunderbird/profile data | Thunderbird profile directory | Restore from HDD backup. |
+| SSH/GPG/private keys | `~/.ssh`, GPG keyring, password manager | Handle manually and restore only from trusted sources when required. |
+
+: Restore sources and local targets
+
+Lab-specific directory names can differ. Use the table as a checklist, not as proof that every path exists on every workstation.
+
+## Initial setup versus data restore
+
+- **Initial setup** installs and configures the machine through Ansible: packages, roles, services, and documented defaults.
+- **Data restore** brings back user/project data, credentials, synced folders, and local state.
+
+Do not restore old system directories over a freshly configured machine unless there is a deliberate recovery plan.
+Prefer restoring user data and then rerunning the managed setup when configuration is missing.
+
+## Practical restore checklist
+
+- Restore or clone Git repositories.
+- Restore or sync Nextcloud folders.
+- Restore local workstation folders such as `~/workstation` if used.
+- Restore Thunderbird/profile data from HDD backup.
+- Reconnect Vorta/Borg backup jobs to the correct existing repositories.
+- Handle SSH, GPG, backup, and password-manager keys carefully.
+- Verify that key projects, sync folders, and backups work before treating the machine as ready.
+
+## 1. Restore Git repositories
+
+- Create the local directory you normally use for repositories, for example `~/repos`.
+- Clone active projects from GitHub or the institution Git server.
+- Restore local-only repositories from the most recent trusted backup if they were never pushed to a remote.
+- Check each restored repository before continuing work:
+
+```sh
+git status
+git remote -v
+git branch --show-current
+```
+
+## 2. Restore or sync Nextcloud
+
+- Install and start the Nextcloud desktop client from the software setup.
+- Sign in to the correct personal or shared Nextcloud account.
+- Select the folders that should be present on this workstation.
+- Wait for sync to finish before opening large project folders or reference libraries.
+
+::: {.callout-check}
+**✅ Check**
+
+```sh
+nextcloud --version
+find ~/Nextcloud -maxdepth 2 -type d 2>/dev/null | head
+```
+:::
+
+## 3. Restore local workstation folders
+
+Restore local folders such as `~/workstation`, `~/Documents`, or lab-specific working directories from the backup source used by the team.
+
+- Prefer restoring user data, not old system directories.
+- Be careful with symlinks; recreate them only when the target exists on the new machine.
+- Keep large generated files out of Git repositories unless the project explicitly requires them.
+
+## 4. Restore Thunderbird profile data if applicable
+
+If Thunderbird is used locally, restore profile data only from a trusted backup and only when account sync alone is insufficient.
+
+- Close Thunderbird before copying profile data.
+- Restore the relevant profile directory and then start Thunderbird.
+- Re-enter account passwords through the normal GUI prompts instead of storing them in documentation.
+
+## 5. Reconnect Vorta/Borg backup configuration
+
+If the workstation uses Vorta/Borg with external HDD backups:
+
+- Install the backup tools through the lab stack.
+- Connect the backup drive only when needed.
+- Open Vorta and reconnect existing Borg repositories rather than creating duplicate backup histories.
+- Confirm the repository path, encryption settings, and schedule with the lab-specific backup notes.
+
+Avoid running prune or delete operations until you are sure the new workstation is connected to the correct repository.
+
+## 6. Handle SSH, GPG, and private keys carefully
+
+::: {.callout-manual}
+**🔧 Manual setup and configuration**
+
+Private keys require manual review.
+
+- Prefer creating new SSH keys for a new workstation and registering the public key with GitHub or the institution service.
+- Restore old private keys only when continuity is required and the backup source is trusted.
+- Never paste private keys into tickets, chats, or documentation.
+- Restore GPG keys only if they are still needed for commit signing or encrypted archives.
+- Keep password manager recovery, disk encryption recovery, and backup passphrases available before depending on the restored machine.
+:::
+
+## Verification checklist after restore
+
+::: {.callout-check}
+**✅ Check**
+
+```sh
+git -C ~/repos/workstation-setup status
+ssh -T git@github.com
+nextcloud --version
+borg --version
+vorta --version
+thunderbird --version
+```
+:::
+
+Also check manually that:
+
+- active repositories are present and have the expected remotes,
+- Nextcloud reports that synchronization is complete,
+- important local folders are readable,
+- Thunderbird opens the expected profile if used,
+- Vorta shows the expected Borg repository and can list archives,
+- SSH/GPG keys are present only where needed.
+
+## Best practices and useful links
+
+- [Install software](install_software.html)
+- [Update software](update_software.html)
+- [GitHub SSH documentation](https://docs.github.com/en/authentication/connecting-to-github-with-ssh)
+- [Borg documentation](https://borgbackup.readthedocs.io/)
+- [Vorta documentation](https://vorta.borgbase.com/)
+- [Thunderbird profile documentation](https://support.mozilla.org/en-US/kb/profiles-where-thunderbird-stores-user-data)
