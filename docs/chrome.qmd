@@ -2,11 +2,4 @@
 title: "Chrome"
 ---
 
-TODO (extensions (automated?) + shortcuts? - TBD: extract from baseline?)
-
-Extensions:
-
-- Advanced URL Cleaner
-- Freedom
-- Languagetool
-- Obsidian picker
+Chrome configuration is currently a manual follow-up after installation. Extension automation and shared shortcut conventions are future work.

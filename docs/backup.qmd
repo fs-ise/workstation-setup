@@ -2,45 +2,52 @@
 title: "Backup and sync"
 ---
 
-Assumes a particular structure of directories
+This page describes the intended roles of GitHub, Nextcloud, and HDD backups. The exact folder names can vary by workstation or lab, so treat examples such as `~/repos`, `~/Nextcloud`, and `~/workstation` as conventions to confirm locally.
 
-- Nextcloud (shared and personal dirs)
-- repos
-- workstation (local / symlinks / GTD)
+## What belongs where
 
-## External data sources
+- **GitHub or another Git remote:** source code, text-based research projects, documentation, and versioned configuration that can be shared or made private as needed.
+- **Nextcloud:** documents, PDFs, media, shared project folders, and files that should synchronize across devices but are not good Git content.
+- **HDD backup with Vorta/Borg:** versioned encrypted backup of local home-folder data, including Git repositories, Nextcloud content, and local-only workstation folders.
 
-### Nextcloud
+Avoid storing secrets directly in Git or shared folders. Use a password manager or encrypted storage for credentials and recovery material.
 
-Serves as a synchronization mechanism. Nextcloud data is also backed up on HDD.
+## Daily routine
 
-Files (e.g., PDFs and media files that are not in git repositories or zipped archives of git repositories for completed projects; ideally stable, without symlinks, no unzipped git repositories; shared or personal)
+- Commit or stash important Git work before leaving the workstation.
+- Push active Git branches that should not remain local-only.
+- Check that Nextcloud has finished syncing important files.
+- Keep external backup drives disconnected unless a backup or restore is running.
 
-Additional "backup copy"
+## Weekly routine
 
-### GitHub
+- Connect the weekly backup HDD.
+- Run or verify the Vorta/Borg backup.
+- Check that the backup completed successfully before disconnecting the drive.
+- Review local-only folders and decide whether they should become Git repositories, Nextcloud folders, or remain backup-only.
 
-Serves as a synchronization mechanism. Repositories can be private or public. Git repositories can be local only. Repositories are also backed up on HDD.
+## Monthly routine
 
-Additional "backup copy" (even synced across devices)
+- Test that Vorta/Borg can list archives on the backup drive.
+- Restore a small non-sensitive test file to a temporary location.
+- Review whether important new folders are included in backup sources.
+- Confirm that password manager recovery and disk encryption recovery information are still accessible.
 
-### HDD backup
+## Emergency and recovery notes
 
-Covers all files in `/home/username` (including Nextcloud and Git repositories)
+Keep recovery material separate from the laptop and from a single cloud account:
 
-Based on Vorta/Borg
+- password manager recovery information,
+- disk encryption recovery keys if used,
+- Borg repository passphrases or key material,
+- GitHub or institution account recovery options,
+- setup media or a tested way to reinstall Fedora.
 
-- Protects against ransomware / cloud account compromise
-- HDD: versioned snapshots
-- HDD backups are encrypted
-- HDDs are disconnected (different weekly / monthly / annual HDDs)
+Do not document actual passwords, private keys, or recovery codes in this repository.
 
+## Best practices and useful links
 
-## Principles of data management
-
-- principles (what to store where/in line with backup strategy)
-- where to store confidential data/encrypt
-- where to store personal dotfiles and sensitive keys (best practices)
-- maybe even data lake + dense vector database (with search/indexing setup?)
-
-Emergency USB Sticks (passwords, keys, setup) - keep one or two copies separate from the laptop (bag)
+- [GitHub SSH documentation](https://docs.github.com/en/authentication/connecting-to-github-with-ssh)
+- [Nextcloud desktop client documentation](https://docs.nextcloud.com/desktop/latest/)
+- [Borg documentation](https://borgbackup.readthedocs.io/)
+- [Vorta documentation](https://vorta.borgbase.com/)

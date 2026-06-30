@@ -2,37 +2,37 @@
 title: "Update software"
 ---
 
-In this Ansible setup repository.
+Use this page for routine maintenance after a workstation has already been installed. The workflow updates this repository, reapplies the Ansible-managed lab stack, and checks for manually installed Fedora packages that are not documented in the setup.
 
-Note: runnint `dnf list installed` and using Codex or ChatGTP (with Github repository connected) helps to update ansible efficiently.
+## Routine workflow
 
-## Run an automated audit
-
-Detect package drift on Fedora workstations by listing manually installed packages that are not managed by this repository.
+Run these commands from the `workstation-setup` repository:
 
 ```sh
-ansible-playbook -i inventory -K playbooks/audit-unmanaged-packages.yml
-```
-
-Or:
-
-```sh
+git pull
+make lab-stack
 make audit-packages
 ```
 
-To report only (do not fail when unmanaged packages are found):
+The explicit Ansible equivalents are:
 
 ```sh
-ansible-playbook -i inventory -K playbooks/audit-unmanaged-packages.yml -e package_audit_fail_on_unmanaged=false
+git pull
+ansible-playbook -i inventory -K playbooks/lab-stack.yml
+ansible-playbook -i inventory -K playbooks/audit-unmanaged-packages.yml
 ```
 
-## What is an unmanaged package?
+Use `dnf list installed` or `dnf repoquery --userinstalled` when investigating local package state. AI coding tools can help draft Ansible changes, but review package names and repository changes before committing them.
+
+::: {.callout-note title="What is an unmanaged package?"}
 
 An unmanaged package is a package that is:
 
 - manually installed on the workstation,
 - not declared in this repository's Ansible-managed package list,
 - and not allowlisted by exact name or allowlist pattern.
+
+:::
 
 ## How filtering works
 
@@ -43,12 +43,19 @@ Fedora Workstation can report many base/system packages as user-installed. To ke
 
 These filters intentionally suppress expected Fedora Workstation/base noise. Packages that reflect deliberate workstation choices should be added to Ansible-managed package lists.
 
-## Resolve findings
+## Resolve audit findings
 
-- Add a package to managed package lists when Ansible should install and maintain it.
-- Add a package to `package_audit_allowlist` for intentional local exceptions by exact package name.
-- Add a targeted regex to `package_audit_allowlist_patterns` for expected Fedora/system package families.
+Choose one resolution for each finding:
+
+- Add the package to an Ansible-managed package list when all lab workstations should install and maintain it.
+- Add the package to `package_audit_allowlist` when it is an intentional local exception by exact package name.
+- Add a targeted regex to `package_audit_allowlist_patterns` only for expected Fedora/system package families where exact names are too noisy.
+
+Keep allowlist patterns narrow. Broad patterns can hide real workstation drift.
 
 ## Best practices and useful links
 
-- [Ansible Automation at Uber scale](https://www.uber.com/de/en/blog/ansible-automation-powers/)
+- [Ansible playbook guide](https://docs.ansible.com/ansible/latest/playbook_guide/playbooks_intro.html)
+- [DNF command reference](https://dnf.readthedocs.io/en/latest/command_ref.html)
+- [Troubleshooting](troubleshooting.html)
+- [How Ansible Automation Powers the Uber Corporate Network at a Global Scale](https://www.uber.com/de/en/blog/ansible-automation-powers/)

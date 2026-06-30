@@ -2,33 +2,4 @@
 title: "Thunderbird"
 ---
 
-TODO (extensions (automated?) + shortcuts? - TBD: extract from baseline?)
-TBD: best practices for folder structure and archive?
-
-TBD: JP-addon?
-
-::: {.callout-manual}
-**🔧 Manual setup and configuration**
-
-Install extensions:
-
-- LanguageTool (with config)
-- mailmindr
-- [move-mail-shortcuts](https://services.addons.thunderbird.net/En-us/thunderbird/addon/move-mail-shortcuts/)
-- Owl for Exchange
-
-TBD: FiltaQuilly, SmartTemplates??
-
-Set up signature, self-cc
-
-:::
-
-
-Key shortcuts:
-
-- `N` next unread message
-- `P` previous unread message
-- `A` archive message
-- `Ctrl+R` respond
-- `Ctrl+Shift+1` tickle message
-- `Alt+W` to move message to waiting-for (based on move-mail-shortcuts extension)
+Thunderbird profile and extension setup is currently manual. Restore profile data only from trusted backups and prefer normal account sign-in when possible.

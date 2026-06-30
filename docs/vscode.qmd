@@ -1,5 +1,5 @@
 ---
-title: "VSCode"
+title: "VS Code"
 ---
 
-TODO (extensions (automated?) + shortcuts?)
+VS Code configuration is currently documented as a manual follow-up after installation. Extension automation and shortcut conventions are future work.

@@ -2,4 +2,4 @@
 title: "Teams"
 ---
 
-TODO
+Teams for Linux is installed by the lab stack when the `teams` tag is run. Sign in manually with the appropriate work or institution account.

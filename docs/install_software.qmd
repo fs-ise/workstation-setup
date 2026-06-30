@@ -2,44 +2,58 @@
 title: "Install software"
 ---
 
-Software can be installed with a single Ansible playbook command:
+Run the lab stack after completing [Install OS/Ansible](install_os.html). The beginner-facing command is the Makefile target:
 
 ```sh
-# in workstation-setup repository:
+make lab-stack
+```
+
+The explicit equivalent is:
+
+```sh
 ansible-playbook -i inventory -K playbooks/lab-stack.yml
 ```
 
-Ansible playbooks are designed to be **idempotent**:
-they describe the desired final state of the workstation. When you rerun the command, Ansible checks what is already installed or configured and only applies missing or changed steps.
-This makes repeated runs safe, for example after an interrupted installation or after changing `host_vars/localhost.yml`.
-
-
-Next, continue with the manual setup and configuration if necessary:
+Ansible playbooks are designed to be **idempotent**: they describe the desired final state of the workstation. When you rerun the command, Ansible checks what is already installed or configured and only applies missing or changed steps. This makes repeated runs safe after an interrupted installation or after changing documented configuration.
 
 ::: {.callout-manual}
 **🔧 Manual setup and configuration**
 
-After the installation, complete the manual configuration steps for the software you need (see the configuration menu on the left).
+After the automated installation, complete only the manual steps for software you use:
+
+- Set up GitHub SSH/GPG identity and workstation basics in [Baseline](baseline.html).
+- Log out and back in before testing Docker group access; see [Docker](docker.html).
+- Configure browsers and extensions in [Chrome](chrome.html) if needed.
+- Sign in to editors, extensions, and settings sync in [VS Code](vscode.html) if needed.
+- Start or verify local research services in [GROBID](grobid.html) and [LanguageTool](languagetool.html) if you use them.
+- Configure OCR workflows in [OCR](ocr.html) and Quarto publishing in [Quarto](quarto.html) if relevant.
 :::
 
+::: {.callout-check}
+**✅ Check**
 
-::: {.callout-note title="Details" collapse=true}
+```sh
+make lab-stack
+make audit-packages
+```
+:::
 
-If you encounter the error "dnf config-manager: command not found", run the following:
+::: {.callout-note title="Advanced: explicit commands and tags" collapse=true}
+
+If you encounter `dnf config-manager: command not found`, install the DNF plugin package and rerun the setup:
 
 ```sh
 sudo dnf -y install dnf-plugins-core
-ansible-playbook -i inventory -K playbooks/lab-stack.yml
+make lab-stack
 ```
 
-Run only one role:
+Run only one playbook tag when you need to test or reapply a specific area:
 
 ```sh
 ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags baseline
 ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags ocr
 ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags virtualbox
 ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags docker
-ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags local_llm
 ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags grobid
 ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags languagetool
 ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags quarto
@@ -49,6 +63,15 @@ ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags teams
 ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags desktop
 ```
 
-You can also combine tags, e.g. `--tags baseline,docker,grobid,vscode`.
+You can also combine tags, for example:
 
+```sh
+ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags baseline,docker,grobid,vscode
+```
 :::
+
+## Best practices and useful links
+
+- [Ansible playbook guide](https://docs.ansible.com/ansible/latest/playbook_guide/playbooks_intro.html)
+- [Repository structure](repo_structure.html)
+- [Troubleshooting](troubleshooting.html)

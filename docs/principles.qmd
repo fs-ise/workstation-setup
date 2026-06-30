@@ -2,4 +2,30 @@
 title: "Principles"
 ---
 
-open-source, security, reproducibility, simplicity, documentation
+These principles guide changes to the workstation setup documentation and automation.
+
+## Reproducibility
+
+A new team member should be able to rebuild a workstation from documented steps, committed Ansible roles, and clearly marked manual actions. Prefer commands that can be rerun safely.
+
+## Open-source orientation
+
+Prefer open-source tools and documented system packages where they meet the lab need. Use external proprietary services only when they are an explicit requirement and document the manual account or GUI setup they need.
+
+## Security and least surprise
+
+Do not silently overwrite user configuration, disable security features, or handle private keys automatically. Make risky or manual steps visible, explain why they are needed, and provide verification commands where possible.
+
+## Simplicity
+
+Keep roles focused, commands copy-pasteable, and documentation short enough to follow during an actual setup. Avoid speculative sections and long duplicate reference tables.
+
+## Documentation as configuration
+
+Documentation is part of the setup. When a role, tag, command, or manual step changes, update the corresponding page so that the website remains an accurate workstation manual.
+
+## Best practices and useful links
+
+- [Repository structure](repo_structure.html)
+- [Troubleshooting](troubleshooting.html)
+- [Ansible best practices](https://docs.ansible.com/ansible/latest/tips_tricks/ansible_tips_tricks.html)

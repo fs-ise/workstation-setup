@@ -3,7 +3,11 @@ project:
 
 website:
   title: "workstation-setup"
+  favicon: favicon.png
+
   sidebar:
+    logo: logo.png
+
     contents:
       - href: index.qmd
         text: Home
@@ -48,3 +52,8 @@ format:
       - brand
     css: styles.css
     toc: false
+    grid:
+      sidebar-width: 280px
+      body-width: 1000px
+      margin-width: 280px
+      gutter-width: 1.5rem

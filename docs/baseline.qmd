@@ -37,4 +37,4 @@ ssh -T git@github.com
 :::
 
 
-TODO/TBD: integrate the desktop-gnome role? / extract thunderbird?
+Future work: decide whether desktop GNOME and Thunderbird setup should be documented here or split into separate role pages.

@@ -1,5 +1,5 @@
 ---
-title: "Virtualbox"
+title: "VirtualBox"
 ---
 
-TODO
+VirtualBox is installed by the lab stack when the `virtualbox` tag is run. Add VM-specific setup notes here when the lab has a shared convention.
