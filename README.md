@@ -2,18 +2,6 @@
 
 See the [docs](https://fs-ise.github.io/workstation-setup/).
 
-## Run the main workstation setup
-
-```sh
-make lab-stack
-```
-
-Equivalent explicit command:
-
-```sh
-ansible-playbook -i inventory -K playbooks/lab-stack.yml
-```
-
 ## Audit unmanaged Fedora/DNF packages
 
 See documentation: [Update software](docs/update_software.qmd).
