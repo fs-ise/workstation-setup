@@ -2,15 +2,21 @@
 title: "workstation-setup"
 ---
 
-This repository documents a structured, reproducible workstation setup used by [FS-ISE](https://fs-ise.github.io/handbook/).
-It brings together operating system installation, software provisioning, data management, and day-to-day workflows into a single, automated pipeline based on Ansible.
-The goal is twofold: 
 
-1. to provide a reliable and transparent setup for research and knowledge work within the lab, and
-2. to offer a reusable blueprint that others can adapt to their own environments.
+This repository documents a reproducible workstation setup used by [FS-ISE](https://fs-ise.github.io/handbook/).
+It treats a workstation as something that should be installed consistently, configured efficiently, and kept understandable for a small but growing team.
 
-By combining infrastructure-as-code with documented practices (from initial machine setup to ongoing operations),
-the project aims to reduce setup friction, improve consistency across devices, and make workstation configurations easier to share, reproduce, and evolve.
+The vision is pragmatic:
+
+- make new machines transparent and reproducible,
+- share setup knowledge as reviewed documentation and code,
+- minimize configuration drift between machines,
+- automate installation and configuration where possible, and
+- keep room for explicit manual steps when accounts, credentials, or lab-specific choices cannot be automated safely.
+
+Research work often depends on fast-moving open-source software, custom tools, and local services.
+Ansible is the mechanism used here to turn that changing setup knowledge into a programmatic desired state: packages, configuration files, services, and checks can be reviewed in Git, applied to a new machine, and reapplied during maintenance.
+The diagram shows how the same repository connects initial setup, recurring updates, backup/sync, and data restoration.
 
 ```{mermaid}
 flowchart LR
@@ -56,9 +62,9 @@ flowchart LR
 
 
 ::: {.callout-note title="Why Ansible?"}
-Workstation setup is a recurring configuration-management task:
-the same packages, defaults, accounts, and documentation links need to be applied consistently across notebooks and external drives.
+Workstation setup is a recurring configuration-management task.
+The same packages, defaults, accounts, and documentation links need to be applied consistently across notebooks and external drives.
 Ansible is useful here because the desired setup can be documented as code, reviewed in Git, rerun after changes, and reused as the setup evolves.
-Large-scale engineering organizations use this pattern for routine configuration enforcement;
-for example, Uber describes Ansible playbooks for daily backup, generation, and push workflows in its corporate network setup: [How Ansible Automation Powers the Uber Corporate Network at a Global Scale](https://www.uber.com/de/en/blog/ansible-automation-powers/).
+
+See how Uber uses Ansible playbooks for daily backup, generation, and push workflows in its corporate network setup: [How Ansible Automation Powers the Uber Corporate Network at a Global Scale](https://www.uber.com/de/en/blog/ansible-automation-powers/).
 :::

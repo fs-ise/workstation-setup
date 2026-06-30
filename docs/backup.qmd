@@ -2,13 +2,18 @@
 title: "Backup and sync"
 ---
 
-This page describes the intended roles of GitHub, Nextcloud, and HDD backups. The exact folder names can vary by workstation or lab, so treat examples such as `~/repos`, `~/Nextcloud`, and `~/workstation` as conventions to confirm locally.
+This page describes the intended roles of GitHub, Nextcloud, and HDD backups.
 
-## What belongs where
+The workstation setup uses the following default directory conventions:
 
-- **GitHub or another Git remote:** source code, text-based research projects, documentation, and versioned configuration that can be shared or made private as needed.
-- **Nextcloud:** documents, PDFs, media, shared project folders, and files that should synchronize across devices but are not good Git content.
-- **HDD backup with Vorta/Borg:** versioned encrypted backup of local home-folder data, including Git repositories, Nextcloud content, and local-only workstation folders.
+| Area                   |            Default location | Purpose                                                                       |
+| ---------------------------- | :-------------------------- | ----------------------------------------------------------------------------- |
+| Git repositories       |                   `~/repos` | Source code, documentation, text-based projects, and versioned configuration. |
+| Nextcloud folders      |               `~/Nextcloud` | Synced documents, PDFs, media, and shared project folders.                    |
+| Local workstation data |             `~/workstation` | Local working data that is not managed through Git or Nextcloud.              |
+| HDD backup             | External HDD                | Versioned encrypted backup of local workstation data (via Vorta/Borg).        |
+
+<br>
 
 Avoid storing secrets directly in Git or shared folders. Use a password manager or encrypted storage for credentials and recovery material.
 

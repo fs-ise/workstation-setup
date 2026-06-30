@@ -2,19 +2,20 @@
 title: "Install software"
 ---
 
-Run the lab stack after completing [Install OS/Ansible](install_os.html). The beginner-facing command is the Makefile target:
-
-```sh
-make lab-stack
-```
-
-The explicit equivalent is:
+Use this page to apply the managed workstation configuration to a new or freshly prepared machine after completing [Install OS/Ansible](install_os.html).
+Installing software through Ansible makes the setup repeatable, reviewable, and easier to share across the team.
 
 ```sh
 ansible-playbook -i inventory -K playbooks/lab-stack.yml
 ```
+The command applies the desired state for the first time.
+[Update software](update_software.html) reapplies and audits that same state during routine maintenance.
+Both workflows rely on Ansible and documented package policy rather than manual, undocumented changes.
 
-Ansible playbooks are designed to be **idempotent**: they describe the desired final state of the workstation. When you rerun the command, Ansible checks what is already installed or configured and only applies missing or changed steps. This makes repeated runs safe after an interrupted installation or after changing documented configuration.
+Ansible playbooks are designed to be **idempotent**: 
+they describe the desired final state of the workstation.
+When you rerun the command, Ansible checks what is already installed or configured and only applies missing or changed steps.
+This makes repeated runs safe after an interrupted installation or after changing documented configuration.
 
 ::: {.callout-manual}
 **🔧 Manual setup and configuration**
@@ -29,23 +30,7 @@ After the automated installation, complete only the manual steps for software yo
 - Configure OCR workflows in [OCR](ocr.html) and Quarto publishing in [Quarto](quarto.html) if relevant.
 :::
 
-::: {.callout-check}
-**✅ Check**
-
-```sh
-make lab-stack
-make audit-packages
-```
-:::
-
 ::: {.callout-note title="Advanced: explicit commands and tags" collapse=true}
-
-If you encounter `dnf config-manager: command not found`, install the DNF plugin package and rerun the setup:
-
-```sh
-sudo dnf -y install dnf-plugins-core
-make lab-stack
-```
 
 Run only one playbook tag when you need to test or reapply a specific area:
 
@@ -72,6 +57,7 @@ ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags baseline,docker,
 
 ## Best practices and useful links
 
+- [Update software](update_software.html)
 - [Ansible playbook guide](https://docs.ansible.com/ansible/latest/playbook_guide/playbooks_intro.html)
 - [Repository structure](repo_structure.html)
 - [Troubleshooting](troubleshooting.html)

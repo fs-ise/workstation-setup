@@ -2,7 +2,39 @@
 title: "Set up/restore data"
 ---
 
-Use this checklist after the operating system and base software are installed. Restore only data that belongs on the workstation, and keep private keys and credentials under deliberate manual control.
+Use this page after the operating system and managed software are installed.
+Software setup and data restoration are related, but separate operations: [Install software](install_software.html) configures the machine through Ansible; restore brings back user data, project state, synced folders, credentials, and backup connections.
+
+| Area | Typical location or service | Role in restore |
+|---|---|---|
+| Git repositories | `~/repos` | Clone active projects or restore local-only repositories from backup. |
+| Nextcloud folders | `~/Nextcloud` | Resync personal or shared folders selected for this workstation. |
+| Local workstation folders | `~/workstation` | Restore local working data that is not managed by Git or sync. |
+| HDD/Vorta/Borg backups | External HDD, Borg repository, Vorta profile | Recover local data and reconnect backup jobs. |
+| Thunderbird/profile data | Thunderbird profile directory | Restore from HDD backup. |
+| SSH/GPG/private keys | `~/.ssh`, GPG keyring, password manager | Handle manually and restore only from trusted sources when required. |
+
+: Restore sources and local targets
+
+Lab-specific directory names can differ. Use the table as a checklist, not as proof that every path exists on every workstation.
+
+## Initial setup versus data restore
+
+- **Initial setup** installs and configures the machine through Ansible: packages, roles, services, and documented defaults.
+- **Data restore** brings back user/project data, credentials, synced folders, and local state.
+
+Do not restore old system directories over a freshly configured machine unless there is a deliberate recovery plan.
+Prefer restoring user data and then rerunning the managed setup when configuration is missing.
+
+## Practical restore checklist
+
+- Restore or clone Git repositories.
+- Restore or sync Nextcloud folders.
+- Restore local workstation folders such as `~/workstation` if used.
+- Restore Thunderbird/profile data from HDD backup.
+- Reconnect Vorta/Borg backup jobs to the correct existing repositories.
+- Handle SSH, GPG, backup, and password-manager keys carefully.
+- Verify that key projects, sync folders, and backups work before treating the machine as ready.
 
 ## 1. Restore Git repositories
 
@@ -100,6 +132,8 @@ Also check manually that:
 
 ## Best practices and useful links
 
+- [Install software](install_software.html)
+- [Update software](update_software.html)
 - [GitHub SSH documentation](https://docs.github.com/en/authentication/connecting-to-github-with-ssh)
 - [Borg documentation](https://borgbackup.readthedocs.io/)
 - [Vorta documentation](https://vorta.borgbase.com/)
