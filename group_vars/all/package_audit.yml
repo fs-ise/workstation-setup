@@ -148,6 +148,7 @@ package_audit_managed_packages:
   - gnupg2
   - hplip
   - hplip-gui
+  - jdupes
   - keepassxc
   - libxslt
   - nemo

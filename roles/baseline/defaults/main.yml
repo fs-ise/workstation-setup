@@ -65,6 +65,7 @@ baseline_install_packages_best_effort:
   - gnupg2
   - hplip
   - hplip-gui
+  - jdupes
   - keepassxc
   - libxslt
   - nemo
