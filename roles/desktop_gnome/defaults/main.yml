@@ -61,6 +61,16 @@ gnome_hot_corner:
   - key: "/org/gnome/desktop/interface/enable-hot-corners"
     value: false
 
+nemo_preview_preferences:
+  - key: "/org/nemo/preferences/show-image-thumbnails"
+    value: "'local-only'"
+
+  - key: "/org/nemo/preferences/inherit-show-thumbnails"
+    value: false
+
+  - key: "/org/nemo/preferences/thumbnail-limit"
+    value: "uint64 104857600"
+
 german_us_keyboard_layout:
   - key: "/org/gnome/desktop/input-sources/sources"
     value: "[('xkb', 'de'), ('xkb', 'us')]"

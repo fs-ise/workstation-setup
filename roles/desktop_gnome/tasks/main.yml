@@ -160,6 +160,14 @@
     value: "{{ item.value }}"
   loop: "{{ gnome_hot_corner }}"
 
+- name: Configure Nemo thumbnail previews
+  become: true
+  become_user: "{{ target_user }}"
+  community.general.dconf:
+    key: "{{ item.key }}"
+    value: "{{ item.value }}"
+  loop: "{{ nemo_preview_preferences }}"
+
 - name: Add both DE and US keyboard layout
   become: true
   become_user: "{{ target_user }}"
