@@ -12,19 +12,6 @@
     update_cache: true
   failed_when: false
 
-- name: Try to install Thunderbird via dnf
-  ansible.builtin.dnf:
-    name: thunderbird
-    state: present
-  register: desktop_gnome_thunderbird_dnf
-  failed_when: false
-
-- name: Install Thunderbird via Flatpak fallback
-  community.general.flatpak:
-    name: org.mozilla.Thunderbird
-    state: present
-  when: desktop_gnome_thunderbird_dnf is failed
-
 - name: Install Obsidian and Vorta via Flatpak
   community.general.flatpak:
     name: "{{ item }}"

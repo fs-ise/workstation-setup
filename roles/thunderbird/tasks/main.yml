@@ -1,0 +1,79 @@
+---
+- name: Try to install Thunderbird via dnf
+  ansible.builtin.dnf:
+    name: thunderbird
+    state: present
+  register: thunderbird_dnf
+  failed_when: false
+
+- name: Install Thunderbird via Flatpak fallback
+  community.general.flatpak:
+    name: org.mozilla.Thunderbird
+    state: present
+  when: thunderbird_dnf is failed
+
+- name: Ensure Thunderbird policies directory exists
+  ansible.builtin.file:
+    path: "{{ thunderbird_policies_dir }}"
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+  when: thunderbird_extensions_enabled | bool
+
+- name: Check existing Thunderbird policies file
+  ansible.builtin.stat:
+    path: "{{ thunderbird_policies_file }}"
+  register: thunderbird_policies_stat
+  when: thunderbird_extensions_enabled | bool
+
+- name: Read existing Thunderbird policies file
+  ansible.builtin.slurp:
+    path: "{{ thunderbird_policies_file }}"
+  register: thunderbird_existing_policies_slurp
+  when:
+    - thunderbird_extensions_enabled | bool
+    - thunderbird_policies_stat.stat.exists
+
+- name: Parse existing Thunderbird policies
+  ansible.builtin.set_fact:
+    thunderbird_existing_policies: "{{ (thunderbird_existing_policies_slurp.content | b64decode | from_json) if thunderbird_policies_stat.stat.exists else {'policies': {}} }}"
+  when: thunderbird_extensions_enabled | bool
+
+- name: Initialize Thunderbird extension settings policy
+  ansible.builtin.set_fact:
+    thunderbird_extension_settings: {}
+  when: thunderbird_extensions_enabled | bool
+
+- name: Build Thunderbird extension settings policy
+  ansible.builtin.set_fact:
+    thunderbird_extension_settings: "{{ thunderbird_extension_settings | default({}) | combine({ item.id: {'installation_mode': 'normal_installed', 'install_url': item.install_url} }, recursive=True) }}"
+  loop: "{{ thunderbird_extensions }}"
+  loop_control:
+    label: "{{ item.name }}"
+  when:
+    - thunderbird_extensions_enabled | bool
+    - item.id is defined
+    - item.id | length > 0
+    - item.install_url is defined
+    - item.install_url | length > 0
+
+- name: Merge Thunderbird extension settings into policies
+  ansible.builtin.set_fact:
+    thunderbird_policies_document: >-
+      {{ thunderbird_existing_policies | combine({
+        'policies': (thunderbird_existing_policies.policies | default({})) | combine({
+          'ExtensionSettings': (thunderbird_existing_policies.policies.ExtensionSettings | default({})) | combine(thunderbird_extension_settings | default({}), recursive=True)
+        }, recursive=True)
+      }, recursive=True) }}
+  when: thunderbird_extensions_enabled | bool
+
+- name: Write Thunderbird enterprise policies
+  ansible.builtin.template:
+    src: policies.json.j2
+    dest: "{{ thunderbird_policies_file }}"
+    owner: root
+    group: root
+    mode: "0644"
+  notify: Report Thunderbird policy change
+  when: thunderbird_extensions_enabled | bool

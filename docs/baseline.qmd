@@ -37,4 +37,4 @@ ssh -T git@github.com
 :::
 
 
-Future work: decide whether desktop GNOME and Thunderbird setup should be documented here or split into separate role pages.
+Future work: decide whether additional desktop GNOME setup should be documented here or kept in separate role pages.

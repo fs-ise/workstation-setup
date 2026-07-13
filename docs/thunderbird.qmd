@@ -2,4 +2,82 @@
 title: "Thunderbird"
 ---
 
-Thunderbird profile and extension setup is currently manual. Restore profile data only from trusted backups and prefer normal account sign-in when possible.
+**TODO: test on second laptop**
+
+Install Thunderbird and the curated extension policy through the `thunderbird` role, then configure accounts and profile data manually.
+
+```sh
+ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags thunderbird
+```
+
+If you restore the Thunderbird profile path from a previous installation, the manual account and workflow setup below should usually not be necessary.
+Restore profile data only from trusted backups and prefer normal account sign-in when possible.
+
+::: {.callout-manual}
+**🔧 Manual setup and configuration**
+
+- Run the `thunderbird` role before configuring Thunderbird accounts.
+- Add institutional and project email accounts through Thunderbird account setup.
+- Restore profile data only from a trusted backup, and prefer fresh account sign-in when possible.
+- Review extension permissions before enabling extensions, especially extensions that can read messages or connect Thunderbird to AI assistants.
+- Create a folder named `Waiting for` or `Waiting-for` if you use the waiting-for workflow.
+- When sending a message that requires follow-up, add your own address in `Cc`.
+- Add an automatic copy or filter rule that moves self-cc messages into the waiting-for folder.
+:::
+
+The `thunderbird` role installs the following extensions through Thunderbird Enterprise Policies.
+They use `installation_mode: normal_installed`, so Thunderbird installs them automatically but users can still disable extensions they do not need.
+
+| Extension | Why install it |
+| --- | --- |
+| [AI Grammar Checker & Paraphraser -- LanguageTool](https://languagetool.org/thunderbird) | Adds grammar, spelling, punctuation, and style checks while composing email. Use it with the local [LanguageTool setup](languagetool.qmd) when possible. |
+| [FiltaQuilla](https://services.addons.thunderbird.net/en-US/thunderbird/addon/filtaquilla/) | Extends Thunderbird message filters with extra actions and search terms. Use it for workflow rules that Thunderbird cannot express by default. |
+| [mailmindr](https://mailmindr.net/) | Moves messages out of the inbox when you cannot currently act on them, then reminds you when follow-up is due. Use it for time-bound replies, delegated work, and review tasks. |
+| [Move Mail Shortcuts](https://services.addons.thunderbird.net/en-US/thunderbird/addon/move-mail-shortcuts/) | Adds keyboard shortcuts for moving and copying mail to folders. Use it to file messages quickly without interrupting reading flow. |
+| [Owl for Exchange](https://services.addons.thunderbird.net/en-US/thunderbird/addon/owl-for-exchange/) | Connects Thunderbird to Exchange and Microsoft 365 accounts through Outlook Web Access when standard IMAP/SMTP or OAuth setup is not sufficient. Check license terms before relying on it. |
+| [Thunderbird MCP](https://github.com/TKasperczyk/thunderbird-mcp) | Exposes Thunderbird mail, contacts, and calendars to local AI assistants through MCP. Treat it as sensitive access: disable it unless needed and review its configuration carefully. |
+
+
+## Email workflow best practices
+
+Use Thunderbird as a working queue, not as long-term visible clutter.
+
+### Keep the inbox empty
+
+- Treat the inbox as an action list.
+- Decide each message once: reply, delegate, file, convert to a task, or delete.
+- Move reference messages out of the inbox after reading.
+- Use the waiting-for folder for delegated or pending replies instead of leaving sent follow-ups in the inbox.
+
+### Use a waiting-for rule
+
+Use a dedicated waiting-for workflow for messages where you need a reply or external action.
+
+- Create a folder named `Waiting for` or `Waiting-for`.
+- When sending a message that requires follow-up, add your own address in `Cc`.
+- Add an automatic copy or filter rule that moves self-cc messages into the waiting-for folder.
+- Use mailmindr for dated reminders when a response is needed by a specific deadline.
+- Review the waiting-for folder during daily or weekly email triage, then archive completed threads.
+
+### Archive email deliberately
+
+- Archive messages that are complete but may be useful later.
+- Keep folder names practical and stable; avoid over-classifying messages into many rarely used folders.
+- Prefer Thunderbird search for retrieval instead of maintaining a complex folder hierarchy.
+- Do not archive messages that contain credentials or unnecessary sensitive data; delete those when retention is not required.
+
+### Set a professional footer
+
+- Configure a concise signature in **Account Settings > Signature text**.
+- Include name, role or affiliation, and relevant institutional contact details.
+- Keep the footer short; avoid large images, tracking pixels, and long legal disclaimers unless required by the institution.
+- Use plain text or simple HTML so the footer remains readable in mailing lists and plain-text clients.
+
+## Best practices and useful links
+
+- [Thunderbird support](https://support.mozilla.org/products/thunderbird)
+- [Thunderbird add-ons](https://addons.thunderbird.net/)
+- [LanguageTool setup in this repository](languagetool.qmd)
+- [LanguageTool for Thunderbird](https://languagetool.org/thunderbird)
+- [mailmindr documentation](https://mailmindr.net/)
+- [Thunderbird MCP project](https://github.com/TKasperczyk/thunderbird-mcp)

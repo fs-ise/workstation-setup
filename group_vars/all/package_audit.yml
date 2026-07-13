@@ -208,8 +208,10 @@ package_audit_managed_packages:
   # roles/desktop_gnome
   - dropbox
   - nautilus-dropbox
-  - thunderbird
   - python3-psutil
+
+  # roles/thunderbird
+  - thunderbird
 
   # roles/teams_for_linux
   - teams-for-linux

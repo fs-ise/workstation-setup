@@ -1,0 +1,4 @@
+---
+- name: Report Thunderbird policy change
+  ansible.builtin.debug:
+    msg: Thunderbird policies changed. Restart Thunderbird for policy changes to apply.
