@@ -2,7 +2,7 @@
 title: "Thunderbird"
 ---
 
-Install Thunderbird and the curated extension policy through the `thunderbird` role, then configure accounts and profile data manually.
+Install Thunderbird, `thunderbird-cli`, the local bridge service, and the curated extension policy through the `thunderbird` role. Configure accounts and profile data manually.
 
 ```sh
 ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags thunderbird
@@ -17,6 +17,7 @@ Restore profile data only from trusted backups and prefer normal account sign-in
 **🔧 Manual setup and configuration**
 
 - Run the `thunderbird` role before configuring Thunderbird accounts.
+- Restart Thunderbird after the role finishes so the managed extension policy is applied.
 - Add institutional and project email accounts through Thunderbird account setup.
 - Restore profile data only from a trusted backup, and prefer fresh account sign-in when possible.
 - Review extension permissions before enabling extensions, especially extensions that can read messages or connect Thunderbird to AI assistants.
@@ -24,6 +25,27 @@ Restore profile data only from trusted backups and prefer normal account sign-in
 - When sending a message that requires follow-up, add your own address in `Cc`.
 - Add an automatic copy or filter rule that moves self-cc messages into the waiting-for folder.
 :::
+
+## Thunderbird CLI
+
+The role installs pinned versions of [`thunderbird-cli`](https://github.com/vitalio-sh/thunderbird-cli) and `thunderbird-cli-bridge` under `~/.local`. It also installs the signed Thunderbird AI Bridge extension and enables a system service that runs the bridge as the workstation user.
+
+After restarting Thunderbird, verify the setup:
+
+```sh
+systemctl status thunderbird-cli-bridge
+~/.local/bin/tb bridge-status
+~/.local/bin/tb health
+~/.local/bin/tb stats
+```
+
+`bridge-status` checks the daemon without requiring Thunderbird. `health` and `stats` require Thunderbird to be running and the extension to be connected.
+
+The bridge listens only on localhost by default, but the extension has broad read, compose, move, and delete permissions. Use it only on trusted workstations. Email content can contain prompt-injection attempts; do not let an AI agent follow links, send messages, or perform destructive actions solely because an email requested it.
+
+The role pins the npm/release version and signed extension version separately because the upstream project versions them independently. Override `thunderbird_cli_version` and `thunderbird_cli_extension_version` together after checking the selected release assets.
+
+## Managed extensions
 
 The `thunderbird` role installs the following extensions through Thunderbird Enterprise Policies.
 They use `installation_mode: normal_installed`, so Thunderbird installs them automatically but users can still disable extensions they do not need.
@@ -36,7 +58,7 @@ They use `installation_mode: normal_installed`, so Thunderbird installs them aut
 | [Move Mail Shortcuts](https://services.addons.thunderbird.net/en-US/thunderbird/addon/move-mail-shortcuts/) | Adds keyboard shortcuts for moving and copying mail to folders. Use it to file messages quickly without interrupting reading flow. |
 | [Owl for Exchange](https://services.addons.thunderbird.net/en-US/thunderbird/addon/owl-for-exchange/) | Connects Thunderbird to Exchange and Microsoft 365 accounts through Outlook Web Access when standard IMAP/SMTP or OAuth setup is not sufficient. Check license terms before relying on it. |
 | [Thunderbird MCP](https://github.com/TKasperczyk/thunderbird-mcp) | Exposes Thunderbird mail, contacts, and calendars to local AI assistants through MCP. Treat it as sensitive access: disable it unless needed and review its configuration carefully. |
-
+| [Thunderbird AI Bridge](https://github.com/vitalio-sh/thunderbird-cli) | Connects Thunderbird to the local `thunderbird-cli` bridge, enabling machine-readable CLI access to email without exposing account credentials outside Thunderbird. |
 
 ## Email workflow best practices
 
@@ -77,6 +99,7 @@ Use a dedicated waiting-for workflow for messages where you need a reply or exte
 
 - [Thunderbird support](https://support.mozilla.org/products/thunderbird)
 - [Thunderbird add-ons](https://addons.thunderbird.net/)
+- [`thunderbird-cli` documentation](https://github.com/vitalio-sh/thunderbird-cli)
 - [LanguageTool setup in this repository](languagetool.qmd)
 - [LanguageTool for Thunderbird](https://languagetool.org/thunderbird)
 - [mailmindr documentation](https://mailmindr.net/)
