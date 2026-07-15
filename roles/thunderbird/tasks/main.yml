@@ -38,6 +38,7 @@
   become: true
   become_user: "{{ target_user }}"
   environment:
+    HOME: "{{ target_home }}"
     NPM_CONFIG_PREFIX: "{{ thunderbird_cli_npm_prefix }}"
   loop: "{{ thunderbird_cli_npm_packages }}"
   when: thunderbird_cli_enabled | bool
