@@ -28,12 +28,14 @@ flowchart TD
 
   %% Day-to-day flow
   subgraph Daily["<strong>Day-to-day operations</strong>"]
-     AUpd["<a href='update_software.html'>Update software</a>"] <--> S[<a href='backup.html'>Backup and sync</a>]
+     AUpd["<a href='update_software.html'>Update software</a>"] --> S[<a href='backup.html'>Backup and sync</a>]
+     S --> AUpd
   end
-  A <--> AUpd
-  S -- ~/* --> BK
-  S <-- ~/repos* --> GH
-  S <-- ~/Nextcloud* --> NC
+  A <-.-> AUpd
+
+  S -. "~/*" .-> BK
+  S <-. ~/repos* .-> GH
+  S <-. ~/Nextcloud* .-> NC
 
 
   %% New machine flow
@@ -42,12 +44,11 @@ flowchart TD
     OS --> AInst["<a href='install_software.html'>Install software</a>"] --> R
     R[<a href='restore.html'>Set up/restore data</a>]
   end
-  A --> AInst
-  AUpd -.- AInst
+  A -.-> AInst
 
-  BK --> R
-  GH --> R
-  NC --> R
+  BK -.-> R
+  GH -.-> R
+  NC -.-> R
 
   %% Styling
   classDef highlight fill:#ffec99,stroke:#f08c00,stroke-width:3px,color:#1b1b1b;
