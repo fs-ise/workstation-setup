@@ -2,11 +2,17 @@
 thunderbird_policies_dir: /etc/thunderbird/policies
 thunderbird_policies_file: "{{ thunderbird_policies_dir }}/policies.json"
 
-# Extensions are installed through Thunderbird Enterprise Policies with
-# installation_mode=normal_installed, not force_installed. Thunderbird installs
-# them automatically, but users can still disable them.
-thunderbird_extensions_enabled: true
-thunderbird_extensions:
+thunderbird_mcp_enabled: true
+thunderbird_mcp_version: "0.7.4"
+thunderbird_mcp_install_dir: /opt/thunderbird-mcp
+thunderbird_mcp_repository: https://github.com/TKasperczyk/thunderbird-mcp.git
+thunderbird_mcp_extension_id: thunderbird-mcp@tkasperczyk.dev
+thunderbird_mcp_xpi_url: "https://github.com/TKasperczyk/thunderbird-mcp/releases/download/v{{ thunderbird_mcp_version }}/thunderbird-mcp-v{{ thunderbird_mcp_version }}.xpi"
+thunderbird_mcp_write_client_fragment: false
+thunderbird_mcp_client_fragment_dir: "{{ target_home }}/.config/workstation-setup/mcp"
+thunderbird_mcp_client_fragment_file: "{{ thunderbird_mcp_client_fragment_dir }}/thunderbird-mail.json"
+
+thunderbird_base_extensions:
   - name: AI Grammar Checker & Paraphraser -- LanguageTool
     id: languagetool-mailextension@languagetool.org
     install_url: https://addons.thunderbird.net/thunderbird/downloads/latest/grammar-and-spell-checker/latest.xpi
@@ -27,7 +33,15 @@ thunderbird_extensions:
     id: owl@beonex.com
     install_url: https://addons.thunderbird.net/thunderbird/downloads/latest/owl-for-exchange/latest.xpi
     comment: Connects Thunderbird to Exchange and Microsoft 365 accounts through Outlook Web Access when standard IMAP/SMTP or OAuth setup is not sufficient. Check license terms before relying on it.
+
+thunderbird_mcp_extension:
   - name: Thunderbird MCP
-    id: thunderbird-mcp@tkasperczyk.dev
-    install_url: https://github.com/TKasperczyk/thunderbird-mcp/releases/download/v0.7.0/thunderbird-mcp-v0.7.0.xpi
-    comment: Exposes Thunderbird mail, contacts, and calendars to local AI assistants through MCP. Treat it as sensitive access; enable it only when needed and review its configuration carefully.
+    id: "{{ thunderbird_mcp_extension_id }}"
+    install_url: "{{ thunderbird_mcp_xpi_url }}"
+    comment: Exposes Thunderbird mail, contacts, calendars, filters, and message-management operations to local AI assistants through MCP. Treat it as sensitive access; enable it only when needed and review its configuration carefully.
+
+# Extensions are installed through Thunderbird Enterprise Policies with
+# installation_mode=normal_installed, not force_installed. Thunderbird installs
+# them automatically, but users can still disable them.
+thunderbird_extensions_enabled: true
+thunderbird_extensions: "{{ thunderbird_base_extensions + (thunderbird_mcp_extension if thunderbird_mcp_enabled | bool else []) }}"

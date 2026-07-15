@@ -1,0 +1,8 @@
+{{ {
+  'mcpServers': {
+    'thunderbird-mail': {
+      'command': 'node',
+      'args': [thunderbird_mcp_install_dir ~ '/mcp-bridge.cjs']
+    }
+  }
+} | to_nice_json }}
