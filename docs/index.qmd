@@ -35,13 +35,15 @@ flowchart TD
   S <-- ~/repos* --> GH
   S <-- ~/Nextcloud* --> NC
 
+
   %% New machine flow
   subgraph New["<strong>New machine</strong>"]
     OS[<a href='install_os.html'>Install OS/Ansible</a>]
     OS --> AInst["<a href='install_software.html'>Install software</a>"] --> R
-    R[<a href='restore.html'>Restore data</a>]
+    R[<a href='restore.html'>Set up/restore data</a>]
   end
   A --> AInst
+  AUpd -.- AInst
 
   BK --> R
   GH --> R
