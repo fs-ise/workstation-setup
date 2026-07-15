@@ -22,4 +22,3 @@ ansible-playbook -i inventory -K playbooks/lab-stack.yml --list-tags
 
 - [Ollama documentation](https://github.com/ollama/ollama/tree/main/docs)
 - [Open WebUI documentation](https://docs.openwebui.com/)
-- [Repository structure](repo_structure.html)
