@@ -2,6 +2,15 @@
 thunderbird_policies_dir: /etc/thunderbird/policies
 thunderbird_policies_file: "{{ thunderbird_policies_dir }}/policies.json"
 
+thunderbird_cli_enabled: true
+thunderbird_cli_version: "1.0.2"
+thunderbird_cli_extension_version: "2.0.0"
+thunderbird_cli_npm_prefix: "{{ target_home }}/.local"
+thunderbird_cli_npm_packages:
+  - thunderbird-cli
+  - thunderbird-cli-bridge
+thunderbird_cli_service_name: thunderbird-cli-bridge
+
 # Extensions are installed through Thunderbird Enterprise Policies with
 # installation_mode=normal_installed, not force_installed. Thunderbird installs
 # them automatically, but users can still disable them.
@@ -31,3 +40,7 @@ thunderbird_extensions:
     id: thunderbird-mcp@tkasperczyk.dev
     install_url: https://github.com/TKasperczyk/thunderbird-mcp/releases/download/v0.7.0/thunderbird-mcp-v0.7.0.xpi
     comment: Exposes Thunderbird mail, contacts, and calendars to local AI assistants through MCP. Treat it as sensitive access; enable it only when needed and review its configuration carefully.
+  - name: Thunderbird AI Bridge
+    id: thunderbird-ai@extension
+    install_url: "https://github.com/vitalio-sh/thunderbird-cli/releases/download/v{{ thunderbird_cli_version }}/thunderbird_ai_bridge-{{ thunderbird_cli_extension_version }}-tb.xpi"
+    comment: Connects Thunderbird to the local thunderbird-cli bridge. It grants broad mail-management permissions; use it only on trusted workstations and keep the bridge bound to localhost.
