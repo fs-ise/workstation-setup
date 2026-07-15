@@ -2,3 +2,10 @@
 - name: Report Thunderbird policy change
   ansible.builtin.debug:
     msg: Thunderbird policies changed. Restart Thunderbird for policy changes to apply.
+
+- name: Restart Thunderbird CLI bridge
+  ansible.builtin.systemd_service:
+    name: "{{ thunderbird_cli_service_name }}"
+    state: restarted
+    daemon_reload: true
+  when: thunderbird_cli_enabled | bool
