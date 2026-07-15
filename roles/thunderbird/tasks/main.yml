@@ -12,6 +12,54 @@
     state: present
   when: thunderbird_dnf is failed
 
+- name: Install Node.js packages required by thunderbird-cli
+  ansible.builtin.dnf:
+    name:
+      - nodejs22
+      - nodejs22-npm
+    state: present
+  when: thunderbird_cli_enabled | bool
+
+- name: Ensure user-local npm prefix exists
+  ansible.builtin.file:
+    path: "{{ thunderbird_cli_npm_prefix }}"
+    state: directory
+    owner: "{{ target_user }}"
+    group: "{{ target_user }}"
+    mode: "0755"
+  when: thunderbird_cli_enabled | bool
+
+- name: Install thunderbird-cli npm packages
+  community.general.npm:
+    name: "{{ item }}"
+    version: "{{ thunderbird_cli_version }}"
+    global: true
+    state: present
+  become: true
+  become_user: "{{ target_user }}"
+  environment:
+    NPM_CONFIG_PREFIX: "{{ thunderbird_cli_npm_prefix }}"
+  loop: "{{ thunderbird_cli_npm_packages }}"
+  when: thunderbird_cli_enabled | bool
+
+- name: Install thunderbird-cli bridge system service
+  ansible.builtin.template:
+    src: thunderbird-cli-bridge.service.j2
+    dest: "/etc/systemd/system/{{ thunderbird_cli_service_name }}.service"
+    owner: root
+    group: root
+    mode: "0644"
+  notify: Restart Thunderbird CLI bridge
+  when: thunderbird_cli_enabled | bool
+
+- name: Enable and start thunderbird-cli bridge
+  ansible.builtin.systemd_service:
+    name: "{{ thunderbird_cli_service_name }}"
+    enabled: true
+    state: started
+    daemon_reload: true
+  when: thunderbird_cli_enabled | bool
+
 - name: Ensure Thunderbird policies directory exists
   ansible.builtin.file:
     path: "{{ thunderbird_policies_dir }}"
