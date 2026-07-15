@@ -1,0 +1,17 @@
+[Unit]
+Description=Thunderbird CLI bridge
+After=network.target
+
+[Service]
+Type=simple
+User={{ target_user }}
+Environment=HOME={{ target_home }}
+WorkingDirectory={{ target_home }}
+ExecStart={{ thunderbird_cli_npm_prefix }}/bin/tb-bridge
+Restart=on-failure
+RestartSec=3
+NoNewPrivileges=true
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target
