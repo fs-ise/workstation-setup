@@ -2,6 +2,15 @@
 title: "Quarto"
 ---
 
+Install Quarto for rendering reproducible documents, reports, and documentation websites.
+
+```sh
+ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags quarto
+```
+
+::: {.callout-check}
+**✅ Check**
+
 ```sh
 quarto --version
 quarto check
@@ -27,3 +36,4 @@ EOF
 quarto render test.qmd
 ls -la
 ```
+:::

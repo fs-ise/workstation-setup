@@ -2,7 +2,11 @@
 title: "Docker"
 ---
 
-Docker is installed by the lab stack when the `docker` tag is run.
+Install Docker so local services and containerized research tools can run on the workstation.
+
+```sh
+ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags docker
+```
 
 ::: {.callout-manual}
 **🔧 Manual setup and configuration**

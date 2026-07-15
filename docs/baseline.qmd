@@ -2,6 +2,11 @@
 title: "Baseline"
 ---
 
+Install core workstation packages and tools that other lab setup steps rely on.
+
+```sh
+ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags baseline
+```
 
 ::: {.callout-manual}
 **🔧 Manual setup and configuration**

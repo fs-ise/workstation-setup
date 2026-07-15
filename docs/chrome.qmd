@@ -2,4 +2,10 @@
 title: "Chrome"
 ---
 
+Install Google Chrome for browser-based research, teaching, and collaboration workflows.
+
+```sh
+ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags chrome
+```
+
 Chrome configuration is currently a manual follow-up after installation. Extension automation and shared shortcut conventions are future work.

@@ -2,4 +2,10 @@
 title: "VS Code"
 ---
 
+Install Visual Studio Code for editing code, documentation, and lab automation files.
+
+```sh
+ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags vscode
+```
+
 VS Code configuration is currently documented as a manual follow-up after installation. Extension automation and shortcut conventions are future work.

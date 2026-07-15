@@ -2,13 +2,13 @@
 title: "Thunderbird"
 ---
 
-**TODO: test on second laptop**
-
 Install Thunderbird and the curated extension policy through the `thunderbird` role, then configure accounts and profile data manually.
 
 ```sh
 ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags thunderbird
 ```
+
+**TODO: test on second laptop**
 
 If you restore the Thunderbird profile path from a previous installation, the manual account and workflow setup below should usually not be necessary.
 Restore profile data only from trusted backups and prefer normal account sign-in when possible.

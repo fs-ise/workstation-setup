@@ -2,6 +2,12 @@
 title: "Languagetool"
 ---
 
+Run LanguageTool as a local writing-assistance service with lab-specific dictionary support.
+
+```sh
+ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags languagetool
+```
+
 ::: {.callout-check}
 **✅ Check**
 
@@ -73,10 +79,11 @@ Chrome: Advanced settings (only for professional users) - LanguageTool server: L
 
 To update the shared dictionary, edit the [data/spelling.txt](https://github.com/fs-ise/handbook/blob/main/data/spelling.txt).
 
-To update the local instance, run:
+To update the local instance with the latest shared dictionary terminology, run:
 
 ```sh
 ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags languagetool
 ```
 
-Note: this downloads and includes the `data/spelling.txt` from the handbook. The previous version may be cached and it may take a few minutes until GitHub provisions the new file.
+Note: this downloads and includes the `data/spelling.txt` from the handbook.
+The previous version may be cached and it may take a few minutes until GitHub provisions the new file.
