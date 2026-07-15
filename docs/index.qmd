@@ -19,7 +19,7 @@ Ansible is the mechanism used here to turn that changing setup knowledge into a 
 The diagram shows how the same repository connects initial setup, recurring updates, backup/sync, and data restoration.
 
 ```{mermaid}
-flowchart LR
+flowchart TD
   %% External infrastructure (outside the subgraphs)
   GH[(<a href='backup.html#github'>GitHub</a>)]
   BK[(<a href='backup.html#hdd-backup'>HDD Backup</a>)]
