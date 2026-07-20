@@ -18,8 +18,8 @@
 }
 
 /* Title line */
-.callout-manual strong,
-.callout-check strong {
+.callout-manual > p:first-child > strong,
+.callout-check > p:first-child > strong {
   display: block;
   margin-bottom: 0.5rem;
   font-weight: 600;
