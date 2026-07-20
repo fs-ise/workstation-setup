@@ -11,8 +11,10 @@ ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags vscode
 ## Quarto screenshots
 
 The role installs the Quarto and Markdown Paste extensions and `xclip` for Linux
-clipboard access. In a local `.qmd` file, `Ctrl+Alt+V` saves a screenshot under
-`images/` beside the document and inserts a relative Markdown image reference.
+clipboard access. In a local `.qmd` file, `Ctrl+Alt+V` opens a filename
+confirmation box. Edit the proposed filename if needed, then confirm to save the
+image under `images/` beside the document and insert a relative Markdown image
+reference. No automatic filename suffix is configured.
 
 ::: {.callout-check}
 **✅ Check**
@@ -20,8 +22,9 @@ clipboard access. In a local `.qmd` file, `Ctrl+Alt+V` saves a screenshot under
 1. Open a `.qmd` file in VS Code.
 2. Copy a screenshot to the clipboard.
 3. Press `Ctrl+Alt+V`.
-4. Confirm that an image appears under `images/`.
-5. Confirm that a Markdown image reference was inserted.
+4. Enter or edit the desired filename, then confirm the paste.
+5. Confirm that an image appears under `images/`.
+6. Confirm that a relative Markdown image reference was inserted.
 :::
 
 ## Best practices and useful links

@@ -64,7 +64,7 @@
         "workbench.editor.enablePreview": false,
         "editor.formatOnSave": true,
         "MarkdownPaste.path": "${fileDirname}/images",
-        "MarkdownPaste.silence": true,
+        "MarkdownPaste.silence": false,
 
         "editor.trimAutoWhitespace": true,
 
@@ -94,7 +94,7 @@
         "files.trimTrailingWhitespace": true,
         "editor.formatOnSave": true,
         "MarkdownPaste.path": "${fileDirname}/images",
-        "MarkdownPaste.silence": true
+        "MarkdownPaste.silence": false
       }
 
 - name: Set VS Code as default editor for common text formats
