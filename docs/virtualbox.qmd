@@ -9,3 +9,40 @@ ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags virtualbox
 ```
 
 VirtualBox is installed by the lab stack when the `virtualbox` tag is run. Add VM-specific setup notes here when the lab has a shared convention.
+
+Shutdown VM before zipping
+
+Recoommended settings:
+
+## General
+
+- **Operating System:** Windows 10 (64-bit)
+
+## System
+
+- **Base Memory:** 2048 MB
+- **Boot Order:** Floppy, Optical, Hard Disk
+- **Acceleration:** Nested Paging, Hyper-V Paravirtualization
+
+## Display
+
+- **Video Memory:** 128 MB
+- **Scale-factor:** 2.00
+- **Graphics Controller:** VBoxVGA
+- **Remote Desktop Server:** Disabled
+- **Recording:** Disabled
+
+## Storage
+
+- **Controller:** SATA
+- **SATA Port 0:** FS_Win10_Gerit.vhd (Normal, 50,00 GB)
+- **SATA Port 1:** [Optical Drive] Empty
+
+## Audio
+
+- **Host Driver:** Windows DirectSound
+- **Controller:** Intel HD Audio
+
+## Network
+
+- **Adapter 1:** Intel PRO/1000 MT Desktop (NAT)
