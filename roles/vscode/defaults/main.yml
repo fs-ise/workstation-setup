@@ -12,6 +12,8 @@ vscode_extensions:
   - streetsidesoftware.code-spell-checker
   - yzhang.markdown-all-in-one
   - davidanson.vscode-markdownlint
+  - quarto.quarto
+  - telesoho.vscode-markdown-paste-image
   - redhat.vscode-yaml
   - tamasfe.even-better-toml
   - esbenp.prettier-vscode

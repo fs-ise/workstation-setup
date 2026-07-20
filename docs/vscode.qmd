@@ -8,4 +8,23 @@ Install Visual Studio Code for editing code, documentation, and lab automation f
 ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags vscode
 ```
 
-VS Code configuration is currently documented as a manual follow-up after installation. Extension automation and shortcut conventions are future work.
+## Quarto screenshots
+
+The role installs the Quarto and Markdown Paste extensions and `xclip` for Linux
+clipboard access. In a local `.qmd` file, `Ctrl+Alt+V` saves a screenshot under
+`images/` beside the document and inserts a relative Markdown image reference.
+
+::: {.callout-check}
+**✅ Check**
+
+1. Open a `.qmd` file in VS Code.
+2. Copy a screenshot to the clipboard.
+3. Press `Ctrl+Alt+V`.
+4. Confirm that an image appears under `images/`.
+5. Confirm that a Markdown image reference was inserted.
+:::
+
+## Best practices and useful links
+
+- [Quarto VS Code documentation](https://quarto.org/docs/tools/vscode/)
+- [Markdown Paste on the Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=telesoho.vscode-markdown-paste-image)
