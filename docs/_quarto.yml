@@ -26,17 +26,17 @@ website:
       - section: Configuration
         contents:
           - baseline.qmd
+          - docker.qmd
           - thunderbird.qmd
           - chrome.qmd
           - vscode.qmd
+          - languagetool.qmd
           - teams.qmd
-          - docker.qmd
           - virtualbox.qmd
           - quarto.qmd
+          - obsidian.qmd
           - ocr.qmd
           - grobid.qmd
-          - languagetool.qmd
-          - obsidian.qmd
           - llm.qmd
 
       - section: Reference
