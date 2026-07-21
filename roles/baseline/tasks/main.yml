@@ -26,6 +26,7 @@
     name: texlive-scheme-full
     state: present
   failed_when: false
+  when: baseline_install_texlive_scheme | bool
 
 - name: Configure global git settings
   become: false
@@ -44,3 +45,4 @@
     name: flathub
     state: present
     flatpakrepo_url: https://flathub.org/repo/flathub.flatpakrepo
+  when: baseline_configure_flathub | bool

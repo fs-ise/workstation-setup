@@ -227,8 +227,6 @@ package_audit_managed_packages:
   - kernel-devel
   - kernel-headers
 
-
-
   # explicitly managed workstation/user packages
   - 7zip
   - clamav-freshclam

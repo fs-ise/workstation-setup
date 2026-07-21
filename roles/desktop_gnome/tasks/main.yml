@@ -173,5 +173,5 @@
   become_user: "{{ target_user }}"
   community.general.dconf:
     key: "{{ item.key }}"
-    value: "{{ item.value | string }}" # filter enforces string representation
+    value: "{{ item.value | string }}"  # filter enforces string representation
   loop: "{{ german_us_keyboard_layout }}"

@@ -1,0 +1,8 @@
+---
+profile: basic
+
+# Generated documentation and local test output are not Ansible sources.
+exclude_paths:
+  - docs/_site/
+  - tests/output/
+

@@ -98,3 +98,8 @@ baseline_install_packages_best_effort:
   - wv
   - xournalpp
   - xsel
+
+# These switches preserve workstation behavior while allowing the role's safe
+# configuration tasks to be exercised in a disposable CI container.
+baseline_install_texlive_scheme: true
+baseline_configure_flathub: true
