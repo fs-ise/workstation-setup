@@ -35,10 +35,10 @@
     name: "{{ item.name }}"
     value: "{{ item.value }}"
   loop:
-    - { name: "log.date", value: "iso" }
-    - { name: "push.autoSetupRemote", value: "true" }
-    - { name: "core.editor", value: "vim" }
-    - { name: "init.defaultBranch", value: "main" }
+    - {name: "log.date", value: "iso"}
+    - {name: "push.autoSetupRemote", value: "true"}
+    - {name: "core.editor", value: "vim"}
+    - {name: "init.defaultBranch", value: "main"}
 
 - name: Ensure Flathub remote exists
   community.general.flatpak_remote:

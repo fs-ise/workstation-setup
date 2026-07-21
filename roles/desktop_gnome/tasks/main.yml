@@ -32,7 +32,7 @@
   become: true
   become_user: "{{ target_user }}"
   ansible.builtin.file:
-    path: "{{ gnome_shell_extensions_dir }}"
+    path: "{{ desktop_gnome_shell_extensions_dir }}"
     state: directory
     mode: "0755"
 
@@ -41,9 +41,9 @@
   become_user: "{{ target_user }}"
   ansible.builtin.git:
     repo: "{{ item.repo }}"
-    dest: "{{ gnome_shell_extensions_dir }}/{{ item.uuid }}"
+    dest: "{{ desktop_gnome_shell_extensions_dir }}/{{ item.uuid }}"
     update: true
-  loop: "{{ gnome_shell_extensions }}"
+  loop: "{{ desktop_gnome_shell_extensions }}"
   loop_control:
     label: "{{ item.name }}"
 
@@ -59,16 +59,16 @@
   become_user: "{{ target_user }}"
   ansible.builtin.command:
     cmd: dconf read /org/gnome/shell/enabled-extensions
-  register: gnome_shell_enabled_extensions_read
+  register: desktop_gnome_shell_enabled_extensions_read
   changed_when: false
   failed_when: false
 
 - name: Build GNOME Shell enabled extensions list
   ansible.builtin.set_fact:
-    gnome_shell_enabled_extensions_current: >-
-      {{ (gnome_shell_enabled_extensions_read.stdout
-          if (gnome_shell_enabled_extensions_read.stdout | trim | length > 0
-              and (gnome_shell_enabled_extensions_read.stdout | trim)[0] == '[')
+    desktop_gnome_shell_enabled_extensions_current: >-
+      {{ (desktop_gnome_shell_enabled_extensions_read.stdout
+          if (desktop_gnome_shell_enabled_extensions_read.stdout | trim | length > 0
+              and (desktop_gnome_shell_enabled_extensions_read.stdout | trim)[0] == '[')
           else '[]') | from_yaml }}
 
 - name: Enable GNOME Shell extensions
@@ -77,8 +77,8 @@
   community.general.dconf:
     key: /org/gnome/shell/enabled-extensions
     value: >-
-      {{ (gnome_shell_enabled_extensions_current
-          + (gnome_shell_extensions | map(attribute='uuid') | list)) | unique | list | to_json }}
+      {{ (desktop_gnome_shell_enabled_extensions_current
+          + (desktop_gnome_shell_extensions | map(attribute='uuid') | list)) | unique | list | to_json }}
 
 - name: Install dotfiles aliases
   become: true
@@ -87,14 +87,14 @@
     - name: Check if .bash_aliases exists
       ansible.builtin.stat:
         path: "{{ target_home }}/.bash_aliases"
-      register: file_stat
+      register: desktop_gnome_file_stat
 
     - name: Deploy .bash_aliases if it does not exit
       ansible.builtin.copy:
         src: "{{ role_path }}/files/dotfiles/bash_aliases"
         dest: "{{ target_home }}/.bash_aliases"
         mode: "0644"
-      when: not file_stat.stat.exists
+      when: not desktop_gnome_file_stat.stat.exists
 
     - name: Ensure .bashrc sources aliases
       ansible.builtin.lineinfile:
@@ -118,7 +118,7 @@
   community.general.dconf:
     key: "{{ item.key }}"
     value: "{{ item.value }}"
-  loop: "{{ gnome_time_and_calendar_properties }}"
+  loop: "{{ desktop_gnome_time_and_calendar_properties }}"
 
 - name: Add Ubuntu-like shortcuts
   become: true
@@ -126,7 +126,7 @@
   community.general.dconf:
     key: "{{ item.key }}"
     value: "{{ item.value }}"
-  loop: "{{ gnome_navigation_shortcuts + gnome_custom_shortcuts }}"
+  loop: "{{ desktop_gnome_navigation_shortcuts + desktop_gnome_custom_shortcuts }}"
 
 - name: Disable alert sound (terminal 'dingding' noise)
   become: true
@@ -134,7 +134,7 @@
   community.general.dconf:
     key: "{{ item.key }}"
     value: "{{ item.value }}"
-  loop: "{{ gnome_alert_sound }}"
+  loop: "{{ desktop_gnome_alert_sound }}"
 
 - name: Enable battery percentage in top bar
   become: true
@@ -142,7 +142,7 @@
   community.general.dconf:
     key: "{{ item.key }}"
     value: "{{ item.value }}"
-  loop: "{{ gnome_battery_percentage }}"
+  loop: "{{ desktop_gnome_battery_percentage }}"
 
 - name: Set mouse and touchpad settings
   become: true
@@ -150,7 +150,7 @@
   community.general.dconf:
     key: "{{ item.key }}"
     value: "{{ item.value }}"
-  loop: "{{ gnome_mouse_touchpad }}"
+  loop: "{{ desktop_gnome_mouse_touchpad }}"
 
 - name: Disable GNOME hot corner (top-left)
   become: true
@@ -158,7 +158,7 @@
   community.general.dconf:
     key: "{{ item.key }}"
     value: "{{ item.value }}"
-  loop: "{{ gnome_hot_corner }}"
+  loop: "{{ desktop_gnome_hot_corner }}"
 
 - name: Configure Nemo thumbnail previews
   become: true
@@ -166,7 +166,7 @@
   community.general.dconf:
     key: "{{ item.key }}"
     value: "{{ item.value }}"
-  loop: "{{ nemo_preview_preferences }}"
+  loop: "{{ desktop_gnome_nemo_preview_preferences }}"
 
 - name: Add both DE and US keyboard layout
   become: true
@@ -174,4 +174,4 @@
   community.general.dconf:
     key: "{{ item.key }}"
     value: "{{ item.value | string }}"  # filter enforces string representation
-  loop: "{{ german_us_keyboard_layout }}"
+  loop: "{{ desktop_gnome_german_us_keyboard_layout }}"

@@ -1,31 +1,32 @@
 ---
-- name: Check {{ quarto_install_dir }} path
+- name: Check installation path {{ quarto_install_dir }}
   ansible.builtin.stat:
     path: "{{ quarto_install_dir }}"
-  register: path_stat
+  register: quarto_path_stat
 
-- name: Remove {{ quarto_install_dir }} if it exists as a directory
+- name: Remove installation path if it is a directory {{ quarto_install_dir }}
   ansible.builtin.file:
     path: "{{ quarto_install_dir }}"
     state: absent
-  when: path_stat.stat.exists and path_stat.stat.isdir
-  register: remove_result
+  when: quarto_path_stat.stat.exists and quarto_path_stat.stat.isdir
+  register: quarto_remove_result
 
-- block:
+- name: Install Quarto archive
+  when: not quarto_path_stat.stat.exists or quarto_remove_result.changed
+  block:
     - name: Download Quarto tarball
       ansible.builtin.get_url:
         url: "{{ quarto_url }}"
         dest: "/tmp/{{ quarto_tarball }}"
         mode: "0644"
 
-    - name: Unpack Quarto tarball to {{ quarto_install_dir }}-{{ quarto_version }}
+    - name: Unpack Quarto tarball to versioned installation directory
       ansible.builtin.unarchive:
         src: "/tmp/{{ quarto_tarball }}"
         dest: /opt
         remote_src: true
-  when: not path_stat.stat.exists or remove_result.changed
 
-- name: Symlink {{ quarto_install_dir }} -> {{ quarto_install_dir }}-{{ quarto_version }}
+- name: Symlink the versioned directory to the installation path {{ quarto_install_dir }}
   ansible.builtin.file:
     src: "{{ quarto_install_dir }}-{{ quarto_version }}"
     dest: "{{ quarto_install_dir }}"
@@ -33,7 +34,7 @@
     force: true
     follow: false
 
-- name: Add {{ quarto_install_dir }}/bin to system PATH
+- name: Add Quarto bin directory to system PATH
   ansible.builtin.copy:
     dest: /etc/profile.d/quarto.sh
     mode: "0644"

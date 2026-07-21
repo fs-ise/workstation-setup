@@ -1,5 +1,5 @@
 ---
-gnome_navigation_shortcuts:
+desktop_gnome_navigation_shortcuts:
   - key: "/org/gnome/desktop/wm/keybindings/switch-applications"
     value: "['<Super>Tab']"
 
@@ -12,7 +12,7 @@ gnome_navigation_shortcuts:
   - key: "/org/gnome/desktop/wm/keybindings/switch-windows-backward"
     value: "['<Shift><Alt>Tab']"
 
-gnome_custom_shortcuts:
+desktop_gnome_custom_shortcuts:
   # Ensure custom shortcuts are visible in GNOME keyboard shortcuts
   - key: "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings"
     value: >
@@ -35,33 +35,33 @@ gnome_custom_shortcuts:
   - key: "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1/binding"
     value: "'<Super>e'"
 
-gnome_time_and_calendar_properties:
+desktop_gnome_time_and_calendar_properties:
   - key: "/org/gnome/desktop/calendar/show-weekdate"
     value: true
 
   - key: "/org/gnome/desktop/interface/clock-format"
     value: "'24h'"
 
-gnome_alert_sound:
+desktop_gnome_alert_sound:
   - key: "/org/gnome/desktop/sound/event-sounds"
     value: false
 
-gnome_battery_percentage:
+desktop_gnome_battery_percentage:
   - key: "/org/gnome/desktop/interface/show-battery-percentage"
     value: true
 
-gnome_mouse_touchpad:
+desktop_gnome_mouse_touchpad:
   - key: "/org/gnome/desktop/peripherals/mouse/accel-profile"
     value: "'flat'"
 
   - key: "/org/gnome/desktop/peripherals/touchpad/tap-to-click"
     value: true
 
-gnome_hot_corner:
+desktop_gnome_hot_corner:
   - key: "/org/gnome/desktop/interface/enable-hot-corners"
     value: false
 
-nemo_preview_preferences:
+desktop_gnome_nemo_preview_preferences:
   - key: "/org/nemo/preferences/show-image-thumbnails"
     value: "'local-only'"
 
@@ -71,12 +71,12 @@ nemo_preview_preferences:
   - key: "/org/nemo/preferences/thumbnail-limit"
     value: "uint64 104857600"
 
-german_us_keyboard_layout:
+desktop_gnome_german_us_keyboard_layout:
   - key: "/org/gnome/desktop/input-sources/sources"
     value: "[('xkb', 'de'), ('xkb', 'us')]"
 
-gnome_shell_extensions_dir: "{{ target_home }}/.local/share/gnome-shell/extensions"
-gnome_shell_extensions:
+desktop_gnome_shell_extensions_dir: "{{ target_home }}/.local/share/gnome-shell/extensions"
+desktop_gnome_shell_extensions:
   - name: maximize-new-windows
     uuid: maximize-new-windows@VitalyOstanin
     repo: https://github.com/VitalyOstanin/maximize-new-windows.git

@@ -2,6 +2,11 @@
 extends: default
 
 rules:
+  braces:
+    max-spaces-inside: 1
+  comments:
+    min-spaces-from-content: 1
+  comments-indentation: false
   document-start: disable
   line-length:
     max: 160
@@ -9,3 +14,6 @@ rules:
   truthy:
     allowed-values: ["true", "false"]
     check-keys: false
+  octal-values:
+    forbid-implicit-octal: true
+    forbid-explicit-octal: true

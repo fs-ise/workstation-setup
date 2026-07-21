@@ -15,7 +15,7 @@
     - role: baseline
 
   post_tasks:
-    - name: Read configured default Git branch
+    - name: Read configured default Git branch  # noqa command-instead-of-module
       become: false
       ansible.builtin.command: git config --global init.defaultBranch
       register: ci_git_default_branch
@@ -26,4 +26,3 @@
         that:
           - ci_git_default_branch.stdout == "main"
         fail_msg: The baseline role did not configure Git as expected.
-

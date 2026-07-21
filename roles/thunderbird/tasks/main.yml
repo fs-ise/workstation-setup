@@ -84,7 +84,9 @@
 
 - name: Parse existing Thunderbird policies
   ansible.builtin.set_fact:
-    thunderbird_existing_policies: "{{ (thunderbird_existing_policies_slurp.content | b64decode | from_json) if thunderbird_policies_stat.stat.exists else {'policies': {}} }}"
+    thunderbird_existing_policies: >-
+      {{ (thunderbird_existing_policies_slurp.content | b64decode | from_json)
+         if thunderbird_policies_stat.stat.exists else {'policies': {}} }}
   when: thunderbird_extensions_enabled | bool
 
 - name: Initialize Thunderbird extension settings policy
@@ -94,7 +96,9 @@
 
 - name: Build Thunderbird extension settings policy
   ansible.builtin.set_fact:
-    thunderbird_extension_settings: "{{ thunderbird_extension_settings | default({}) | combine({ item.id: {'installation_mode': 'normal_installed', 'install_url': item.install_url} }, recursive=True) }}"
+    thunderbird_extension_settings: >-
+      {{ thunderbird_extension_settings | default({})
+         | combine({item.id: {'installation_mode': 'normal_installed', 'install_url': item.install_url}}, recursive=True) }}
   loop: "{{ thunderbird_extensions }}"
   loop_control:
     label: "{{ item.name }}"
@@ -110,7 +114,8 @@
     thunderbird_policies_document: >-
       {{ thunderbird_existing_policies | combine({
         'policies': (thunderbird_existing_policies.policies | default({})) | combine({
-          'ExtensionSettings': (thunderbird_existing_policies.policies.ExtensionSettings | default({})) | combine(thunderbird_extension_settings | default({}), recursive=True)
+          'ExtensionSettings': (thunderbird_existing_policies.policies.ExtensionSettings | default({}))
+            | combine(thunderbird_extension_settings | default({}), recursive=True)
         }, recursive=True)
       }, recursive=True) }}
   when: thunderbird_extensions_enabled | bool

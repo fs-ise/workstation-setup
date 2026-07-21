@@ -5,4 +5,3 @@ profile: basic
 exclude_paths:
   - docs/_site/
   - tests/output/
-
