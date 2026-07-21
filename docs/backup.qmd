@@ -50,6 +50,34 @@ Keep recovery material separate from the laptop and from a single cloud account:
 
 Do not document actual passwords, private keys, or recovery codes in this repository.
 
+
+## Optional: Emergency USB recovery kit
+
+An emergency USB stick can be useful when a laptop is lost, broken, or temporarily unusable.
+It is intended as a last-resort recovery aid, not as a replacement for GitHub, Nextcloud, or the regular HDD/Vorta/Borg backup.
+
+Use it only if the additional maintenance effort is realistic. A stale emergency stick can create false confidence.
+
+The USB stick may contain:
+
+- Fedora installation media or offline reinstall notes,
+- a copy of the workstation setup bootstrap instructions,
+- password manager recovery information, encrypted,
+- disk encryption recovery keys, encrypted,
+- Borg repository passphrases or key material, encrypted,
+- GitHub or institution account recovery codes, encrypted,
+- a short restore checklist.
+
+Do not store unencrypted passwords, private keys, recovery codes, or account secrets on the stick.
+
+Recommended maintenance:
+
+- Review the stick together with the monthly backup routine.
+- Update it after changes to recovery codes, backup passphrases, disk encryption keys, or password manager recovery.
+- Keep a small `MANIFEST.md` on the stick with the last review date and a non-sensitive list of contents.
+- Store the stick separately from the laptop and backup drive.
+
+
 ## Best practices and useful links
 
 - [GitHub SSH documentation](https://docs.github.com/en/authentication/connecting-to-github-with-ssh)
