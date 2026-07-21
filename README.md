@@ -4,13 +4,13 @@
 
 <div align="center">
 
-[![Ansible CI](https://github.com/fs-ise/workstation-setup/actions/workflows/ansible-ci.yml/badge.svg)](https://github.com/fs-ise/workstation-setup/actions/workflows/ansible-ci.yml)
-
 # Workstation setup
+
+[![Ansible CI](https://github.com/fs-ise/workstation-setup/actions/workflows/ansible-ci.yml/badge.svg)](https://github.com/fs-ise/workstation-setup/actions/workflows/ansible-ci.yml)
 
 </div>
 
-See the [docs](https://fs-ise.github.io/workstation-setup/).
+Documentation available at [https://fs-ise.github.io/workstation-setup/](https://fs-ise.github.io/workstation-setup/).
 
 Automated checks lint and syntax-check the complete Ansible setup and exercise a
 container-safe subset twice for idempotence. See [the Ansible CI test guide](tests/README.md)
