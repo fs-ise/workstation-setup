@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="docs/logo.png" alt="Workstation setup logo" width="300">
+</p>
+
 # Workstation setup
 
 [![Ansible CI](https://github.com/fs-ise/workstation-setup/actions/workflows/ansible-ci.yml/badge.svg)](https://github.com/fs-ise/workstation-setup/actions/workflows/ansible-ci.yml)
