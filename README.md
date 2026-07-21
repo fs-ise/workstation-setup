@@ -2,19 +2,19 @@
   <img src="docs/logo.png" alt="Workstation setup logo" width="300">
 </p>
 
-# Workstation setup
+<div align="center">
 
 [![Ansible CI](https://github.com/fs-ise/workstation-setup/actions/workflows/ansible-ci.yml/badge.svg)](https://github.com/fs-ise/workstation-setup/actions/workflows/ansible-ci.yml)
+
+# Workstation setup
+
+</div>
 
 See the [docs](https://fs-ise.github.io/workstation-setup/).
 
 Automated checks lint and syntax-check the complete Ansible setup and exercise a
 container-safe subset twice for idempotence. See [the Ansible CI test guide](tests/README.md)
 for coverage, limitations, and local reproduction commands.
-
-## Audit unmanaged Fedora/DNF packages
-
-See documentation: [Update software](docs/update_software.qmd).
 
 ## Acknowledgment
 
