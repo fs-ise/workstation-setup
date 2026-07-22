@@ -17,7 +17,6 @@ The managed policy is written to `/etc/opt/chrome/policies/managed/workstation-e
 **🔧 Manual setup and configuration**
 
 - Restart Chrome after running the role so the browser reloads its managed policies.
-- GNOME Shell integration requires the native `gnome-browser-connector` package, which the role installs.
 - KeePassXC-Browser requires the `keepassxc` desktop application, which the role installs.
   Open KeePassXC and enable browser integration before pairing the extension.
 :::
@@ -42,9 +41,6 @@ python -m json.tool /etc/opt/chrome/policies/managed/workstation-extensions.json
 | [Advanced URL Cleaner](https://chromewebstore.google.com/detail/advanced-url-cleaner/lbicdpmpkmpfoiiinfgkbaknidgkhnbp)       | Remove tracking parameters from links          |
 | [LanguageTool](https://chromewebstore.google.com/detail/ai-grammar-checker-paraph/oldceeleldhonbafppcapldpdifcinji)          | Check grammar and paraphrase text (see [languagetool](languagetool.qmd))|
 | [Freedom](https://chromewebstore.google.com/detail/freedom-website-blocker-f/abdkjmofmjelgafcdffaimhgdgpagmop)               | Block distracting websites                     |
-| [GNOME Shell integration](https://chromewebstore.google.com/detail/gnome-shell-integration/gphhapmejobijbbhgpjhcjognlahblep) | Manage GNOME Shell extensions from the browser |
-| [Google Docs Offline](https://chromewebstore.google.com/detail/google-docs-offline/ghbmnnjooekpmoecnnnilnnbdlolhkhi)         | Work with Google documents offline             |
-| [Insight](https://chromewebstore.google.com/detail/insight-track-and-optimiz/fekofipodopncnlomnghaaebmohagjho)               | Track and review time spent online             |
 | [JSON Formatter](https://chromewebstore.google.com/detail/json-formatter/bcjindcccaagfpapjjmafapmmgkkhgoa)                   | Make JSON responses easier to inspect          |
 | [KeePassXC-Browser](https://chromewebstore.google.com/detail/keepassxc-browser/oboonakemofpalcgghocfoadofidjkkk)             | Fill credentials from KeePassXC                |
 | [Obsidian Web Clipper](https://chromewebstore.google.com/detail/obsidian-web-clipper/cnjifjpddelmedmihgijeibhnjfabmlf)       | Save web content to Obsidian                   |

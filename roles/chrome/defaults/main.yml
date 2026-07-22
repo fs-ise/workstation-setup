@@ -5,7 +5,6 @@ chrome_extension_policy_directory: /etc/opt/chrome/policies/managed
 chrome_extension_policy_file: workstation-extensions.json
 
 chrome_extension_native_packages:
-  - gnome-browser-connector
   - keepassxc
 
 chrome_extensions:
@@ -15,12 +14,6 @@ chrome_extensions:
     id: oldceeleldhonbafppcapldpdifcinji
   - name: "Freedom – Website Blocker for Chrome"
     id: abdkjmofmjelgafcdffaimhgdgpagmop
-  - name: "GNOME Shell integration"
-    id: gphhapmejobijbbhgpjhcjognlahblep
-  - name: "Google Docs Offline"
-    id: ghbmnnjooekpmoecnnnilnnbdlolhkhi
-  - name: "Insight – Track and Optimize Your Time Online"
-    id: fekofipodopncnlomnghaaebmohagjho
   - name: "JSON Formatter"
     id: bcjindcccaagfpapjjmafapmmgkkhgoa
   - name: "KeePassXC-Browser"
