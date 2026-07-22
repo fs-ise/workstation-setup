@@ -57,7 +57,7 @@ Expected (not match for `fs-ise`, which should be in the shared dictionary):
 
 ```{mermaid}
 flowchart LR
-    spelling["handbook/data/spelling<br/>lab-specific shared dictionaries"]
+    spelling["<a href='https://github.com/fs-ise/handbook/blob/main/data/spelling.txt' target=_blank>handbook/data/spelling.txt</a><br/>(shared dictionary)"]
 
     subgraph apps["Writing applications"]
         languagetool["LanguageTool server<br/>local Docker container"]
@@ -69,10 +69,10 @@ flowchart LR
 
     spelling --> languagetool
 
-    thunderbird <--> languagetool
-    chrome <--> languagetool
-    vscode <--> languagetool
-    obsidian <--> languagetool
+    languagetool --> thunderbird
+    languagetool --> chrome
+    languagetool --> vscode
+    languagetool --> obsidian
 ```
 
 Chrome: Advanced settings (only for professional users) - LanguageTool server: Local server
