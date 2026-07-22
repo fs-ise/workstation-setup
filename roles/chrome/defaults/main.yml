@@ -27,8 +27,6 @@ chrome_extensions:
     id: oboonakemofpalcgghocfoadofidjkkk
   - name: "Obsidian Web Clipper"
     id: cnjifjpddelmedmihgijeibhnjfabmlf
-  - name: "QuillBot: AI Writing Assistant"
-    id: iidnbdjijdkbmajdffnidomddglmieko
   - name: "Vimium"
     id: dbepggeogbaibhgnhhndojpepiihcmeb
   - name: "Zotero Connector"

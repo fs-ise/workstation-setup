@@ -48,7 +48,6 @@ python -m json.tool /etc/opt/chrome/policies/managed/workstation-extensions.json
 | [JSON Formatter](https://chromewebstore.google.com/detail/json-formatter/bcjindcccaagfpapjjmafapmmgkkhgoa)                   | Make JSON responses easier to inspect          |
 | [KeePassXC-Browser](https://chromewebstore.google.com/detail/keepassxc-browser/oboonakemofpalcgghocfoadofidjkkk)             | Fill credentials from KeePassXC                |
 | [Obsidian Web Clipper](https://chromewebstore.google.com/detail/obsidian-web-clipper/cnjifjpddelmedmihgijeibhnjfabmlf)       | Save web content to Obsidian                   |
-| [QuillBot](https://chromewebstore.google.com/detail/quillbot-ai-writing-assis/iidnbdjijdkbmajdffnidomddglmieko)              | Assist with rewriting and editing              |
 | [Vimium](https://chromewebstore.google.com/detail/vimium/dbepggeogbaibhgnhhndojpepiihcmeb)                                   | Add keyboard-driven browser navigation         |
 | [Zotero Connector](https://chromewebstore.google.com/detail/zotero-connector/ekhagklcjbdpajgpjgmbionohlpdbjgc)               | Save research sources to Zotero                |
 
