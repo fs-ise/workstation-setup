@@ -10,9 +10,28 @@ ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags virtualbox
 
 VirtualBox is installed by the lab stack when the `virtualbox` tag is run. Add VM-specific setup notes here when the lab has a shared convention.
 
+## Host Key
+
+The role automatically assigns **Right Ctrl** as the VirtualBox Host Key.
+This avoids conflicts with AltGr, which is required to type characters such as `[` and `]` on German keyboards.
+
+::: {.callout-check}
+**✅ Check**
+
+```sh
+VBoxManage getextradata global GUI/Input/HostKeyCombination
+```
+
+Expected output for the default configuration:
+
+```txt
+Value: 65508
+```
+:::
+
 Shutdown VM before zipping
 
-Recoommended settings:
+Recommended settings:
 
 ## General
 

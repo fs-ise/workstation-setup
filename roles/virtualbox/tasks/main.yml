@@ -42,3 +42,34 @@
     name: "{{ target_user }}"
     groups: vboxusers
     append: true
+
+- name: Read VirtualBox Host Key combination
+  become_user: "{{ target_user }}"
+  ansible.builtin.command:
+    argv:
+      - VBoxManage
+      - getextradata
+      - global
+      - GUI/Input/HostKeyCombination
+  environment:
+    HOME: "{{ target_home }}"
+  register: virtualbox_host_key_current
+  changed_when: false
+  when: virtualbox_configure_host_key | bool
+
+- name: Configure VirtualBox Host Key combination
+  become_user: "{{ target_user }}"
+  ansible.builtin.command:
+    argv:
+      - VBoxManage
+      - setextradata
+      - global
+      - GUI/Input/HostKeyCombination
+      - "{{ virtualbox_host_key_combination }}"
+  environment:
+    HOME: "{{ target_home }}"
+  when:
+    - virtualbox_configure_host_key | bool
+    - >-
+      virtualbox_host_key_current.stdout | trim !=
+      'Value: ' ~ virtualbox_host_key_combination
