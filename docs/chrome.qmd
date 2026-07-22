@@ -2,10 +2,56 @@
 title: "Chrome"
 ---
 
-Install Google Chrome for browser-based research, teaching, and collaboration workflows.
+Install Google Chrome and a standard set of extensions for browser-based research, teaching, and collaboration workflows.
 
 ```sh
 ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags chrome
 ```
 
-Chrome configuration is currently a manual follow-up after installation. Extension automation and shared shortcut conventions are future work.
+The role automatically installs these extensions with Chrome's managed `ExtensionSettings` policy.
+The `normal_installed` installation mode lets users disable an extension in Chrome when they do not need it.
+
+| Extension | Purpose |
+|---|---|
+| Advanced URL Cleaner | Remove tracking parameters from links |
+| LanguageTool | Check grammar and paraphrase text |
+| Freedom | Block distracting websites |
+| GNOME Shell integration | Manage GNOME Shell extensions from the browser |
+| Google Docs Offline | Work with Google documents offline |
+| Insight | Track and review time spent online |
+| JSON Formatter | Make JSON responses easier to inspect |
+| KeePassXC-Browser | Fill credentials from KeePassXC |
+| Obsidian Web Clipper | Save web content to Obsidian |
+| QuillBot | Assist with rewriting and editing |
+| Vimium | Add keyboard-driven browser navigation |
+| Zotero Connector | Save research sources to Zotero |
+
+The managed policy is written to `/etc/opt/chrome/policies/managed/workstation-extensions.json`. Other files in the managed-policy directory are left unchanged.
+
+::: {.callout-manual}
+**🔧 Manual setup and configuration**
+
+- Restart Chrome after running the role so the browser reloads its managed policies.
+- GNOME Shell integration requires the native `gnome-browser-connector` package, which the role installs.
+- KeePassXC-Browser requires the `keepassxc` desktop application, which the role installs.
+  Open KeePassXC and enable browser integration before pairing the extension.
+:::
+
+::: {.callout-check}
+**✅ Check**
+
+1. Open `chrome://policy`, reload policies, and confirm that `ExtensionSettings` contains the standard extension IDs.
+2. Open `chrome://extensions` and confirm that the extensions are installed. Users may disable any extension installed by this policy.
+
+Validate the policy file from a terminal:
+
+```sh
+python -m json.tool /etc/opt/chrome/policies/managed/workstation-extensions.json >/dev/null
+```
+:::
+
+## Best practices and useful links
+
+- [Chrome Enterprise extension settings policy](https://chromeenterprise.google/policies/#ExtensionSettings)
+- [Chrome Enterprise policy list](https://chromeenterprise.google/policies/)
+- [KeePassXC browser integration guide](https://keepassxc.org/docs/KeePassXC_GettingStarted#_setup_browser_integration)

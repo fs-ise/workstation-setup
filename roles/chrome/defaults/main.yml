@@ -1,1 +1,35 @@
 ---
+chrome_extensions_enabled: true
+chrome_extension_update_url: https://clients2.google.com/service/update2/crx
+chrome_extension_policy_directory: /etc/opt/chrome/policies/managed
+chrome_extension_policy_file: workstation-extensions.json
+
+chrome_extension_native_packages:
+  - gnome-browser-connector
+  - keepassxc
+
+chrome_extensions:
+  - name: "Advanced URL Cleaner"
+    id: lbicdpmpkmpfoiiinfgkbaknidgkhnbp
+  - name: "AI Grammar Checker & Paraphraser – LanguageTool"
+    id: oldceeleldhonbafppcapldpdifcinji
+  - name: "Freedom – Website Blocker for Chrome"
+    id: abdkjmofmjelgafcdffaimhgdgpagmop
+  - name: "GNOME Shell integration"
+    id: gphhapmejobijbbhgpjhcjognlahblep
+  - name: "Google Docs Offline"
+    id: ghbmnnjooekpmoecnnnilnnbdlolhkhi
+  - name: "Insight – Track and Optimize Your Time Online"
+    id: fekofipodopncnlomnghaaebmohagjho
+  - name: "JSON Formatter"
+    id: bcjindcccaagfpapjjmafapmmgkkhgoa
+  - name: "KeePassXC-Browser"
+    id: oboonakemofpalcgghocfoadofidjkkk
+  - name: "Obsidian Web Clipper"
+    id: cnjifjpddelmedmihgijeibhnjfabmlf
+  - name: "QuillBot: AI Writing Assistant"
+    id: iidnbdjijdkbmajdffnidomddglmieko
+  - name: "Vimium"
+    id: dbepggeogbaibhgnhhndojpepiihcmeb
+  - name: "Zotero Connector"
+    id: ekhagklcjbdpajgpjgmbionohlpdbjgc

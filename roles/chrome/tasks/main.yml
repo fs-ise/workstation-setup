@@ -18,3 +18,33 @@
     name: google-chrome-stable
     state: present
     update_cache: true
+
+- name: Install native packages used by Chrome extensions
+  ansible.builtin.dnf:
+    name: "{{ chrome_extension_native_packages }}"
+    state: present
+  when: chrome_extensions_enabled | bool
+
+- name: Create Chrome managed policy directory
+  ansible.builtin.file:
+    path: "{{ chrome_extension_policy_directory }}"
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+  when: chrome_extensions_enabled | bool
+
+- name: Configure standard Chrome extensions
+  ansible.builtin.template:
+    src: extension-settings.json.j2
+    dest: "{{ chrome_extension_policy_directory }}/{{ chrome_extension_policy_file }}"
+    owner: root
+    group: root
+    mode: "0644"
+  when: chrome_extensions_enabled | bool
+
+- name: Remove repository-managed extension policy when disabled
+  ansible.builtin.file:
+    path: "{{ chrome_extension_policy_directory }}/{{ chrome_extension_policy_file }}"
+    state: absent
+  when: not (chrome_extensions_enabled | bool)
