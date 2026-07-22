@@ -50,6 +50,8 @@ format:
     theme:
       - cosmo
       - brand
+    mermaid:
+      theme: neutral
     css: styles.css
     toc: false
     grid:
