@@ -20,6 +20,10 @@ chrome_extensions:
     id: oboonakemofpalcgghocfoadofidjkkk
   - name: "Obsidian Web Clipper"
     id: cnjifjpddelmedmihgijeibhnjfabmlf
+  - name: "Unpaywall"
+    id: iplffkdpngmdjhlpjmppncnlhomiipha
+  - name: "Google Scholar Button"
+    id: ldipcbpaocekfooobnbcddclnhejkcpn
   - name: "Vimium"
     id: dbepggeogbaibhgnhhndojpepiihcmeb
   - name: "Zotero Connector"
