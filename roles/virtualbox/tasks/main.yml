@@ -44,6 +44,7 @@
     append: true
 
 - name: Read VirtualBox Host Key combination
+  become: true
   become_user: "{{ target_user }}"
   ansible.builtin.command:
     argv:
@@ -58,6 +59,7 @@
   when: virtualbox_configure_host_key | bool
 
 - name: Configure VirtualBox Host Key combination
+  become: true
   become_user: "{{ target_user }}"
   ansible.builtin.command:
     argv:
