@@ -40,7 +40,7 @@ python -m json.tool /etc/opt/chrome/policies/managed/workstation-extensions.json
 | Extension                                                                                                                    | Purpose                                        |
 | ---------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------- |
 | [Advanced URL Cleaner](https://chromewebstore.google.com/detail/advanced-url-cleaner/lbicdpmpkmpfoiiinfgkbaknidgkhnbp)       | Remove tracking parameters from links          |
-| [LanguageTool](https://chromewebstore.google.com/detail/ai-grammar-checker-paraph/oldceeleldhonbafppcapldpdifcinji)          | Check grammar and paraphrase text              |
+| [LanguageTool](https://chromewebstore.google.com/detail/ai-grammar-checker-paraph/oldceeleldhonbafppcapldpdifcinji)          | Check grammar and paraphrase text (see [languagetool](languagetool.qmd))|
 | [Freedom](https://chromewebstore.google.com/detail/freedom-website-blocker-f/abdkjmofmjelgafcdffaimhgdgpagmop)               | Block distracting websites                     |
 | [GNOME Shell integration](https://chromewebstore.google.com/detail/gnome-shell-integration/gphhapmejobijbbhgpjhcjognlahblep) | Manage GNOME Shell extensions from the browser |
 | [Google Docs Offline](https://chromewebstore.google.com/detail/google-docs-offline/ghbmnnjooekpmoecnnnilnnbdlolhkhi)         | Work with Google documents offline             |
