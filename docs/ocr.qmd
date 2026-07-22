@@ -58,6 +58,33 @@ Expected: at least one action file exists (depending on your file manager).
 - **Batch behavior:** the wrapper accepts multiple files and processes each one in sequence
 - **Troubleshooting:** if the menu entry does not appear, restart Nautilus (`nautilus -q`) or relogin
 
+::: {.callout-note title="Rationale" collapse="true"}
+## Why this software?
+
+OCRmyPDF is preferred for the workstation setup because it runs locally, adds a
+searchable text layer while preserving the original PDF, and provides a mature
+command-line workflow for rotation, deskewing, optimization, and PDF/A output.
+It also works without an account, API key, document upload, or separate model
+service and integrates directly with the automated file-manager action above.
+
+Consider an alternative when the task is broader than making scanned PDFs
+searchable:
+
+- [Mistral OCR](https://docs.mistral.ai/capabilities/document_ai/basic_ocr/) can
+  extract document structure and content for downstream AI workflows. It is a
+  hosted API, so review costs, credentials, and data-handling requirements
+  before uploading research or institutional documents.
+- [PaddleOCR](https://github.com/PaddlePaddle/PaddleOCR) provides trainable,
+  deep-learning OCR and document-layout models for many languages and complex
+  extraction pipelines. It requires more model/runtime setup, and producing a
+  searchable archival PDF needs additional pipeline work.
+- [Baidu Unlimited OCR](https://cloud.baidu.com/product/ocr.html) is a managed
+  OCR option for high-volume or application-integrated extraction. It requires
+  a Baidu cloud account and sending documents to an external service; confirm
+  current service limits, pricing, supported regions, and privacy terms before
+  use.
+:::
+
 ## Best practices and useful links
 
 - [OCRmyPDF documentation](https://ocrmypdf.readthedocs.io/)
