@@ -8,8 +8,6 @@ Install Thunderbird and the curated extension policy through the `thunderbird` r
 ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags thunderbird
 ```
 
-**TODO: test on second laptop**
-
 If you restore the Thunderbird profile path from a previous installation, the manual account and workflow setup below should usually not be necessary.
 Restore profile data only from trusted backups and prefer normal account sign-in when possible.
 
@@ -50,7 +48,8 @@ The bridge command for MCP clients is:
 node /opt/thunderbird-mcp/mcp-bridge.cjs
 ```
 
-The role does not copy session tokens or `connection.json`. The bridge discovers the current Thunderbird extension connection dynamically, so Thunderbird must be running for bridge calls to reach the extension.
+The role does not copy session tokens or `connection.json`.
+The bridge discovers the current Thunderbird extension connection dynamically, so Thunderbird must be running for bridge calls to reach the extension.
 
 ::: {.callout-manual}
 **🔧 Manual setup and configuration**
@@ -63,7 +62,8 @@ The role does not copy session tokens or `connection.json`. The bridge discovers
 
 ### Optional MCP client fragment
 
-The role does not modify `~/.claude.json`, Codex configuration, or another MCP client's live configuration automatically. To generate a fragment that users can merge manually, set:
+The role does not modify `~/.claude.json`, Codex configuration, or another MCP client's live configuration automatically.
+To generate a fragment that users can merge manually, set:
 
 ```yaml
 thunderbird_mcp_write_client_fragment: true

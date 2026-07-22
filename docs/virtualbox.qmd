@@ -18,18 +18,14 @@ This avoids conflicts with AltGr, which is required to type characters such as `
 **✅ Check**
 
 ```sh
+# Check the VirtualBox host key — default: 65508
 VBoxManage getextradata global GUI/Input/HostKeyCombination
-```
-
-Expected output for the default configuration:
-
-```txt
-Value: 65508
 ```
 :::
 
 ## Configuring virtual machines
 
+::: {.callout-note title="Recommended configuration for Windows VMs" collapse=true}
 The following settings are recommended for Windows VMs:
 
 ### General
@@ -64,6 +60,8 @@ The following settings are recommended for Windows VMs:
 ### Network
 
 - **Adapter 1:** Intel PRO/1000 MT Desktop (NAT)
+
+:::
 
 ## Backing up virtual machines
 
