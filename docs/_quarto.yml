@@ -4,6 +4,8 @@ project:
 website:
   title: "workstation-setup"
   favicon: favicon.png
+  repo-url: https://github.com/fs-ise/workstation-setup
+  repo-actions: [edit, issue]
 
   sidebar:
     logo: logo.png
