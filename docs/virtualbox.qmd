@@ -8,9 +8,8 @@ Install VirtualBox for running local virtual machines needed by lab workflows.
 ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags virtualbox
 ```
 
-VirtualBox is installed by the lab stack when the `virtualbox` tag is run. Add VM-specific setup notes here when the lab has a shared convention.
-
-## Host Key
+VirtualBox is installed by the lab stack when the `virtualbox` tag is run.
+Add VM-specific setup notes here when the lab has a shared convention.
 
 The role automatically assigns **Right Ctrl** as the VirtualBox Host Key.
 This avoids conflicts with AltGr, which is required to type characters such as `[` and `]` on German keyboards.
@@ -29,21 +28,21 @@ Value: 65508
 ```
 :::
 
-Shutdown VM before zipping
+## Configuring virtual machines
 
-Recommended settings:
+The following settings are recommended for Windows VMs:
 
-## General
+### General
 
 - **Operating System:** Windows 10 (64-bit)
 
-## System
+### System
 
 - **Base Memory:** 2048 MB
 - **Boot Order:** Floppy, Optical, Hard Disk
 - **Acceleration:** Nested Paging, Hyper-V Paravirtualization
 
-## Display
+### Display
 
 - **Video Memory:** 128 MB
 - **Scale-factor:** 2.00
@@ -51,17 +50,22 @@ Recommended settings:
 - **Remote Desktop Server:** Disabled
 - **Recording:** Disabled
 
-## Storage
+### Storage
 
 - **Controller:** SATA
 - **SATA Port 0:** FS_Win10_Gerit.vhd (Normal, 50,00 GB)
 - **SATA Port 1:** [Optical Drive] Empty
 
-## Audio
+### Audio
 
 - **Host Driver:** Windows DirectSound
 - **Controller:** Intel HD Audio
 
-## Network
+### Network
 
 - **Adapter 1:** Intel PRO/1000 MT Desktop (NAT)
+
+## Backing up virtual machines
+
+- Shutdown VM before zipping the `*.vhd` to create a snapshot backup.
+- Exclude the VM from regular backups and copy them manually to an external HDD.
