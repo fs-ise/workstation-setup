@@ -2,11 +2,20 @@
 title: "workstation-setup"
 ---
 
-
 This repository documents a reproducible workstation setup used by [FS-ISE](https://fs-ise.github.io/handbook/).
 It treats a workstation as something that should be installed consistently, configured efficiently, and kept understandable for a small but growing team.
 
-The vision is pragmatic:
+The workstation stack includes:
+
+- Base (Minimal Fedora, debloated GNOME)
+- Dev (Visual Studio Code, Git + LFS, Python, Docker, SSH)
+- Research (Quarto, LaTeX, Pandoc tooling, Obsidian)
+- Documents (Okular, OCR, GROBID, Recoll)
+- Sync & Backup (Nextcloud, Vorta/Borg)
+- Productivity & Media (Thunderbird, Chrome, GIMP, Audacity, OBS Studio)
+- Security (KeePassXC, ClamAV)
+
+We use Ansible to translate the following pragmatic principles into a reproducible workstation setup:
 
 - make new machines transparent and reproducible,
 - share setup knowledge as reviewed documentation and code,
