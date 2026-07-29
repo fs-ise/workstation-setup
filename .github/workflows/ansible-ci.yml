@@ -122,6 +122,8 @@ jobs:
         run: ansible-galaxy collection install -r requirements.yml
       - name: Validate the main playbook and role imports
         run: |
+          python -m unittest tests/test_rstudio_role.py
+
           ansible-playbook \
             --syntax-check \
             -i tests/inventory/hosts.yml \

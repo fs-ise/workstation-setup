@@ -200,6 +200,7 @@ package_audit_managed_packages:
   - libjpeg-turbo-devel
   - libpng-devel
   - libtiff-devel
+  - libuv-devel
   - zlib-devel
 
   # roles/ocrmypdf

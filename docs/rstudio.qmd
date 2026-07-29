@@ -29,6 +29,16 @@ Use `renv` within individual projects to record and restore project-specific pac
 
 [Rocker](https://rocker-project.org/) images remain available through Docker when a project requires container-level reproducibility. Containers are optional and are not required for normal local RStudio use.
 
+## Troubleshoot package installation
+
+Fedora compiles CRAN packages from source. The role installs the required system
+development libraries and automatically retries transient download failures. The
+first package installation can therefore take several minutes.
+
+If the role reports a package lock, close R and RStudio before rerunning it. A
+rerun is safe: the role skips configured top-level packages that are already
+installed and retries only those still missing.
+
 ::: {.callout-check}
 **✅ Check**
 
