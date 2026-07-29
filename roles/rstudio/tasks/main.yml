@@ -75,7 +75,7 @@
         missing <- setdiff(wanted, rownames(installed.packages(lib.loc = Sys.getenv('R_LIBS_USER'))));
         if (length(missing)) {
           install.packages(missing, repos = Sys.getenv('RSTUDIO_CRAN_REPOSITORY'),
-          lib = Sys.getenv('R_LIBS_USER'), dependencies = TRUE);
+          lib = Sys.getenv('R_LIBS_USER'), dependencies = c("Depends", "Imports", "LinkingTo"));
           still_missing <- setdiff(missing, rownames(installed.packages(lib.loc = Sys.getenv('R_LIBS_USER'))));
           if (length(still_missing)) stop('Failed to install: ', paste(still_missing, collapse = ', '));
           cat('RSTUDIO_PACKAGES_INSTALLED:', paste(missing, collapse = ','), '\n');

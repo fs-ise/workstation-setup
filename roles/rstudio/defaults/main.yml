@@ -1,10 +1,10 @@
 ---
 # Posit's stable open-source RStudio Desktop build for Fedora x86-64.
-rstudio_version: "2025.05.1+513"
+rstudio_version: "2026.07.1+147"
 rstudio_rpm_version: "{{ rstudio_version | replace('+', '-') }}"
 rstudio_rpm_filename: "rstudio-{{ rstudio_rpm_version }}-x86_64.rpm"
 rstudio_download_url: >-
-  https://download1.rstudio.org/electron/fedora/x86_64/{{ rstudio_rpm_filename }}
+  https://download1.rstudio.org/electron/rhel9/x86_64/{{ rstudio_rpm_filename }}
 # Posit displays a checksum on its download page but does not provide a stable
 # checksum-file URL. Set this to "sha256:<digest>" when pinning a published digest.
 rstudio_rpm_checksum: ""
@@ -27,6 +27,7 @@ rstudio_system_packages:
   - libjpeg-turbo-devel
   - libpng-devel
   - libtiff-devel
+  - libuv-devel
   - zlib-devel
 
 rstudio_cran_repository: "https://cloud.r-project.org"
