@@ -12,6 +12,7 @@ vscode_extensions:
   - streetsidesoftware.code-spell-checker
   - yzhang.markdown-all-in-one
   - davidanson.vscode-markdownlint
+  - davidlday.languagetool-linter
   - quarto.quarto
   - telesoho.vscode-markdown-paste-image
   - redhat.vscode-yaml
@@ -33,6 +34,8 @@ vscode_settings:
   "editor.formatOnSave": true
   "MarkdownPaste.path": "${fileDirname}/images"
   "MarkdownPaste.silence": false
+  "languageToolLinter.serviceType": "external"
+  "languageToolLinter.external.url": "http://localhost:8081"
   "editor.trimAutoWhitespace": true
   "[markdown]":
     "editor.trimAutoWhitespace": false
