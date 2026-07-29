@@ -32,21 +32,14 @@
     name: xclip
     state: present
 
-- name: Ensure VS Code user settings dir exists (RPM path)
+- name: Ensure VS Code user settings directories exist
   ansible.builtin.file:
-    path: "{{ target_home }}/.config/Code/User"
+    path: "{{ item }}"
     state: directory
     owner: "{{ target_user }}"
     group: "{{ target_user }}"
     mode: "0755"
-
-- name: Ensure VS Code user settings dir exists (Flatpak path)
-  ansible.builtin.file:
-    path: "{{ target_home }}/.var/app/com.visualstudio.code/config/Code/User"
-    state: directory
-    owner: "{{ target_user }}"
-    group: "{{ target_user }}"
-    mode: "0755"
+  loop: "{{ vscode_user_config_dirs }}"
 
 - name: Write global VS Code keybindings.json
   ansible.builtin.copy:
@@ -54,79 +47,17 @@
     owner: "{{ target_user }}"
     group: "{{ target_user }}"
     mode: "0644"
-    content: |
-      [
-        {
-          "key": "ctrl+pageup",
-          "command": "-quarto.goToPreviousCell",
-          "when": "editorTextFocus && editorLangId == 'quarto'"
-        },
-        {
-          "key": "ctrl+pagedown",
-          "command": "-quarto.goToNextCell",
-          "when": "editorTextFocus && editorLangId == 'quarto'"
-        },
-        {
-          "key": "ctrl+pageup",
-          "command": "workbench.action.previousEditor"
-        },
-        {
-          "key": "ctrl+pagedown",
-          "command": "workbench.action.nextEditor"
-        }
-      ]
-  loop:
-    - "{{ target_home }}/.config/Code/User"
-    - "{{ target_home }}/.var/app/com.visualstudio.code/config/Code/User"
+    content: "{{ vscode_keybindings | to_nice_json(indent=2) }}"
+  loop: "{{ vscode_user_config_dirs }}"
 
-- name: Write VS Code settings.json (RPM path)
+- name: Write global VS Code settings.json
   ansible.builtin.copy:
-    dest: "{{ target_home }}/.config/Code/User/settings.json"
+    dest: "{{ item }}/settings.json"
     owner: "{{ target_user }}"
     group: "{{ target_user }}"
     mode: "0644"
-    content: |
-      {
-        "workbench.startupEditor": "none",
-        "workbench.welcomePage.walkthroughs.openOnInstall": false,
-        "workbench.tips.enabled": false,
-        "update.showReleaseNotes": false,
-        "telemetry.telemetryLevel": "off",
-        "workbench.editor.enablePreview": false,
-        "editor.formatOnSave": true,
-        "MarkdownPaste.path": "${fileDirname}/images",
-        "MarkdownPaste.silence": false,
-
-        "editor.trimAutoWhitespace": true,
-
-        "[markdown]": {
-          "editor.trimAutoWhitespace": false
-        },
-
-        "[jupyter]": {
-          "editor.trimAutoWhitespace": false
-        }
-      }
-
-- name: Write VS Code settings.json (Flatpak path)
-  ansible.builtin.copy:
-    dest: "{{ target_home }}/.var/app/com.visualstudio.code/config/Code/User/settings.json"
-    owner: "{{ target_user }}"
-    group: "{{ target_user }}"
-    mode: "0644"
-    content: |
-      {
-        "workbench.startupEditor": "none",
-        "workbench.welcomePage.walkthroughs.openOnInstall": false,
-        "workbench.tips.enabled": false,
-        "update.showReleaseNotes": false,
-        "telemetry.telemetryLevel": "off",
-        "workbench.editor.enablePreview": false,
-        "files.trimTrailingWhitespace": true,
-        "editor.formatOnSave": true,
-        "MarkdownPaste.path": "${fileDirname}/images",
-        "MarkdownPaste.silence": false
-      }
+    content: "{{ vscode_settings | to_nice_json(indent=2) }}"
+  loop: "{{ vscode_user_config_dirs }}"
 
 - name: Set VS Code as default editor for common text formats
   become: false
