@@ -38,6 +38,7 @@ website:
           - teams.qmd
           - virtualbox.qmd
           - quarto.qmd
+          - rstudio.qmd
           - obsidian.qmd
           - ocr.qmd
           - grobid.qmd

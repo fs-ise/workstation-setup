@@ -167,7 +167,6 @@ package_audit_managed_packages:
   - recoll
   - ruby
   - rubygem-bundler
-  - R
   - sqlitebrowser
   - texlive-lang-german
   - texlive-latex-extra
@@ -182,6 +181,26 @@ package_audit_managed_packages:
   - xournalpp
   - xsel
   - texlive-scheme-full
+
+  # roles/rstudio
+  - R
+  - R-devel
+  - rstudio
+  - gcc
+  - gcc-c++
+  - gcc-gfortran
+  - make
+  - libcurl-devel
+  - openssl-devel
+  - libxml2-devel
+  - fontconfig-devel
+  - freetype-devel
+  - fribidi-devel
+  - harfbuzz-devel
+  - libjpeg-turbo-devel
+  - libpng-devel
+  - libtiff-devel
+  - zlib-devel
 
   # roles/ocrmypdf
   - ocrmypdf
@@ -232,7 +251,6 @@ package_audit_managed_packages:
   - clamav-freshclam
   - clisp
   - dos2unix
-  - gcc
   - nmap-ncat
   - nodejs22
   - pandoc-cli

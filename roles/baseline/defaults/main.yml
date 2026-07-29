@@ -80,7 +80,6 @@ baseline_install_packages_best_effort:
   - pinentry
   - poppler-utils
   - pwgen
-  - R
   - python3-tkinter
   - recoll
   - ruby

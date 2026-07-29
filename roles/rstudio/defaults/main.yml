@@ -1,0 +1,47 @@
+---
+# Posit's stable open-source RStudio Desktop build for Fedora x86-64.
+rstudio_version: "2025.05.1+513"
+rstudio_rpm_version: "{{ rstudio_version | replace('+', '-') }}"
+rstudio_rpm_filename: "rstudio-{{ rstudio_rpm_version }}-x86_64.rpm"
+rstudio_download_url: >-
+  https://download1.rstudio.org/electron/fedora/x86_64/{{ rstudio_rpm_filename }}
+# Posit displays a checksum on its download page but does not provide a stable
+# checksum-file URL. Set this to "sha256:<digest>" when pinning a published digest.
+rstudio_rpm_checksum: ""
+rstudio_rpm_download_directory: /var/cache/workstation-setup
+
+rstudio_system_packages:
+  - R
+  - R-devel
+  - gcc
+  - gcc-c++
+  - gcc-gfortran
+  - make
+  - libcurl-devel
+  - openssl-devel
+  - libxml2-devel
+  - fontconfig-devel
+  - freetype-devel
+  - fribidi-devel
+  - harfbuzz-devel
+  - libjpeg-turbo-devel
+  - libpng-devel
+  - libtiff-devel
+  - zlib-devel
+
+rstudio_cran_repository: "https://cloud.r-project.org"
+rstudio_user_library: "{{ target_home }}/R/library"
+rstudio_r_packages:
+  - tidyverse
+  - tidymodels
+  - janitor
+  - skimr
+  - here
+  - writexl
+  - openxlsx
+  - knitr
+  - rmarkdown
+  - quarto
+  - renv
+  - testthat
+  - languageserver

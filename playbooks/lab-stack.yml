@@ -32,6 +32,9 @@
     - role: quarto
       tags: [quarto]
 
+    - role: rstudio
+      tags: [rstudio]
+
     - role: chrome
       tags: [chrome]
 

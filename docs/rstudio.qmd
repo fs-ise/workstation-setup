@@ -1,0 +1,48 @@
+---
+title: "R and RStudio"
+---
+
+Install R, RStudio Desktop, and a practical user-level package set for data analysis, teaching, and research.
+
+```sh
+ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags rstudio
+```
+
+| Component | Purpose |
+|---|---|
+| R | Statistical computing language and development files for compiling packages. |
+| RStudio Desktop | Local open-source IDE for interactive R work. |
+| Analysis packages | tidyverse, tidymodels, janitor, skimr, here, writexl, and openxlsx. |
+| Authoring and development packages | knitr, rmarkdown, quarto, renv, testthat, and languageserver. |
+
+## Launch RStudio
+
+Open **RStudio** from the desktop application menu, or launch it from a terminal:
+
+```sh
+rstudio
+```
+
+Packages managed by this role are installed in `~/R/library`, so they are owned by the workstation user rather than root.
+
+Use `renv` within individual projects to record and restore project-specific package versions. The shared user library is a practical starting set, not a replacement for a reproducible project environment.
+
+[Rocker](https://rocker-project.org/) images remain available through Docker when a project requires container-level reproducibility. Containers are optional and are not required for normal local RStudio use.
+
+::: {.callout-check}
+**✅ Check**
+
+```sh
+R --version
+rstudio --version
+Rscript -e 'library(tidyverse); library(tidymodels); sessionInfo()'
+```
+:::
+
+## Best practices and useful links
+
+- [R project](https://www.r-project.org/)
+- [RStudio Desktop documentation](https://docs.posit.co/ide/user/)
+- [tidyverse](https://www.tidyverse.org/)
+- [`renv` documentation](https://rstudio.github.io/renv/)
+- [Rocker project](https://rocker-project.org/)

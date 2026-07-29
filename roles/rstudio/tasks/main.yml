@@ -1,0 +1,89 @@
+---
+- name: Verify that RStudio Desktop supports this architecture
+  ansible.builtin.assert:
+    that:
+      - ansible_facts['architecture'] == 'x86_64'
+    fail_msg: >-
+      RStudio Desktop {{ rstudio_version }} is configured only for x86-64 Fedora;
+      detected architecture {{ ansible_facts['architecture'] }}.
+
+- name: Install R and CRAN package build dependencies
+  ansible.builtin.dnf:
+    name: "{{ rstudio_system_packages }}"
+    state: present
+
+- name: Read installed package versions
+  ansible.builtin.package_facts:
+    manager: auto
+
+- name: Install pinned RStudio Desktop release
+  when: >-
+    'rstudio' not in ansible_facts.packages or
+    rstudio_version not in (ansible_facts.packages['rstudio'] | map(attribute='version') | list)
+  block:
+    - name: Create the RStudio RPM cache directory
+      ansible.builtin.file:
+        path: "{{ rstudio_rpm_download_directory }}"
+        state: directory
+        owner: root
+        group: root
+        mode: "0755"
+
+    - name: Download the pinned RStudio Desktop RPM
+      ansible.builtin.get_url:
+        url: "{{ rstudio_download_url }}"
+        dest: "{{ rstudio_rpm_download_directory }}/{{ rstudio_rpm_filename }}"
+        checksum: "{{ rstudio_rpm_checksum if rstudio_rpm_checksum | length > 0 else omit }}"
+        owner: root
+        group: root
+        mode: "0644"
+
+    - name: Install the pinned RStudio Desktop RPM
+      ansible.builtin.dnf:
+        name: "{{ rstudio_rpm_download_directory }}/{{ rstudio_rpm_filename }}"
+        state: present
+        disable_gpg_check: false
+
+- name: Create the user R package library
+  ansible.builtin.file:
+    path: "{{ rstudio_user_library }}"
+    state: directory
+    owner: "{{ target_user }}"
+    group: "{{ target_user }}"
+    mode: "0755"
+
+- name: Configure the user R package library
+  ansible.builtin.blockinfile:
+    path: "{{ target_home }}/.Renviron"
+    marker: "# {mark} ANSIBLE MANAGED R USER LIBRARY"
+    block: 'R_LIBS_USER={{ rstudio_user_library }}'
+    create: true
+    owner: "{{ target_user }}"
+    group: "{{ target_user }}"
+    mode: "0600"
+
+- name: Install missing user R packages from CRAN
+  become: true
+  become_user: "{{ target_user }}"
+  ansible.builtin.command:
+    argv:
+      - Rscript
+      - --vanilla
+      - -e
+      - >-
+        wanted <- strsplit(Sys.getenv('RSTUDIO_R_PACKAGES'), ',', fixed = TRUE)[[1]];
+        missing <- setdiff(wanted, rownames(installed.packages(lib.loc = Sys.getenv('R_LIBS_USER'))));
+        if (length(missing)) {
+          install.packages(missing, repos = Sys.getenv('RSTUDIO_CRAN_REPOSITORY'),
+          lib = Sys.getenv('R_LIBS_USER'), dependencies = TRUE);
+          still_missing <- setdiff(missing, rownames(installed.packages(lib.loc = Sys.getenv('R_LIBS_USER'))));
+          if (length(still_missing)) stop('Failed to install: ', paste(still_missing, collapse = ', '));
+          cat('RSTUDIO_PACKAGES_INSTALLED:', paste(missing, collapse = ','), '\n');
+        }
+  environment:
+    HOME: "{{ target_home }}"
+    R_LIBS_USER: "{{ rstudio_user_library }}"
+    RSTUDIO_CRAN_REPOSITORY: "{{ rstudio_cran_repository }}"
+    RSTUDIO_R_PACKAGES: "{{ rstudio_r_packages | join(',') }}"
+  register: rstudio_package_install
+  changed_when: "'RSTUDIO_PACKAGES_INSTALLED:' in rstudio_package_install.stdout"

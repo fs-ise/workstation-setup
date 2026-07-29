@@ -9,7 +9,7 @@ The workstation stack includes:
 
 - Base: Minimal Fedora, debloated GNOME
 - Sync & Backup: Vorta/Borg, Nextcloud, Git + LFS
-- Development: SSH, Docker, Visual Studio Code, Python
+- Development: SSH, Docker, Visual Studio Code, Python, R, RStudio
 - Research: LaTeX, Pandoc tooling, Quarto, Obsidian
 - Documents: Okular, OCR, GROBID, Recoll
 - Productivity & Media: Thunderbird, Chrome, GIMP, Audacity, OBS Studio
