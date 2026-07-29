@@ -8,6 +8,23 @@ Install Visual Studio Code for editing code, documentation, and lab automation f
 ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags vscode
 ```
 
+| Extension identifier                                                                                                                 | Why install it                                                                        |
+| ------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------- |
+| [`ms-python.python`](https://marketplace.visualstudio.com/items?itemName=ms-python.python)                                           | Provides Python language support, debugging, IntelliSense, and environment selection. |
+| [`ms-toolsai.jupyter`](https://marketplace.visualstudio.com/items?itemName=ms-toolsai.jupyter)                                       | Enables Jupyter notebooks and interactive Python execution in VS Code.                |
+| [`ms-vscode.makefile-tools`](https://marketplace.visualstudio.com/items?itemName=ms-vscode.makefile-tools)                           | Supports configuring, building, and debugging projects that use Makefiles.            |
+| [`ms-azuretools.vscode-docker`](https://marketplace.visualstudio.com/items?itemName=ms-azuretools.vscode-docker)                     | Supports working with Dockerfiles, containers, images, and Compose configurations.    |
+| [`eamodio.gitlens`](https://marketplace.visualstudio.com/items?itemName=eamodio.gitlens)                                             | Adds detailed Git history, blame information, and repository navigation.              |
+| [`streetsidesoftware.code-spell-checker`](https://marketplace.visualstudio.com/items?itemName=streetsidesoftware.code-spell-checker) | Detects spelling errors in source code, comments, and documentation.                  |
+| [`yzhang.markdown-all-in-one`](https://marketplace.visualstudio.com/items?itemName=yzhang.markdown-all-in-one)                       | Adds Markdown shortcuts, table-of-contents generation, and editing assistance.        |
+| [`davidanson.vscode-markdownlint`](https://marketplace.visualstudio.com/items?itemName=davidanson.vscode-markdownlint)               | Detects Markdown formatting and style problems.                                       |
+| [`quarto.quarto`](https://marketplace.visualstudio.com/items?itemName=quarto.quarto)                                                 | Provides editing, previewing, and rendering support for Quarto documents.             |
+| [`telesoho.vscode-markdown-paste-image`](https://marketplace.visualstudio.com/items?itemName=telesoho.vscode-markdown-paste-image)   | Saves clipboard images and inserts the corresponding Markdown image link.             |
+| [`redhat.vscode-yaml`](https://marketplace.visualstudio.com/items?itemName=redhat.vscode-yaml)                                       | Provides YAML validation, completion, navigation, and schema support.                 |
+| [`tamasfe.even-better-toml`](https://marketplace.visualstudio.com/items?itemName=tamasfe.even-better-toml)                           | Provides TOML syntax support, validation, completion, and formatting.                 |
+| [`esbenp.prettier-vscode`](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode)                               | Applies consistent automated formatting to supported file types.                      |
+| [`davidlday.languagetool-linter`](https://marketplace.visualstudio.com/items?itemName=davidlday.languagetool-linter)                 | Checks grammar, style, and spelling in Markdown, plain-text, HTML, and MDX files. See [languagetool setup](languagetool.qmd) |
+
 ## Quarto screenshots
 
 The role installs GitLens, Prettier, Quarto, and Markdown Paste, plus `xclip` for
