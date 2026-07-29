@@ -98,6 +98,26 @@ baseline_install_packages_best_effort:
   - xournalpp
   - xsel
 
+# VeraCrypt is included because its encrypted volumes are compatible across Linux, Windows, and macOS.
+baseline_install_veracrypt: true
+# Pin the audited artifact for reproducibility. The isolated keyring prevents
+# unrelated globally trusted keys from validating it, and a newer installed
+# version must never be downgraded automatically.
+baseline_veracrypt_version: "1.26.29"
+baseline_veracrypt_supported_fedora_versions:
+  - "41"
+  - "42"
+baseline_veracrypt_architecture: x86_64
+baseline_veracrypt_rpm_filename: >-
+  veracrypt-{{ baseline_veracrypt_version }}-Fedora-{{ ansible_distribution_major_version }}-{{ baseline_veracrypt_architecture }}.rpm
+baseline_veracrypt_signing_key_url: >-
+  https://www.idrix.fr/VeraCrypt/VeraCrypt_PGP_public_key.asc
+baseline_veracrypt_signing_key_fingerprint: >-
+  5069A233D55A0EEB174A5FC3821ACD02680D16DE
+baseline_veracrypt_package_url: >-
+  https://launchpad.net/veracrypt/trunk/{{ baseline_veracrypt_version }}/+download/{{ baseline_veracrypt_rpm_filename }}
+baseline_veracrypt_signature_url: "{{ baseline_veracrypt_package_url }}.sig"
+
 # These switches preserve workstation behavior while allowing the role's safe
 # configuration tasks to be exercised in a disposable CI container.
 baseline_install_texlive_scheme: true

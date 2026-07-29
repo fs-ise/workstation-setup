@@ -132,6 +132,15 @@ jobs:
             -i tests/inventory/hosts.yml \
             playbooks/lab-stack.yml
 
+          ansible-playbook \
+            --syntax-check \
+            -i tests/inventory/hosts.yml \
+            tests/playbooks/veracrypt.yml
+
+          ansible-playbook \
+            -i tests/inventory/hosts.yml \
+            tests/playbooks/veracrypt.yml
+
   container-idempotence:
     name: Fedora container idempotence
     runs-on: ubuntu-latest

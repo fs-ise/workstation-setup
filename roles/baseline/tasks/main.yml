@@ -21,6 +21,10 @@
   loop: "{{ baseline_install_packages_best_effort }}"
   failed_when: false
 
+- name: Install VeraCrypt
+  ansible.builtin.include_tasks: veracrypt.yml
+  when: baseline_install_veracrypt | bool
+
 - name: Install texlive-scheme-full (this might take a while...)
   ansible.builtin.dnf:
     name: texlive-scheme-full

@@ -1,0 +1,86 @@
+---
+- name: Test VeraCrypt baseline selection and safety defaults
+  hosts: local
+  gather_facts: false
+  tasks:
+    - name: Load baseline role defaults
+      ansible.builtin.include_vars:
+        file: ../../roles/baseline/defaults/main.yml
+
+    - name: Check pinned VeraCrypt security defaults
+      ansible.builtin.assert:
+        that:
+          - baseline_veracrypt_version == "1.26.29"
+          - >-
+            baseline_veracrypt_signing_key_fingerprint ==
+            '5069A233D55A0EEB174A5FC3821ACD02680D16DE'
+          - >-
+            'allow_downgrade' not in
+            lookup('ansible.builtin.file',
+                   playbook_dir ~ '/../../roles/baseline/tasks/veracrypt.yml')
+
+    - name: Exercise the disabled VeraCrypt include
+      ansible.builtin.include_tasks: ../../roles/baseline/tasks/veracrypt.yml
+      when: baseline_install_veracrypt | bool
+      vars:
+        baseline_install_veracrypt: false
+      register: baseline_veracrypt_disabled_include
+
+    - name: Check that disabled VeraCrypt tasks were skipped
+      ansible.builtin.assert:
+        that:
+          - baseline_veracrypt_disabled_include is skipped
+          - baseline_veracrypt_installed is not defined
+          - baseline_veracrypt_tempdir is not defined
+
+    - name: Test equal installed VeraCrypt version
+      ansible.builtin.include_tasks: ../../roles/baseline/tasks/veracrypt-decision.yml
+      vars:
+        baseline_veracrypt_installed:
+          rc: 0
+        baseline_veracrypt_version_comparison:
+          rc: 0
+
+    - name: Check that an equal version is satisfactory
+      ansible.builtin.assert:
+        that:
+          - not baseline_veracrypt_install_required
+
+    - name: Test newer installed VeraCrypt version
+      ansible.builtin.include_tasks: ../../roles/baseline/tasks/veracrypt-decision.yml
+      vars:
+        baseline_veracrypt_installed:
+          rc: 0
+        baseline_veracrypt_version_comparison:
+          rc: 0
+
+    - name: Check that a newer version is satisfactory
+      ansible.builtin.assert:
+        that:
+          - not baseline_veracrypt_install_required
+
+    - name: Test older installed VeraCrypt version
+      ansible.builtin.include_tasks: ../../roles/baseline/tasks/veracrypt-decision.yml
+      vars:
+        baseline_veracrypt_installed:
+          rc: 0
+        baseline_veracrypt_version_comparison:
+          rc: 1
+
+    - name: Check that an older version requires an upgrade
+      ansible.builtin.assert:
+        that:
+          - baseline_veracrypt_install_required
+
+    - name: Test absent VeraCrypt installation
+      ansible.builtin.include_tasks: ../../roles/baseline/tasks/veracrypt-decision.yml
+      vars:
+        baseline_veracrypt_installed:
+          rc: 1
+        baseline_veracrypt_version_comparison:
+          rc: 1
+
+    - name: Check that an absent version requires installation
+      ansible.builtin.assert:
+        that:
+          - baseline_veracrypt_install_required
