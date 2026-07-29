@@ -7,13 +7,13 @@ It treats a workstation as something that should be installed consistently, conf
 
 The workstation stack includes:
 
-- Base (Minimal Fedora, debloated GNOME)
-- Dev (Visual Studio Code, Git + LFS, Python, Docker, SSH)
-- Research (Quarto, LaTeX, Pandoc tooling, Obsidian)
-- Documents (Okular, OCR, GROBID, Recoll)
-- Sync & Backup (Nextcloud, Vorta/Borg)
-- Productivity & Media (Thunderbird, Chrome, GIMP, Audacity, OBS Studio)
-- Security (KeePassXC, ClamAV)
+- Base: Minimal Fedora, debloated GNOME
+- Sync & Backup: Vorta/Borg, Nextcloud, Git + LFS
+- Development: SSH, Docker, Visual Studio Code, Python
+- Research: LaTeX, Pandoc tooling, Quarto, Obsidian
+- Documents: Okular, OCR, GROBID, Recoll
+- Productivity & Media: Thunderbird, Chrome, GIMP, Audacity, OBS Studio
+- Security: KeePassXC, ClamAV
 
 We use Ansible to translate the following pragmatic principles into a reproducible workstation setup:
 
