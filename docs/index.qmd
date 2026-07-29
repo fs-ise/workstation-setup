@@ -33,7 +33,7 @@ flowchart TD
   GH[(<a href='backup.html#github'>GitHub</a>)]
   BK[(<a href='backup.html#hdd-backup'>HDD Backup</a>)]
   NC[(<a href='backup.html#nextcloud'>Nextcloud</a>)]
-  A[("<a href='https://github.com/fs-ise/workstation-setup'>workstation-setup<br/>(ansible)</a>")]
+  A[("<a href='https://github.com/fs-ise/workstation-setup'>workstation-setup<br/>(Ansible)</a>")]
 
   %% Day-to-day flow
   subgraph Daily["<strong>Day-to-day operations</strong>"]
