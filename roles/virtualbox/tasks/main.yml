@@ -27,6 +27,7 @@
       - VirtualBox
       - VirtualBox-server
       - akmod-VirtualBox
+      - virtualbox-guest-additions
       - kernel-devel
       - kernel-headers
     state: present

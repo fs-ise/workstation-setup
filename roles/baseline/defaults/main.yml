@@ -70,6 +70,7 @@ baseline_install_packages_best_effort:
   - libxslt
   - nemo
   - nemo-fileroller
+  - nemo-preview
   - nextcloud-client
   - obs-studio
   - openssh-clients
@@ -95,8 +96,11 @@ baseline_install_packages_best_effort:
   - untex
   - vim
   - wv
+  - xclip
+  - xdotool
   - xournalpp
   - xsel
+  - ydotool
 
 # VeraCrypt is included because its encrypted volumes are compatible across Linux, Windows, and macOS.
 baseline_install_veracrypt: true

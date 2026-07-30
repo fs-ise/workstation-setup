@@ -153,6 +153,7 @@ package_audit_managed_packages:
   - libxslt
   - nemo
   - nemo-fileroller
+  - nemo-preview
   - nextcloud-client
   - obs-studio
   - openssh-clients
@@ -178,8 +179,11 @@ package_audit_managed_packages:
   - untex
   - vim
   - wv
+  - xclip
+  - xdotool
   - xournalpp
   - xsel
+  - ydotool
   - texlive-scheme-full
 
   # roles/rstudio
@@ -244,6 +248,7 @@ package_audit_managed_packages:
   - VirtualBox
   - VirtualBox-server
   - akmod-VirtualBox
+  - virtualbox-guest-additions
   - kernel-devel
   - kernel-headers
 
