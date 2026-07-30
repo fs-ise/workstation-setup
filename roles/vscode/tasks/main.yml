@@ -13,19 +13,37 @@
     gpgcheck: true
     gpgkey: https://packages.microsoft.com/keys/microsoft.asc
 
-- name: Try to install VS Code via dnf
-  ansible.builtin.dnf:
-    name: "{{ vscode_rpm_package }}"
-    state: present
-    update_cache: true
-  register: vscode_dnf
-  failed_when: false
+- name: Prefer the RPM installation of VS Code
+  block:
+    - name: Install VS Code via dnf
+      ansible.builtin.dnf:
+        name: "{{ vscode_rpm_package }}"
+        state: present
+        update_cache: true
 
-- name: Install VS Code via Flatpak fallback
-  community.general.flatpak:
-    name: "{{ vscode_flatpak_id }}"
-    state: present
-  when: vscode_dnf is failed
+    - name: Select the RPM desktop entry
+      ansible.builtin.set_fact:
+        vscode_desktop_id: "{{ vscode_rpm_desktop_id }}"
+        vscode_install_method: rpm
+  rescue:
+    - name: Install VS Code via Flatpak fallback
+      community.general.flatpak:
+        name: "{{ vscode_flatpak_id }}"
+        state: present
+
+    - name: Select the Flatpak desktop entry
+      ansible.builtin.set_fact:
+        vscode_desktop_id: "{{ vscode_flatpak_desktop_id }}"
+        vscode_install_method: flatpak
+
+- name: Validate the selected VS Code desktop entry
+  ansible.builtin.assert:
+    that:
+      - vscode_install_method in ['rpm', 'flatpak']
+      - vscode_desktop_id in [vscode_rpm_desktop_id, vscode_flatpak_desktop_id]
+      - (vscode_install_method == 'rpm' and vscode_desktop_id == vscode_rpm_desktop_id)
+        or (vscode_install_method == 'flatpak' and vscode_desktop_id == vscode_flatpak_desktop_id)
+    quiet: true
 
 - name: Install Linux clipboard integration for Markdown Paste
   ansible.builtin.dnf:
@@ -59,14 +77,85 @@
     content: "{{ vscode_settings | to_nice_json(indent=2) }}"
   loop: "{{ vscode_user_config_dirs }}"
 
+- name: Ensure the user MIME package directory exists
+  become: true
+  become_user: "{{ target_user }}"
+  ansible.builtin.file:
+    path: "{{ target_home }}/.local/share/mime/packages"
+    state: directory
+    mode: "0755"
+
+- name: Register the Quarto MIME type for qmd files
+  become: true
+  become_user: "{{ target_user }}"
+  ansible.builtin.copy:
+    dest: "{{ target_home }}/.local/share/mime/packages/quarto.xml"
+    mode: "0644"
+    content: |
+      <?xml version="1.0" encoding="UTF-8"?>
+      <mime-info xmlns="http://www.freedesktop.org/standards/shared-mime-info">
+        <mime-type type="{{ vscode_quarto_mime_type }}">
+          <comment>Quarto document</comment>
+          <glob pattern="*.qmd"/>
+        </mime-type>
+      </mime-info>
+  environment:
+    HOME: "{{ target_home }}"
+    XDG_DATA_HOME: "{{ target_home }}/.local/share"
+  notify: Update user MIME database
+
+- name: Apply pending user MIME database changes
+  ansible.builtin.meta: flush_handlers
+
+- name: Ensure the user applications configuration directory exists
+  become: true
+  become_user: "{{ target_user }}"
+  ansible.builtin.file:
+    path: "{{ target_home }}/.config"
+    state: directory
+    mode: "0755"
+
 - name: Set VS Code as default editor for common text formats
-  become: false
-  ansible.builtin.shell: |
-    xdg-mime default code.desktop text/plain
-    xdg-mime default code.desktop text/markdown
-    xdg-mime default code.desktop text/x-python
-    xdg-mime default code.desktop application/x-quarto
+  become: true
+  become_user: "{{ target_user }}"
+  community.general.ini_file:
+    path: "{{ target_home }}/.config/mimeapps.list"
+    section: "Default Applications"
+    option: "{{ item }}"
+    value: "{{ vscode_desktop_id }};"
+    mode: "0644"
+    no_extra_spaces: true
+  environment:
+    HOME: "{{ target_home }}"
+    XDG_CONFIG_HOME: "{{ target_home }}/.config"
+    XDG_DATA_HOME: "{{ target_home }}/.local/share"
+  loop: "{{ vscode_mime_types }}"
+
+- name: Query the Quarto default application
+  become: true
+  become_user: "{{ target_user }}"
+  ansible.builtin.command:
+    argv:
+      - xdg-mime
+      - query
+      - default
+      - "{{ vscode_quarto_mime_type }}"
+  environment:
+    HOME: "{{ target_home }}"
+    XDG_CONFIG_HOME: "{{ target_home }}/.config"
+    XDG_DATA_HOME: "{{ target_home }}/.local/share"
+  register: vscode_quarto_mime_default
   changed_when: false
+
+- name: Verify the Quarto default application
+  ansible.builtin.assert:
+    that:
+      - vscode_quarto_mime_default.stdout == vscode_desktop_id
+    fail_msg: >-
+      Expected {{ vscode_desktop_id }} as the default application for
+      {{ vscode_quarto_mime_type }}, got
+      {{ vscode_quarto_mime_default.stdout | default('no desktop entry') }}.
+    quiet: true
 
 - name: Install VS Code extensions with code CLI (best effort)
   become: false

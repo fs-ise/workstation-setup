@@ -1,0 +1,11 @@
+---
+- name: Update user MIME database
+  become: true
+  become_user: "{{ target_user }}"
+  ansible.builtin.command:
+    argv:
+      - update-mime-database
+      - "{{ target_home }}/.local/share/mime"
+  environment:
+    HOME: "{{ target_home }}"
+    XDG_DATA_HOME: "{{ target_home }}/.local/share"
