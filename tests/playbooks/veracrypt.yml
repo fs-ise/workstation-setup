@@ -37,7 +37,7 @@
       ansible.builtin.include_tasks: ../../roles/baseline/tasks/veracrypt-platform.yml
 
     - name: Reject unsupported VeraCrypt platforms
-      ansible.builtin.include_tasks: unsupported-veracrypt-platform.yml
+      ansible.builtin.include_tasks: ../tasks/unsupported-veracrypt-platform.yml
       loop:
         - distribution: Ubuntu
           distribution_major_version: "44"
