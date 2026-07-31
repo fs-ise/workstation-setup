@@ -66,6 +66,7 @@ package_audit_allowlist:
   - parted
   - pinfo
   - quota
+  - setxkbmap
   - smartmontools
   - socat
   - symlinks
@@ -77,6 +78,8 @@ package_audit_allowlist:
   - wget2-wget
   - which
   - words
+  - xmodmap
+  - xrdb
   - botan3
   - compesize
   - gamemode
