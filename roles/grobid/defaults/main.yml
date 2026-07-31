@@ -5,7 +5,8 @@ grobid_container_name: grobid
 grobid_port: 8070
 grobid_nfs_timeout_ms: 60000
 grobid_script_path: /usr/local/bin/pdf-to-tei
-grobid_nautilus_script_dir: "{{ ansible_facts['env']['HOME'] }}/.local/share/nautilus/scripts"
+grobid_nautilus_script_dir: >-
+  {{ ansible_facts["env"]["HOME"] }}/.local/share/nautilus/scripts
 grobid_nautilus_script_install: true
 grobid_nautilus_action_install: true
 grobid_nautilus_action_name: "Convert PDF to TEI (grobid)"

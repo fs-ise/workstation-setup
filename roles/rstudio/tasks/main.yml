@@ -2,10 +2,10 @@
 - name: Verify that RStudio Desktop supports this architecture
   ansible.builtin.assert:
     that:
-      - ansible_facts['architecture'] == 'x86_64'
+      - ansible_facts["architecture"] == 'x86_64'
     fail_msg: >-
       RStudio Desktop {{ rstudio_version }} is configured only for x86-64 Fedora;
-      detected architecture {{ ansible_facts['architecture'] }}.
+      detected architecture {{ ansible_facts["architecture"] }}.
 
 - name: Validate CRAN installation settings
   ansible.builtin.assert:
@@ -32,8 +32,8 @@
 - name: Install pinned RStudio Desktop release
   when: >-
     rstudio_install_desktop | bool and
-    ('rstudio' not in ansible_facts.packages or
-    rstudio_version not in (ansible_facts.packages['rstudio'] | map(attribute='version') | list))
+    ('rstudio' not in ansible_facts["packages"] or
+    rstudio_version not in (ansible_facts["packages"]["rstudio"] | map(attribute='version') | list))
   block:
     - name: Create the RStudio RPM cache directory
       ansible.builtin.file:

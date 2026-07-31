@@ -1,0 +1,20 @@
+---
+- name: Reset the expected platform rejection marker
+  ansible.builtin.set_fact:
+    veracrypt_platform_rejected: false
+
+- name: Exercise an unsupported VeraCrypt platform
+  block:
+    - name: Validate the unsupported platform
+      ansible.builtin.include_tasks: ../../roles/baseline/tasks/veracrypt-platform.yml
+      vars:
+        ansible_facts: "{{ unsupported_facts }}"
+  rescue:
+    - name: Record the expected platform rejection
+      ansible.builtin.set_fact:
+        veracrypt_platform_rejected: true
+
+- name: Require the unsupported platform to be rejected
+  ansible.builtin.assert:
+    that:
+      - veracrypt_platform_rejected

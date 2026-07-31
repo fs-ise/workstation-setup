@@ -1,7 +1,7 @@
 # Ansible CI tests
 
 The CI checks the complete Ansible setup statically and runs a deliberately small,
-safe subset in a Fedora 43 container. The execution test runs the `baseline` role
+safe subset in a Fedora 44 container. The execution test runs the `baseline` role
 with package installation, package removal, TeX Live, and Flathub disabled. It
 exercises the role's Git configuration, asserts the result, runs the playbook a
 second time, and requires `changed=0` in the second play recap.
@@ -39,7 +39,7 @@ Run the same unprivileged Fedora container used by GitHub Actions:
 docker run --rm \
   --volume "$PWD:/workspace:Z" \
   --workdir /workspace \
-  fedora:43 \
+  fedora:44 \
   bash -lc 'dnf install -y ansible-core git python3-libdnf5 && ansible-galaxy collection install -r requirements.yml && tests/run-idempotence.sh'
 ```
 

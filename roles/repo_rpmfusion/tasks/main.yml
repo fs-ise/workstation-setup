@@ -5,4 +5,4 @@
     state: present
     disable_gpg_check: true
   loop: "{{ repo_rpmfusion_urls }}"
-  when: ansible_facts['distribution'] == 'Fedora'
+  when: ansible_facts["distribution"] == 'Fedora'

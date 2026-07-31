@@ -2,12 +2,14 @@
 - name: Lab stack on Fedora
   hosts: local
   become: true
+  gather_facts: true
 
   vars:
-    target_user: "{{ ansible_facts['env'].get('SUDO_USER', ansible_facts['user_id']) }}"
+    target_user: >-
+      {{ ansible_facts["env"].get('SUDO_USER', ansible_facts["user_id"]) }}
     target_home: >-
-      {{ ansible_facts['env'].get('HOME', lookup('ansible.builtin.env', 'HOME'))
-         if ansible_facts['env'].get('SUDO_USER') is none
+      {{ ansible_facts["env"].get('HOME', lookup('ansible.builtin.env', 'HOME'))
+         if ansible_facts["env"].get('SUDO_USER') is none
          else '/home/' ~ target_user }}
 
   roles:

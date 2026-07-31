@@ -1,18 +1,8 @@
 ---
 - name: Validate VeraCrypt platform support
-  ansible.builtin.assert:
-    that:
-      - ansible_distribution == "Fedora"
-      - ansible_distribution_major_version in baseline_veracrypt_supported_fedora_versions
-      - ansible_architecture == baseline_veracrypt_architecture
-    fail_msg: >-
-      VeraCrypt {{ baseline_veracrypt_version }} is supported only on Fedora
-      {{ baseline_veracrypt_supported_fedora_versions | join(', ') }} for
-      {{ baseline_veracrypt_architecture }}; detected
-      {{ ansible_distribution }} {{ ansible_distribution_major_version }} on
-      {{ ansible_architecture }}.
+  ansible.builtin.include_tasks: veracrypt-platform.yml
 
-- name: Read the installed VeraCrypt version  # noqa command-instead-of-module
+- name: Read the installed VeraCrypt version # noqa command-instead-of-module
   ansible.builtin.command:
     argv:
       - rpm
@@ -24,7 +14,7 @@
   changed_when: false
   failed_when: baseline_veracrypt_installed.rc not in [0, 1]
 
-- name: Compare installed and pinned VeraCrypt versions  # noqa command-instead-of-module
+- name: Compare installed and pinned VeraCrypt versions # noqa command-instead-of-module
   ansible.builtin.command:
     argv:
       - rpm
@@ -136,7 +126,7 @@
 
         - name: Import the verified VeraCrypt RPM-signing key
           ansible.builtin.rpm_key:
-            key: "{{ baseline_veracrypt_tempdir.path }}/trustedkeys.gpg"
+            key: "{{ baseline_veracrypt_tempdir.path }}/signing-key.asc"
             fingerprint: "{{ baseline_veracrypt_signing_key_fingerprint }}"
             state: present
 

@@ -2,6 +2,11 @@
 - name: Test VeraCrypt baseline selection and safety defaults
   hosts: local
   gather_facts: false
+  vars:
+    ansible_facts:
+      distribution: Fedora
+      distribution_major_version: "44"
+      architecture: x86_64
   tasks:
     - name: Load baseline role defaults
       ansible.builtin.include_vars:
@@ -11,6 +16,15 @@
       ansible.builtin.assert:
         that:
           - baseline_veracrypt_version == "1.26.29"
+          - baseline_veracrypt_supported_fedora_versions == ["42", "43", "44"]
+          - >-
+            baseline_veracrypt_rpm_filename ==
+            'veracrypt-1.26.29-Fedora-44-x86_64.rpm'
+          - >-
+            baseline_veracrypt_package_url ==
+            'https://launchpad.net/veracrypt/trunk/1.26.29/+download/'
+            ~ 'veracrypt-1.26.29-Fedora-44-x86_64.rpm'
+          - baseline_veracrypt_signature_url == baseline_veracrypt_package_url ~ '.sig'
           - >-
             baseline_veracrypt_signing_key_fingerprint ==
             '5069A233D55A0EEB174A5FC3821ACD02680D16DE'
@@ -18,6 +32,24 @@
             'allow_downgrade' not in
             lookup('ansible.builtin.file',
                    playbook_dir ~ '/../../roles/baseline/tasks/veracrypt.yml')
+
+    - name: Accept Fedora 44 for VeraCrypt
+      ansible.builtin.include_tasks: ../../roles/baseline/tasks/veracrypt-platform.yml
+
+    - name: Reject unsupported VeraCrypt platforms
+      ansible.builtin.include_tasks: unsupported-veracrypt-platform.yml
+      loop:
+        - distribution: Ubuntu
+          distribution_major_version: "44"
+          architecture: x86_64
+        - distribution: Fedora
+          distribution_major_version: "41"
+          architecture: x86_64
+        - distribution: Fedora
+          distribution_major_version: "44"
+          architecture: aarch64
+      loop_control:
+        loop_var: unsupported_facts
 
     - name: Exercise the disabled VeraCrypt include
       ansible.builtin.include_tasks: ../../roles/baseline/tasks/veracrypt.yml

@@ -1,0 +1,16 @@
+---
+- name: Require a supported VeraCrypt platform
+  ansible.builtin.assert:
+    that:
+      - ansible_facts["distribution"] == "Fedora"
+      - >-
+        ansible_facts["distribution_major_version"]
+        in baseline_veracrypt_supported_fedora_versions
+      - ansible_facts["architecture"] == baseline_veracrypt_architecture
+    fail_msg: >-
+      VeraCrypt {{ baseline_veracrypt_version }} is supported only on Fedora
+      {{ baseline_veracrypt_supported_fedora_versions | join(', ') }} for
+      {{ baseline_veracrypt_architecture }}; detected
+      {{ ansible_facts["distribution"] }}
+      {{ ansible_facts["distribution_major_version"] }} on
+      {{ ansible_facts["architecture"] }}.

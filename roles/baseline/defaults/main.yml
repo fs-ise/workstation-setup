@@ -109,11 +109,12 @@ baseline_install_veracrypt: true
 # version must never be downgraded automatically.
 baseline_veracrypt_version: "1.26.29"
 baseline_veracrypt_supported_fedora_versions:
-  - "41"
   - "42"
+  - "43"
+  - "44"
 baseline_veracrypt_architecture: x86_64
 baseline_veracrypt_rpm_filename: >-
-  veracrypt-{{ baseline_veracrypt_version }}-Fedora-{{ ansible_distribution_major_version }}-{{ baseline_veracrypt_architecture }}.rpm
+  veracrypt-{{ baseline_veracrypt_version }}-Fedora-{{ ansible_facts["distribution_major_version"] }}-{{ baseline_veracrypt_architecture }}.rpm
 baseline_veracrypt_signing_key_url: >-
   https://www.idrix.fr/VeraCrypt/VeraCrypt_PGP_public_key.asc
 baseline_veracrypt_signing_key_fingerprint: >-
