@@ -35,6 +35,14 @@
     ('rstudio' not in ansible_facts["packages"] or
     rstudio_version not in (ansible_facts["packages"]["rstudio"] | map(attribute='version') | list))
   block:
+    - name: Import the Posit RPM signing key
+      ansible.builtin.rpm_key:
+        state: present
+        key: "{{ rstudio_rpm_signing_key_url }}"
+        fingerprint:
+          - "{{ rstudio_rpm_signing_key_fingerprint }}"
+        validate_certs: true
+
     - name: Create the RStudio RPM cache directory
       ansible.builtin.file:
         path: "{{ rstudio_rpm_download_directory }}"

@@ -5,6 +5,12 @@ rstudio_rpm_version: "{{ rstudio_version | replace('+', '-') }}"
 rstudio_rpm_filename: "rstudio-{{ rstudio_rpm_version }}-x86_64.rpm"
 rstudio_download_url: >-
   https://download1.rstudio.org/electron/rhel9/x86_64/{{ rstudio_rpm_filename }}
+# Posit's current open-source repository signing key for builds released after
+# July 25, 2023. Keep the fingerprint pinned so an unexpected key is rejected.
+rstudio_rpm_signing_key_url: >-
+  https://dl.posit.co/public/open/gpg.51C0B5BB19F92D60.key
+rstudio_rpm_signing_key_fingerprint: >-
+  8B65E5A107BBEFE3BA99C59751C0B5BB19F92D60
 # Posit displays a checksum on its download page but does not provide a stable
 # checksum-file URL. Set this to "sha256:<digest>" when pinning a published digest.
 rstudio_rpm_checksum: ""
