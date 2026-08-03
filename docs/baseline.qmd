@@ -41,5 +41,12 @@ ssh -T git@github.com
 ```
 :::
 
+## File manager keyboard shortcuts
+
+In Nautilus or Nemo, select a file or folder and press `Shift+F10` to open its
+context menu (the same menu as right-clicking). A dedicated **Menu key**, when
+available, does the same. These shortcuts open the selected file or folder's
+context menu, not the application's top menu.
+
 
 Future work: decide whether additional desktop GNOME setup should be documented here or kept in separate role pages.
