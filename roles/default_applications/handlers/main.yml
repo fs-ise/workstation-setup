@@ -8,4 +8,5 @@
       - "{{ target_home }}/.local/share/mime"
   environment:
     HOME: "{{ target_home }}"
+    XDG_CONFIG_HOME: "{{ target_home }}/.config"
     XDG_DATA_HOME: "{{ target_home }}/.local/share"

@@ -12,8 +12,77 @@
     baseline_install_texlive_scheme: false
     baseline_install_veracrypt: false
     baseline_configure_flathub: false
+    default_applications_associations:
+      - name: CI text editor
+        desktop_ids: [ci-text-editor.desktop]
+        required: true
+        mime_types:
+          - text/x-quarto-markdown
+          - text/plain
+      - name: Missing optional viewer
+        desktop_ids: [ci-missing-viewer.desktop]
+        required: false
+        mime_types: [application/pdf]
+      - name: Thunderbird
+        desktop_ids:
+          - net.thunderbird.Thunderbird.desktop
+          - org.mozilla.Thunderbird.desktop
+          - thunderbird.desktop
+        required: true
+        mime_types:
+          - message/rfc822
+          - x-scheme-handler/mailto
+  pre_tasks:
+    - name: Ensure the CI desktop entry directory exists
+      ansible.builtin.file:
+        path: /root/.local/share/applications
+        state: directory
+        mode: "0755"
+
+    - name: Ensure the CI configuration directory exists
+      ansible.builtin.file:
+        path: /root/.config
+        state: directory
+        mode: "0755"
+
+    - name: Seed a legacy Quarto association for migration coverage
+      ansible.builtin.copy:
+        dest: /root/.config/mimeapps.list
+        force: false
+        mode: "0644"
+        content: |
+          [Default Applications]
+          application/x-quarto=legacy-editor.desktop;
+          application/x-unrelated=unrelated.desktop;
+
+    - name: Create a fake desktop entry for default-application tests
+      ansible.builtin.copy:
+        dest: /root/.local/share/applications/ci-text-editor.desktop
+        mode: "0644"
+        content: |
+          [Desktop Entry]
+          Type=Application
+          Name=CI text editor
+          Exec=/usr/bin/true %f
+          MimeType=text/x-quarto-markdown;text/plain;
+
+    - name: Create fake Thunderbird desktop-entry candidates
+      ansible.builtin.copy:
+        dest: "/root/.local/share/applications/{{ item }}"
+        mode: "0644"
+        content: |
+          [Desktop Entry]
+          Type=Application
+          Name=CI Thunderbird candidate
+          Exec=/usr/bin/true %u
+          MimeType=message/rfc822;x-scheme-handler/mailto;
+      loop:
+        - net.thunderbird.Thunderbird.desktop
+        - org.mozilla.Thunderbird.desktop
+        - thunderbird.desktop
   roles:
     - role: baseline
+    - role: default_applications
 
   post_tasks:
     - name: Read configured default Git branch  # noqa command-instead-of-module
@@ -27,3 +96,31 @@
         that:
           - ci_git_default_branch.stdout == "main"
         fail_msg: The baseline role did not configure Git as expected.
+
+    - name: Read the CI default applications
+      ansible.builtin.slurp:
+        src: /root/.config/mimeapps.list
+      register: ci_mimeapps
+
+    - name: Verify the default-application fixture
+      ansible.builtin.assert:
+        that:
+          - "'text/x-quarto-markdown=ci-text-editor.desktop;' in (ci_mimeapps.content | b64decode)"
+          - "'text/plain=ci-text-editor.desktop;' in (ci_mimeapps.content | b64decode)"
+          - "'message/rfc822=net.thunderbird.Thunderbird.desktop;' in (ci_mimeapps.content | b64decode)"
+          - "'x-scheme-handler/mailto=net.thunderbird.Thunderbird.desktop;' in (ci_mimeapps.content | b64decode)"
+          - "'application/x-quarto' not in (ci_mimeapps.content | b64decode)"
+          - "'application/x-unrelated=unrelated.desktop;' in (ci_mimeapps.content | b64decode)"
+          - "'ci-missing-viewer.desktop' not in (ci_mimeapps.content | b64decode)"
+        fail_msg: The default-applications role did not write the expected CI associations.
+
+    - name: Check for an obsolete custom Quarto MIME definition
+      ansible.builtin.stat:
+        path: /root/.local/share/mime/packages/quarto.xml
+      register: ci_quarto_mime_definition
+
+    - name: Verify Fedora Quarto MIME configuration
+      ansible.builtin.assert:
+        that:
+          - not ci_quarto_mime_definition.stat.exists
+        fail_msg: The role left an obsolete custom Quarto MIME definition installed.

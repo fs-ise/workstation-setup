@@ -1,0 +1,99 @@
+---
+default_applications_quarto_mime_type: text/x-quarto-markdown
+default_applications_packages:
+  - shared-mime-info
+  - xdg-utils
+
+# Desktop IDs are basenames from Fedora RPM payloads or Flatpak exports. Candidate
+# lists cover packages with both RPM and Flatpak installation paths.
+default_applications_associations:
+  - name: Visual Studio Code
+    desktop_ids: >-
+      {{ (([vscode_desktop_id] if vscode_desktop_id is defined else [])
+          + [vscode_rpm_desktop_id, vscode_flatpak_desktop_id]) | unique | list }}
+    required: true
+    mime_types:
+      - "{{ default_applications_quarto_mime_type }}"
+      - text/markdown
+      - text/plain
+      - text/x-python
+      - application/yaml
+      - application/json
+      - application/toml
+      - application/x-shellscript
+      - text/x-bibtex
+      - application/x-research-info-systems
+  - name: TeXstudio
+    desktop_ids: [texstudio.desktop]
+    required: true
+    mime_types: [text/x-tex]
+  - name: Okular
+    desktop_ids: [org.kde.okular.desktop]
+    required: true
+    mime_types: [application/pdf]
+  - name: LibreOffice Writer
+    desktop_ids: [libreoffice-writer.desktop]
+    required: false
+    mime_types:
+      - application/vnd.oasis.opendocument.text
+      - application/msword
+      - application/vnd.openxmlformats-officedocument.wordprocessingml.document
+      - application/rtf
+  - name: LibreOffice Calc
+    desktop_ids: [libreoffice-calc.desktop]
+    required: false
+    mime_types:
+      - application/vnd.oasis.opendocument.spreadsheet
+      - application/vnd.ms-excel
+      - application/vnd.openxmlformats-officedocument.spreadsheetml.sheet
+      - text/csv
+  - name: LibreOffice Impress
+    desktop_ids: [libreoffice-impress.desktop]
+    required: false
+    mime_types:
+      - application/vnd.oasis.opendocument.presentation
+      - application/vnd.ms-powerpoint
+      - application/vnd.openxmlformats-officedocument.presentationml.presentation
+  - name: Google Chrome
+    desktop_ids: [google-chrome.desktop]
+    required: true
+    mime_types:
+      - text/html
+      - application/xhtml+xml
+      - x-scheme-handler/http
+      - x-scheme-handler/https
+  - name: Thunderbird
+    desktop_ids:
+      - net.thunderbird.Thunderbird.desktop
+      - org.mozilla.Thunderbird.desktop
+      - thunderbird.desktop
+    required: true
+    mime_types:
+      - message/rfc822
+      - x-scheme-handler/mailto
+  - name: DB Browser for SQLite
+    desktop_ids: [sqlitebrowser.desktop]
+    required: false
+    mime_types:
+      - application/vnd.sqlite3
+      - application/x-sqlite3
+  - name: Loupe
+    desktop_ids: [org.gnome.Loupe.desktop]
+    required: false
+    mime_types:
+      - image/bmp
+      - image/gif
+      - image/jpeg
+      - image/png
+      - image/tiff
+      - image/webp
+  - name: GIMP
+    desktop_ids: [org.gimp.GIMP.desktop]
+    required: false
+    mime_types: [image/x-xcf]
+
+default_applications_desktop_search_paths:
+  - /usr/share/applications
+  - "{{ target_home }}/.local/share/applications"
+  - /var/lib/flatpak/exports/share/applications
+  - "{{ target_home }}/.local/share/flatpak/exports/share/applications"

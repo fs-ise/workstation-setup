@@ -1,0 +1,161 @@
+---
+- name: Install default-application support tools
+  ansible.builtin.dnf:
+    name: "{{ default_applications_packages }}"
+    state: present
+
+- name: Ensure user default-application directories exist
+  become: true
+  become_user: "{{ target_user }}"
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    mode: "0755"
+  loop:
+    - "{{ target_home }}/.config"
+    - "{{ target_home }}/.local/share/mime/packages"
+    - "{{ target_home }}/.cache/workstation-setup"
+
+- name: Remove the obsolete custom Quarto MIME definition
+  become: true
+  become_user: "{{ target_user }}"
+  ansible.builtin.file:
+    path: "{{ target_home }}/.local/share/mime/packages/quarto.xml"
+    state: absent
+  environment: &default_applications_environment
+    HOME: "{{ target_home }}"
+    XDG_CONFIG_HOME: "{{ target_home }}/.config"
+    XDG_DATA_HOME: "{{ target_home }}/.local/share"
+  notify: Update user MIME database
+
+- name: Apply pending user MIME database changes
+  ansible.builtin.meta: flush_handlers
+
+- name: Remove the obsolete Quarto default application
+  become: true
+  become_user: "{{ target_user }}"
+  community.general.ini_file:
+    path: "{{ target_home }}/.config/mimeapps.list"
+    section: Default Applications
+    option: application/x-quarto
+    state: absent
+    mode: "0644"
+    no_extra_spaces: true
+  environment: *default_applications_environment
+
+- name: Find installed desktop entries
+  become: true
+  become_user: "{{ target_user }}"
+  ansible.builtin.find:
+    paths: "{{ default_applications_desktop_search_paths }}"
+    patterns: "*.desktop"
+    file_type: any
+    recurse: false
+  register: default_applications_desktop_files
+
+- name: Record installed desktop entry IDs
+  ansible.builtin.set_fact:
+    default_applications_installed_desktop_ids: >-
+      {{ default_applications_desktop_files.files
+         | map(attribute='path') | map('basename') | unique | list }}
+    default_applications_enabled: []
+
+- name: Select installed applications
+  ansible.builtin.set_fact:
+    default_applications_enabled: >-
+      {{ default_applications_enabled +
+         [item | combine({'selected_desktop_id':
+           (item.desktop_ids | intersect(default_applications_installed_desktop_ids) | first)})] }}
+  loop: "{{ default_applications_associations }}"
+  loop_control:
+    label: "{{ item.name }}"
+  when: item.desktop_ids | intersect(default_applications_installed_desktop_ids) | length > 0
+
+- name: Require expected desktop entries
+  ansible.builtin.assert:
+    that:
+      - item.desktop_ids | intersect(default_applications_installed_desktop_ids) | length > 0
+    fail_msg: >-
+      Required application {{ item.name }} has no desktop entry. Expected one of
+      {{ item.desktop_ids | join(', ') }} in {{ default_applications_desktop_search_paths | join(', ') }}.
+    quiet: true
+  loop: "{{ default_applications_associations | selectattr('required') | list }}"
+  loop_control:
+    label: "{{ item.name }}"
+
+- name: Report unavailable optional applications
+  ansible.builtin.debug:
+    msg: "Skipping optional application {{ item.name }}: no {{ item.desktop_ids | join(' or ') }} desktop entry."
+  loop: "{{ default_applications_associations | rejectattr('required') | list }}"
+  loop_control:
+    label: "{{ item.name }}"
+  when: item.desktop_ids | intersect(default_applications_installed_desktop_ids) | length == 0
+
+- name: Configure default applications
+  become: true
+  become_user: "{{ target_user }}"
+  community.general.ini_file:
+    path: "{{ target_home }}/.config/mimeapps.list"
+    section: Default Applications
+    option: "{{ item.1 }}"
+    value: "{{ item.0.selected_desktop_id }};"
+    mode: "0644"
+    no_extra_spaces: true
+  environment: *default_applications_environment
+  loop: "{{ default_applications_enabled | subelements('mime_types') }}"
+  loop_control:
+    label: "{{ item.1 }} -> {{ item.0.selected_desktop_id }}"
+
+- name: Query configured default applications
+  become: true
+  become_user: "{{ target_user }}"
+  ansible.builtin.command:
+    argv: [xdg-mime, query, default, "{{ item.1 }}"]
+  environment: *default_applications_environment
+  loop: "{{ default_applications_enabled | subelements('mime_types') }}"
+  loop_control:
+    label: "{{ item.1 }}"
+  register: default_applications_queries
+  changed_when: false
+
+- name: Verify configured default applications
+  ansible.builtin.assert:
+    that:
+      - item.stdout == item.item.0.selected_desktop_id
+    fail_msg: >-
+      MIME type {{ item.item.1 }}: expected {{ item.item.0.selected_desktop_id }},
+      got {{ item.stdout | default('no desktop entry', true) }}.
+    quiet: true
+  loop: "{{ default_applications_queries.results }}"
+  loop_control:
+    label: "{{ item.item.1 }}"
+
+- name: Create a Quarto MIME recognition fixture
+  become: true
+  become_user: "{{ target_user }}"
+  ansible.builtin.copy:
+    dest: "{{ target_home }}/.cache/workstation-setup/mime-recognition.qmd"
+    content: "---\ntitle: MIME recognition check\n---\n"
+    mode: "0644"
+
+- name: Query the Quarto fixture MIME type
+  become: true
+  become_user: "{{ target_user }}"
+  ansible.builtin.command:
+    argv:
+      - xdg-mime
+      - query
+      - filetype
+      - "{{ target_home }}/.cache/workstation-setup/mime-recognition.qmd"
+  environment: *default_applications_environment
+  register: default_applications_quarto_query
+  changed_when: false
+
+- name: Verify qmd MIME recognition
+  ansible.builtin.assert:
+    that:
+      - default_applications_quarto_query.stdout == default_applications_quarto_mime_type
+    fail_msg: >-
+      Expected .qmd to resolve to {{ default_applications_quarto_mime_type }}, got
+      {{ default_applications_quarto_query.stdout | default('no MIME type', true) }}.
+    quiet: true

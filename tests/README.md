@@ -3,8 +3,9 @@
 The CI checks the complete Ansible setup statically and runs a deliberately small,
 safe subset in a Fedora 44 container. The execution test runs the `baseline` role
 with package installation, package removal, TeX Live, and Flathub disabled. It
-exercises the role's Git configuration, asserts the result, runs the playbook a
-second time, and requires `changed=0` in the second play recap.
+also runs `default_applications` with a reduced fixture and a fake desktop entry,
+without installing GUI software. It asserts the Git and MIME configuration, runs
+the playbook a second time, and requires `changed=0` in the second play recap.
 
 ## Run the checks locally
 
@@ -57,8 +58,10 @@ the tag. Do not mark mutating commands unchanged merely to satisfy the test.
 
 ## Coverage and limitations
 
-- **Executed in Fedora:** the baseline role's global Git configuration and its
-  resulting state. Package loops are loaded but intentionally empty.
+- **Executed in Fedora:** the baseline role's global Git configuration and the
+  default-applications role's Fedora Quarto MIME recognition, legacy association
+  cleanup, desktop-entry validation, optional-application skip, `mimeapps.list`
+  updates, and queries. Package loops are loaded but intentionally empty.
 - **Static validation only:** all roles in `playbooks/lab-stack.yml`, including
   package repositories, downloads, Docker and LanguageTool containers, Quarto,
   OCR, Chrome, VS Code, Teams for Linux, Thunderbird, and desktop configuration.

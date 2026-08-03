@@ -32,17 +32,6 @@
   failed_when: false
   when: baseline_install_texlive_scheme | bool
 
-- name: Set TeXstudio as the default TeX editor
-  become: true
-  become_user: "{{ target_user }}"
-  community.general.ini_file:
-    path: "{{ target_home }}/.config/mimeapps.list"
-    section: "Default Applications"
-    option: text/x-tex
-    value: texstudio.desktop;
-    mode: "0644"
-    no_extra_spaces: true
-
 - name: Configure global git settings
   become: false
   community.general.git_config:

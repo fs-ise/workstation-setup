@@ -4,14 +4,6 @@ vscode_rpm_package: "code"
 vscode_flatpak_id: "com.visualstudio.code"
 vscode_rpm_desktop_id: "code.desktop"
 vscode_flatpak_desktop_id: "com.visualstudio.code.desktop"
-vscode_quarto_mime_type: "application/x-quarto"
-
-vscode_mime_types:
-  - text/plain
-  - text/markdown
-  - text/x-python
-  - "{{ vscode_quarto_mime_type }}"
-
 vscode_extensions:
   - ms-python.python
   - ms-toolsai.jupyter

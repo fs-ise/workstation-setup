@@ -51,3 +51,7 @@
 
     - role: desktop_gnome
       tags: [desktop]
+
+    # Keep this last: associations are valid only after applications export their desktop entries.
+    - role: default_applications
+      tags: [default_applications]
