@@ -1,6 +1,7 @@
 ---
 default_applications_quarto_mime_type: text/x-quarto-markdown
 default_applications_packages:
+  - perl-File-MimeInfo
   - shared-mime-info
   - xdg-utils
 

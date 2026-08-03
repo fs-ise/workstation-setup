@@ -16,12 +16,21 @@
     - "{{ target_home }}/.local/share/mime/packages"
     - "{{ target_home }}/.cache/workstation-setup"
 
-- name: Remove the obsolete custom Quarto MIME definition
+- name: Register the Quarto MIME type
   become: true
   become_user: "{{ target_user }}"
-  ansible.builtin.file:
-    path: "{{ target_home }}/.local/share/mime/packages/quarto.xml"
-    state: absent
+  ansible.builtin.copy:
+    dest: "{{ target_home }}/.local/share/mime/packages/quarto.xml"
+    mode: "0644"
+    content: |
+      <?xml version="1.0" encoding="UTF-8"?>
+      <mime-info xmlns="http://www.freedesktop.org/standards/shared-mime-info">
+        <mime-type type="text/x-quarto-markdown">
+          <comment>Quarto document</comment>
+          <sub-class-of type="text/markdown"/>
+          <glob pattern="*.qmd"/>
+        </mime-type>
+      </mime-info>
   environment: &default_applications_environment
     HOME: "{{ target_home }}"
     XDG_CONFIG_HOME: "{{ target_home }}/.config"

@@ -19,9 +19,9 @@ Fedora 44's Thunderbird RPM exports
 older installations. Candidate order determines which entry is selected when
 more than one is installed.
 
-Fedora already registers `.qmd` files as `text/x-quarto-markdown`. This role
-only selects the default application for that MIME type; it does not install a
-competing custom MIME definition.
+The role registers `.qmd` files as `text/x-quarto-markdown` in the user's MIME
+database before selecting their default application. This explicit definition
+keeps MIME recognition consistent on minimal Fedora installations.
 
 ::: {.callout-manual}
 **🔧 Manual setup and configuration**

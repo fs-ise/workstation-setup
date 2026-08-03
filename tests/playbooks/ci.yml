@@ -45,6 +45,12 @@
         state: directory
         mode: "0755"
 
+    - name: Ensure the CI MIME package directory exists
+      ansible.builtin.file:
+        path: /root/.local/share/mime/packages
+        state: directory
+        mode: "0755"
+
     - name: Seed a legacy Quarto association for migration coverage
       ansible.builtin.copy:
         dest: /root/.config/mimeapps.list
@@ -54,6 +60,20 @@
           [Default Applications]
           application/x-quarto=legacy-editor.desktop;
           application/x-unrelated=unrelated.desktop;
+
+    - name: Seed a legacy Quarto MIME definition for migration coverage
+      ansible.builtin.copy:
+        dest: /root/.local/share/mime/packages/quarto.xml
+        force: false
+        mode: "0644"
+        content: |
+          <?xml version="1.0" encoding="UTF-8"?>
+          <mime-info xmlns="http://www.freedesktop.org/standards/shared-mime-info">
+            <mime-type type="application/x-quarto">
+              <comment>Legacy Quarto document</comment>
+              <glob pattern="*.qmd"/>
+            </mime-type>
+          </mime-info>
 
     - name: Create a fake desktop entry for default-application tests
       ansible.builtin.copy:
@@ -114,13 +134,15 @@
           - "'ci-missing-viewer.desktop' not in (ci_mimeapps.content | b64decode)"
         fail_msg: The default-applications role did not write the expected CI associations.
 
-    - name: Check for an obsolete custom Quarto MIME definition
-      ansible.builtin.stat:
-        path: /root/.local/share/mime/packages/quarto.xml
+    - name: Read the Quarto MIME definition
+      ansible.builtin.slurp:
+        src: /root/.local/share/mime/packages/quarto.xml
       register: ci_quarto_mime_definition
 
-    - name: Verify Fedora Quarto MIME configuration
+    - name: Verify the Quarto MIME definition
       ansible.builtin.assert:
         that:
-          - not ci_quarto_mime_definition.stat.exists
-        fail_msg: The role left an obsolete custom Quarto MIME definition installed.
+          - "'text/x-quarto-markdown' in (ci_quarto_mime_definition.content | b64decode)"
+          - "'*.qmd' in (ci_quarto_mime_definition.content | b64decode)"
+          - "'application/x-quarto' not in (ci_quarto_mime_definition.content | b64decode)"
+        fail_msg: The role did not install the expected Quarto MIME definition.
