@@ -17,7 +17,8 @@ Fedora 44's Thunderbird RPM exports
 `net.thunderbird.Thunderbird.desktop`. The association also retains
 `org.mozilla.Thunderbird.desktop` for Flatpak and `thunderbird.desktop` for
 older installations. Candidate order determines which entry is selected when
-more than one is installed.
+more than one is installed: the role selects the first installed desktop ID in
+the configured candidate list.
 
 The role registers `.qmd` files as `text/x-quarto-markdown` in the user's MIME
 database before selecting their default application. This explicit definition

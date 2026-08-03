@@ -17,6 +17,7 @@ class DefaultApplicationsRoleTests(unittest.TestCase):
             "  - name: DB Browser for SQLite\n", 1
         )[0]
         cls.tasks = TASKS_PATH.read_text(encoding="utf-8")
+        cls.normalized_tasks = " ".join(cls.tasks.split())
 
     def test_thunderbird_candidates_are_supported_in_preference_order(self):
         candidates = (
@@ -34,9 +35,45 @@ class DefaultApplicationsRoleTests(unittest.TestCase):
 
     def test_first_installed_candidate_is_selected(self):
         self.assertIn(
-            "item.desktop_ids | intersect(default_applications_installed_desktop_ids) | first",
-            self.tasks,
+            "item.desktop_ids | "
+            "community.general.lists_intersect(default_applications_installed_desktop_ids) "
+            "| first",
+            self.normalized_tasks,
         )
+
+    def test_thunderbird_prefers_first_candidate_when_all_are_installed(self):
+        candidates = (
+            "net.thunderbird.Thunderbird.desktop",
+            "org.mozilla.Thunderbird.desktop",
+            "thunderbird.desktop",
+        )
+        installed = set(candidates)
+
+        selected = next(candidate for candidate in candidates if candidate in installed)
+
+        self.assertEqual(selected, "net.thunderbird.Thunderbird.desktop")
+
+    def test_all_application_handling_uses_order_preserving_intersection(self):
+        matching_filter = (
+            "community.general.lists_intersect("
+            "default_applications_installed_desktop_ids)"
+        )
+        task_names = (
+            "Select installed applications",
+            "Require expected desktop entries",
+            "Report unavailable optional applications",
+        )
+
+        for index, task_name in enumerate(task_names):
+            start = self.tasks.index(f"- name: {task_name}")
+            if index + 1 < len(task_names):
+                end = self.tasks.index(f"- name: {task_names[index + 1]}")
+                task = self.tasks[start:end]
+            else:
+                task = self.tasks[start:]
+            self.assertIn(matching_filter, task, task_name)
+
+        self.assertNotIn(" | intersect(", self.tasks)
 
     def test_missing_required_entry_has_clear_failure(self):
         self.assertIn("- name: Require expected desktop entries", self.tasks)

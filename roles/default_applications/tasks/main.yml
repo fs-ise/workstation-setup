@@ -74,16 +74,24 @@
     default_applications_enabled: >-
       {{ default_applications_enabled +
          [item | combine({'selected_desktop_id':
-           (item.desktop_ids | intersect(default_applications_installed_desktop_ids) | first)})] }}
+           (item.desktop_ids
+            | community.general.lists_intersect(default_applications_installed_desktop_ids)
+            | first)})] }}
   loop: "{{ default_applications_associations }}"
   loop_control:
     label: "{{ item.name }}"
-  when: item.desktop_ids | intersect(default_applications_installed_desktop_ids) | length > 0
+  when: >-
+    item.desktop_ids
+    | community.general.lists_intersect(default_applications_installed_desktop_ids)
+    | length > 0
 
 - name: Require expected desktop entries
   ansible.builtin.assert:
     that:
-      - item.desktop_ids | intersect(default_applications_installed_desktop_ids) | length > 0
+      - >-
+        item.desktop_ids
+        | community.general.lists_intersect(default_applications_installed_desktop_ids)
+        | length > 0
     fail_msg: >-
       Required application {{ item.name }} has no desktop entry. Expected one of
       {{ item.desktop_ids | join(', ') }} in {{ default_applications_desktop_search_paths | join(', ') }}.
@@ -98,7 +106,10 @@
   loop: "{{ default_applications_associations | rejectattr('required') | list }}"
   loop_control:
     label: "{{ item.name }}"
-  when: item.desktop_ids | intersect(default_applications_installed_desktop_ids) | length == 0
+  when: >-
+    item.desktop_ids
+    | community.general.lists_intersect(default_applications_installed_desktop_ids)
+    | length == 0
 
 - name: Configure default applications
   become: true
