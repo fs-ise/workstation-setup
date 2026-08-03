@@ -8,6 +8,9 @@ readonly output_dir=tests/output
 rm -rf "${output_dir}"
 mkdir -p "${output_dir}"
 
+ansible-playbook -i "${inventory}" tests/playbooks/keyboard-copilot-activation.yml \
+  | tee "${output_dir}/keyboard-copilot-activation.log"
+
 ansible-playbook -i "${inventory}" "${playbook}" | tee "${output_dir}/first-run.log"
 ansible-playbook -i "${inventory}" "${playbook}" | tee "${output_dir}/second-run.log"
 
@@ -15,4 +18,3 @@ if ! sed -n '/PLAY RECAP/,$p' "${output_dir}/second-run.log" | grep -Eq 'changed
   echo "The second Ansible run was not idempotent." >&2
   exit 1
 fi
-

@@ -1,0 +1,125 @@
+---
+- name: Calculate Copilot key remapping activation
+  ansible.builtin.import_tasks: activation.yml
+
+- name: Configure active Copilot key remapping
+  when: keyboard_copilot_rightctrl_active | bool
+  tags:
+    - hardware
+    - requires_systemd
+  block:
+    - name: Install evsieve build and test dependencies
+      ansible.builtin.dnf:
+        name:
+          - cargo
+          - evtest
+          - libevdev
+          - libevdev-devel
+        state: present
+
+    - name: Check the physical keyboard input device
+      ansible.builtin.stat:
+        path: "{{ keyboard_copilot_rightctrl_input_device }}"
+      register: keyboard_copilot_rightctrl_input_stat
+
+    - name: Require the physical keyboard input device
+      ansible.builtin.assert:
+        that:
+          - keyboard_copilot_rightctrl_input_stat.stat.exists
+        fail_msg: >-
+          The configured keyboard input device {{ keyboard_copilot_rightctrl_input_device }} does not exist.
+          I2C keyboards may use a different /dev/input/by-path entry; override
+          keyboard_copilot_rightctrl_input_device with the stable path for this laptop's keyboard.
+
+    - name: Create the evsieve source parent directory
+      ansible.builtin.file:
+        path: "{{ keyboard_copilot_rightctrl_evsieve_source_dir | dirname }}"
+        state: directory
+        owner: root
+        group: root
+        mode: "0755"
+
+    - name: Create the evsieve Cargo cache directory
+      ansible.builtin.file:
+        path: "{{ keyboard_copilot_rightctrl_evsieve_cargo_home }}"
+        state: directory
+        owner: root
+        group: root
+        mode: "0755"
+
+    - name: Check for the compiled evsieve release binary
+      ansible.builtin.stat:
+        path: "{{ keyboard_copilot_rightctrl_evsieve_source_dir }}/target/release/evsieve"
+      register: keyboard_copilot_rightctrl_evsieve_compiled_stat
+
+    - name: Check out the pinned evsieve source
+      ansible.builtin.git:
+        repo: "{{ keyboard_copilot_rightctrl_evsieve_repository }}"
+        dest: "{{ keyboard_copilot_rightctrl_evsieve_source_dir }}"
+        version: "{{ keyboard_copilot_rightctrl_evsieve_commit }}"
+      register: keyboard_copilot_rightctrl_evsieve_checkout
+
+    - name: Build the pinned evsieve source with Cargo
+      ansible.builtin.command: cargo build --release --locked
+      args:
+        chdir: "{{ keyboard_copilot_rightctrl_evsieve_source_dir }}"
+      environment:
+        CARGO_HOME: "{{ keyboard_copilot_rightctrl_evsieve_cargo_home }}"
+      when: >-
+        keyboard_copilot_rightctrl_evsieve_checkout.changed or
+        not keyboard_copilot_rightctrl_evsieve_compiled_stat.stat.exists
+
+    - name: Install the compiled evsieve executable
+      ansible.builtin.copy:
+        src: "{{ keyboard_copilot_rightctrl_evsieve_source_dir }}/target/release/evsieve"
+        dest: "{{ keyboard_copilot_rightctrl_evsieve_install_path }}"
+        remote_src: true
+        owner: root
+        group: root
+        mode: "0755"
+      notify: Restart Copilot key remapping
+
+    - name: Install the Copilot key remapping service
+      ansible.builtin.template:
+        src: copilot-rightctrl.service.j2
+        dest: "{{ keyboard_copilot_rightctrl_service_unit_path }}"
+        owner: root
+        group: root
+        mode: "0644"
+      notify:
+        - Reload systemd for Copilot key remapping
+        - Restart Copilot key remapping
+
+    - name: Flush systemd reload before starting Copilot key remapping
+      ansible.builtin.meta: flush_handlers
+
+    - name: Enable and start the Copilot key remapping service
+      ansible.builtin.systemd_service:
+        name: "{{ keyboard_copilot_rightctrl_service_name }}.service"
+        enabled: true
+        state: started
+
+- name: Remove inactive Copilot key remapping
+  when: not (keyboard_copilot_rightctrl_active | bool)
+  tags:
+    - hardware
+    - requires_systemd
+  block:
+    - name: Check for the managed Copilot key remapping unit
+      ansible.builtin.stat:
+        path: "{{ keyboard_copilot_rightctrl_service_unit_path }}"
+      register: keyboard_copilot_rightctrl_unit_stat
+
+    - name: Disable and stop the existing Copilot key remapping service
+      ansible.builtin.systemd_service:
+        name: "{{ keyboard_copilot_rightctrl_service_name }}.service"
+        enabled: false
+        state: stopped
+      when: keyboard_copilot_rightctrl_unit_stat.stat.exists
+
+    - name: Remove the managed Copilot key remapping unit
+      ansible.builtin.file:
+        path: "{{ keyboard_copilot_rightctrl_service_unit_path }}"
+        state: absent
+      when: keyboard_copilot_rightctrl_unit_stat.stat.exists
+      notify: Reload systemd for Copilot key remapping

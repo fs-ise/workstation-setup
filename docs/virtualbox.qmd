@@ -11,16 +11,55 @@ ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags virtualbox
 VirtualBox is installed by the lab stack when the `virtualbox` tag is run.
 Add VM-specific setup notes here when the lab has a shared convention.
 
-The role automatically assigns **Right Ctrl** as the VirtualBox Host Key.
-This avoids conflicts with AltGr, which is required to type characters such as `[` and `]` on German keyboards.
+## Host key: Right Ctrl
+
+The role continues to assign **Right Ctrl**, key code `65508`, as the VirtualBox Host Key.
+This avoids conflicts with AltGr, which is required to type characters such as `[` and `]` on German keyboards (inside the VM).
 
 ::: {.callout-check}
 **✅ Check**
 
 ```sh
-# Check the VirtualBox host key — default: 65508
+# Check the VirtualBox host key
 VBoxManage getextradata global GUI/Input/HostKeyCombination
+# Expected:
+# Value: 65508
 ```
+:::
+
+::: {.callout-note title="Laptops without a physical right CTRL" collapse=true}
+
+On laptops without a physical Right Ctrl key, run the dedicated system-wide keyboard role:
+
+```sh
+ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags keyboard
+```
+
+The default `auto` mode enables the remapping only for recognized vendor and product-name combinations. It currently recognizes Dell product names containing `MB16250`. It does not infer the presence of a physical key from keyboard capability data.
+
+To enable the remapping explicitly on another laptop, set the following in [roles/keyboard_copilot_rightctrl/defaults/main.yml](https://github.com/fs-ise/workstation-setup/tree/main/roles/keyboard_copilot_rightctrl/defaults/main.yml):
+
+```yaml
+keyboard_copilot_rightctrl_mode: enabled
+```
+
+To stop the service and remove its managed unit explicitly, set:
+
+```yaml
+keyboard_copilot_rightctrl_mode: disabled
+```
+
+::: {.callout-check}
+**✅ Check**
+
+```bash
+systemctl status copilot-rightctrl.service
+sudo evtest /dev/input/by-path/copilot-rightctrl-event-kbd
+```
+
+Press and hold the Copilot key. The virtual device should report `KEY_RIGHTCTRL` down and up events (Linux keycode `97`). For the recognized Copilot sequence, the virtual output must not contain forwarded `KEY_LEFTMETA`, `KEY_LEFTSHIFT`, or `KEY_F23` events.
+:::
+
 :::
 
 ## Configuring virtual machines
@@ -67,3 +106,8 @@ The following settings are recommended for Windows VMs:
 
 - Shutdown VM before zipping the `*.vhd` to create a snapshot backup.
 - Exclude the VM from regular backups and copy them manually to an external HDD.
+
+## Best practices and useful links
+
+- [evsieve documentation](https://github.com/KarsMulder/evsieve)
+- [VirtualBox documentation](https://www.virtualbox.org/wiki/Documentation)

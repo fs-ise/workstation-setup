@@ -1,0 +1,32 @@
+---
+# Supported values: auto, enabled, disabled.
+keyboard_copilot_rightctrl_mode: auto
+
+keyboard_copilot_rightctrl_system_vendors:
+  - "Dell Inc."
+
+# Regex patterns matched against ansible_facts["product_name"].
+# The initial known model is the Dell Pro Max 16 Plus MB16250.
+keyboard_copilot_rightctrl_product_name_patterns:
+  - "(?i).*MB16250.*"
+
+keyboard_copilot_rightctrl_input_device: >-
+  /dev/input/by-path/platform-i8042-serio-0-event-kbd
+keyboard_copilot_rightctrl_output_device: >-
+  /dev/input/by-path/copilot-rightctrl-event-kbd
+
+keyboard_copilot_rightctrl_service_name: copilot-rightctrl
+keyboard_copilot_rightctrl_service_unit_path: >-
+  /etc/systemd/system/{{ keyboard_copilot_rightctrl_service_name }}.service
+
+keyboard_copilot_rightctrl_evsieve_version: "1.4.0"
+keyboard_copilot_rightctrl_evsieve_commit: >-
+  162839865e85c65cfc6d4591218e1320378bf079
+keyboard_copilot_rightctrl_evsieve_repository: >-
+  https://github.com/KarsMulder/evsieve.git
+keyboard_copilot_rightctrl_evsieve_source_dir: >-
+  /usr/local/src/evsieve
+keyboard_copilot_rightctrl_evsieve_cargo_home: >-
+  /var/cache/evsieve-cargo
+keyboard_copilot_rightctrl_evsieve_install_path: >-
+  /usr/local/bin/evsieve

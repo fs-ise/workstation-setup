@@ -1,0 +1,9 @@
+---
+- name: Reload systemd for Copilot key remapping
+  ansible.builtin.systemd_service:
+    daemon_reload: true
+
+- name: Restart Copilot key remapping
+  ansible.builtin.systemd_service:
+    name: "{{ keyboard_copilot_rightctrl_service_name }}.service"
+    state: restarted

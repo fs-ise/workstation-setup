@@ -1,0 +1,63 @@
+---
+- name: Test Copilot key activation calculation
+  hosts: local
+  gather_facts: false
+  vars:
+    keyboard_copilot_rightctrl_system_vendors: ["Dell Inc."]
+    keyboard_copilot_rightctrl_product_name_patterns: ["(?i).*MB16250.*"]
+  tasks:
+    - name: Exercise activation scenarios
+      ansible.builtin.include_tasks: ../tasks/keyboard-copilot-activation-scenario.yml
+      loop:
+        - name: Disabled on a recognized model
+          mode: disabled
+          vendor: Dell Inc.
+          product: Dell Pro Max 16 Plus MB16250
+          expected: false
+        - name: Explicitly enabled on an unrelated model
+          mode: enabled
+          vendor: Other Vendor
+          product: Other Laptop
+          expected: true
+        - name: Automatic on MB16250
+          mode: auto
+          vendor: Dell Inc.
+          product: Dell Pro Max 16 Plus MB16250
+          expected: true
+        - name: Automatic on another Dell model
+          mode: auto
+          vendor: Dell Inc.
+          product: Dell Latitude 7450
+          expected: false
+        - name: Automatic on a non-Dell model
+          mode: auto
+          vendor: Framework
+          product: Laptop 16 MB16250
+          expected: false
+      loop_control:
+        loop_var: keyboard_activation_scenario
+        label: "{{ keyboard_activation_scenario.name }}"
+
+    - name: Verify invalid mode rejection
+      block:
+        - name: Calculate activation with an invalid mode
+          ansible.builtin.include_role:
+            name: keyboard_copilot_rightctrl
+            tasks_from: activation
+          vars:
+            keyboard_copilot_rightctrl_mode: sometimes
+            ansible_facts:
+              system_vendor: Dell Inc.
+              product_name: Dell Pro Max 16 Plus MB16250
+
+        - name: Fail when the invalid mode was accepted
+          ansible.builtin.fail:
+            msg: The activation calculation accepted an invalid mode.
+      rescue:
+        - name: Check the invalid-mode assertion message
+          ansible.builtin.assert:
+            that:
+              - >-
+                'must be one of: auto, enabled, disabled' in
+                ansible_failed_result.msg
+            fail_msg: The invalid mode did not produce the expected assertion message.

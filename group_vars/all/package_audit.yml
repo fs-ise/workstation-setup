@@ -255,6 +255,12 @@ package_audit_managed_packages:
   - kernel-devel
   - kernel-headers
 
+  # roles/keyboard_copilot_rightctrl
+  - cargo
+  - evtest
+  - libevdev
+  - libevdev-devel
+
   # explicitly managed workstation/user packages
   - 7zip
   - clamav-freshclam

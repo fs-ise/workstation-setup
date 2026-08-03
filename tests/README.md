@@ -46,6 +46,9 @@ docker run --rm \
 
 The container is not privileged. All changes are confined to its disposable
 filesystem and the ignored `tests/output/` directory in the mounted checkout.
+The script also exercises all Copilot-key activation modes with synthetic
+vendor and product facts; this pure calculation does not access input hardware
+or systemd.
 
 ## Extend execution coverage
 
