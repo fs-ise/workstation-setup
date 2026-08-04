@@ -3,6 +3,34 @@
   ansible.builtin.include_role:
     name: repo_rpmfusion
 
+- name: Read WIFIonICE cloned MAC address setting
+  ansible.builtin.command:
+    argv:
+      - nmcli
+      - --get-values
+      - 802-11-wireless.cloned-mac-address
+      - connection
+      - show
+      - WIFIonICE
+  register: desktop_gnome_wifionice_cloned_mac
+  changed_when: false
+  failed_when: false
+  when: desktop_gnome_configure_wifionice_permanent_mac | bool
+
+- name: Configure WIFIonICE to use the permanent MAC address
+  ansible.builtin.command:
+    argv:
+      - nmcli
+      - connection
+      - modify
+      - WIFIonICE
+      - 802-11-wireless.cloned-mac-address
+      - permanent
+  when:
+    - desktop_gnome_configure_wifionice_permanent_mac | bool
+    - desktop_gnome_wifionice_cloned_mac.rc == 0
+    - desktop_gnome_wifionice_cloned_mac.stdout | trim != "permanent"
+
 - name: Install Dropbox and Nautilus extension (RPMFusion)
   ansible.builtin.dnf:
     name:

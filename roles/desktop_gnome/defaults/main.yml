@@ -1,4 +1,9 @@
 ---
+# ICE captive portals may associate access with a device's permanent MAC address.
+# This changes only the existing WIFIonICE profile; it does not alter global
+# NetworkManager MAC-address privacy settings.
+desktop_gnome_configure_wifionice_permanent_mac: true
+
 desktop_gnome_navigation_shortcuts:
   - key: "/org/gnome/desktop/wm/keybindings/switch-applications"
     value: "['<Super>Tab']"
