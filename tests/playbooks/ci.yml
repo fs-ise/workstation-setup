@@ -12,6 +12,7 @@
     baseline_install_texlive_scheme: false
     baseline_install_veracrypt: false
     baseline_configure_flathub: false
+    keepassxc_packages: []
     default_applications_associations:
       - name: CI text editor
         desktop_ids: [ci-text-editor.desktop]
@@ -102,6 +103,7 @@
         - thunderbird.desktop
   roles:
     - role: baseline
+    - role: keepassxc
     - role: default_applications
 
   post_tasks:

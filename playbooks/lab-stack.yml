@@ -40,6 +40,9 @@
     - role: rstudio
       tags: [rstudio]
 
+    - role: keepassxc
+      tags: [keepassxc]
+
     - role: chrome
       tags: [chrome]
 

@@ -19,12 +19,6 @@
     state: present
     update_cache: true
 
-- name: Install native packages used by Chrome extensions
-  ansible.builtin.dnf:
-    name: "{{ chrome_extension_native_packages }}"
-    state: present
-  when: chrome_extensions_enabled | bool
-
 - name: Create Chrome managed policy directory
   ansible.builtin.file:
     path: "{{ chrome_extension_policy_directory }}"

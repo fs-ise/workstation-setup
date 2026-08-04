@@ -25,6 +25,7 @@ After the automated installation, complete only the manual steps for software yo
 - Set up GitHub SSH/GPG identity and workstation basics in [Baseline](baseline.html).
 - Log out and back in before testing Docker group access; see [Docker](docker.html).
 - Configure browsers and extensions in [Chrome](chrome.html) if needed.
+- Create or open a database and pair KeePassXC-Browser in [KeePassXC](keepassxc.html).
 - Configure Thunderbird accounts and extensions in [Thunderbird](thunderbird.html) if needed.
 - Sign in to editors, extensions, and settings sync in [VS Code](vscode.html) if needed.
 - Start or verify local research services in [GROBID](grobid.html) and [LanguageTool](languagetool.html) if you use them.
@@ -44,6 +45,7 @@ ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags grobid
 ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags languagetool
 ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags quarto
 ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags rstudio
+ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags keepassxc
 ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags chrome
 ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags vscode
 ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags teams
@@ -54,7 +56,7 @@ ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags desktop
 You can also combine tags, for example:
 
 ```sh
-ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags baseline,docker,grobid,vscode
+ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags keepassxc,chrome
 ```
 :::
 

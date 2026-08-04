@@ -17,8 +17,8 @@ The managed policy is written to `/etc/opt/chrome/policies/managed/workstation-e
 **🔧 Manual setup and configuration**
 
 - Restart Chrome after running the role so the browser reloads its managed policies.
-- KeePassXC-Browser requires the `keepassxc` desktop application, which the role installs.
-  Open KeePassXC and enable browser integration before pairing the extension.
+- For KeePassXC-Browser desktop installation and pairing, follow the concise
+  [KeePassXC integration guide](keepassxc.qmd).
 :::
 
 ::: {.callout-check}

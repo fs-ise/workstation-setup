@@ -33,6 +33,7 @@ website:
           - baseline.qmd
           - docker.qmd
           - thunderbird.qmd
+          - keepassxc.qmd
           - chrome.qmd
           - vscode.qmd
           - languagetool.qmd

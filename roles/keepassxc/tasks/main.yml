@@ -1,0 +1,6 @@
+---
+- name: Install KeePassXC
+  ansible.builtin.dnf:
+    name: "{{ keepassxc_packages }}"
+    state: present
+  when: keepassxc_packages | length > 0

@@ -1,0 +1,77 @@
+---
+title: "KeePassXC"
+---
+
+KeePassXC stores credentials in an encrypted local KDBX database; the desktop
+application unlocks that database and controls access to it. KeePassXC-Browser
+communicates locally with the application through browser native messaging. When
+the database is unlocked and an entry URL matches the current website, the
+extension can request that entry and fill its login fields. The extension is not
+a separate password database. Ansible installs both components but does not
+manage databases, master passwords, credentials, or browser pairing permissions.
+
+## Install KeePassXC and browser integration
+
+Install the desktop application, Chrome, and the managed browser extension:
+
+```sh
+ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags keepassxc,chrome
+```
+
+The `keepassxc` role installs the desktop application. The `chrome` role installs
+Chrome and deploys KeePassXC-Browser through the existing managed extension
+policy.
+
+::: {.callout-manual}
+**🔧 Manual setup and configuration**
+
+1. Create or open a KeePassXC database.
+2. In KeePassXC, open **Tools → Settings → Browser Integration**.
+3. Enable browser integration and enable Google Chrome or Chromium support.
+4. Unlock the database and restart Chrome if necessary.
+5. Open KeePassXC-Browser and select **Connect**.
+6. Give the browser connection a unique name and approve access.
+7. Ensure each credential entry has an appropriate URL matching its login website.
+:::
+
+### Correct field detection for one site
+
+If **Select login information you would like to fill** offers the correct entry
+but selecting it does not populate the fields, credential matching works; input
+field detection or iframe handling is usually the problem.
+
+1. Open **KeePassXC-Browser → Settings → Site Preferences**.
+2. Add the affected login URL or origin, for example:
+
+   ```text
+   https://login-ciam.blau.de/
+   ```
+
+3. Enable **Improved Input Field Detection** for that site.
+4. Reload the login page and test filling again.
+5. If the form is in a cross-origin iframe and filling still fails, enable
+   **Allow Cross-Origin iframes** for that site.
+6. Reload the page again.
+
+Try improved detection first. Enable cross-origin iframe access only where it is
+necessary, not indiscriminately. As a final fallback, select custom login fields
+through the extension.
+
+::: {.callout-check}
+**✅ Check**
+
+```sh
+rpm -q keepassxc
+```
+
+- Confirm that KeePassXC-Browser appears in `chrome://extensions`.
+- Confirm that KeePassXC shows browser integration as enabled.
+- Confirm that the extension reports a connection to an unlocked database.
+- Confirm that selecting a matching entry fills a normal login form.
+:::
+
+## Best practices and useful links
+
+- [KeePassXC browser integration guide](https://keepassxc.org/docs/KeePassXC_GettingStarted#_setup_browser_integration)
+- [KeePassXC-Browser getting started guide](https://keepassxc.org/docs/KeePassXC-Browser_UserGuide#_getting_started)
+- [Chrome setup](chrome.qmd)

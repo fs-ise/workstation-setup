@@ -152,7 +152,6 @@ package_audit_managed_packages:
   - hplip
   - hplip-gui
   - jdupes
-  - keepassxc
   - libxslt
   - nemo
   - nemo-fileroller
@@ -188,6 +187,9 @@ package_audit_managed_packages:
   - xsel
   - ydotool
   - texlive-scheme-full
+
+  # roles/keepassxc
+  - keepassxc
 
   # roles/rstudio
   - R
