@@ -1,6 +1,11 @@
 ---
 - name: Validate VeraCrypt platform support
-  ansible.builtin.include_tasks: veracrypt-platform.yml
+  ansible.builtin.include_tasks: platform.yml
+
+- name: Install VeraCrypt verification dependencies
+  ansible.builtin.dnf:
+    name: "{{ veracrypt_verification_packages }}"
+    state: present
 
 - name: Read the installed VeraCrypt version # noqa command-instead-of-module
   ansible.builtin.command:
@@ -10,47 +15,47 @@
       - --queryformat
       - "%{VERSION}"
       - veracrypt
-  register: baseline_veracrypt_installed
+  register: veracrypt_installed
   changed_when: false
-  failed_when: baseline_veracrypt_installed.rc not in [0, 1]
+  failed_when: veracrypt_installed.rc not in [0, 1]
 
 - name: Compare installed and pinned VeraCrypt versions # noqa command-instead-of-module
   ansible.builtin.command:
     argv:
       - rpm
       - --compare-versions
-      - "{{ baseline_veracrypt_installed.stdout }}"
+      - "{{ veracrypt_installed.stdout }}"
       - ge
-      - "{{ baseline_veracrypt_version }}"
-  register: baseline_veracrypt_version_comparison
+      - "{{ veracrypt_version }}"
+  register: veracrypt_version_comparison
   changed_when: false
-  failed_when: baseline_veracrypt_version_comparison.rc not in [0, 1]
-  when: baseline_veracrypt_installed.rc == 0
+  failed_when: veracrypt_version_comparison.rc not in [0, 1]
+  when: veracrypt_installed.rc == 0
 
 - name: Record an unsatisfied comparison when VeraCrypt is absent
   ansible.builtin.set_fact:
-    baseline_veracrypt_version_comparison:
+    veracrypt_version_comparison:
       rc: 1
-  when: baseline_veracrypt_installed.rc != 0
+  when: veracrypt_installed.rc != 0
 
 - name: Select VeraCrypt installation behavior
-  ansible.builtin.include_tasks: veracrypt-decision.yml
+  ansible.builtin.include_tasks: decision.yml
 
 - name: Install the pinned VeraCrypt RPM
-  when: baseline_veracrypt_install_required | bool
+  when: veracrypt_install_required | bool
   block:
     - name: Create an isolated VeraCrypt verification directory
       ansible.builtin.tempfile:
         state: directory
         suffix: veracrypt
-      register: baseline_veracrypt_tempdir
+      register: veracrypt_tempdir
 
     - name: Download and verify VeraCrypt
       block:
         - name: Download the VeraCrypt signing key
           ansible.builtin.get_url:
-            url: "{{ baseline_veracrypt_signing_key_url }}"
-            dest: "{{ baseline_veracrypt_tempdir.path }}/signing-key.asc"
+            url: "{{ veracrypt_signing_key_url }}"
+            dest: "{{ veracrypt_tempdir.path }}/signing-key.asc"
             mode: "0600"
 
         - name: Inspect the VeraCrypt signing-key fingerprint
@@ -59,24 +64,24 @@
               - gpg
               - --batch
               - --homedir
-              - "{{ baseline_veracrypt_tempdir.path }}"
+              - "{{ veracrypt_tempdir.path }}"
               - --with-colons
               - --import-options
               - show-only
               - --import
-              - "{{ baseline_veracrypt_tempdir.path }}/signing-key.asc"
-          register: baseline_veracrypt_key_details
+              - "{{ veracrypt_tempdir.path }}/signing-key.asc"
+          register: veracrypt_key_details
           changed_when: false
 
         - name: Require the pinned VeraCrypt signing-key fingerprint
           ansible.builtin.assert:
             that:
               - >-
-                ('fpr:::::::::' ~ baseline_veracrypt_signing_key_fingerprint ~ ':')
-                in baseline_veracrypt_key_details.stdout
+                ('fpr:::::::::' ~ veracrypt_signing_key_fingerprint ~ ':')
+                in veracrypt_key_details.stdout
             fail_msg: >-
               The downloaded VeraCrypt signing key does not have the pinned
-              fingerprint {{ baseline_veracrypt_signing_key_fingerprint }}.
+              fingerprint {{ veracrypt_signing_key_fingerprint }}.
 
         - name: Import the key into the isolated GPG home
           ansible.builtin.command:
@@ -84,9 +89,9 @@
               - gpg
               - --batch
               - --homedir
-              - "{{ baseline_veracrypt_tempdir.path }}"
+              - "{{ veracrypt_tempdir.path }}"
               - --import
-              - "{{ baseline_veracrypt_tempdir.path }}/signing-key.asc"
+              - "{{ veracrypt_tempdir.path }}/signing-key.asc"
           changed_when: false
 
         - name: Export the isolated VeraCrypt verification keyring
@@ -95,23 +100,23 @@
               - gpg
               - --batch
               - --homedir
-              - "{{ baseline_veracrypt_tempdir.path }}"
+              - "{{ veracrypt_tempdir.path }}"
               - --output
-              - "{{ baseline_veracrypt_tempdir.path }}/trustedkeys.gpg"
+              - "{{ veracrypt_tempdir.path }}/trustedkeys.gpg"
               - --export
-              - "{{ baseline_veracrypt_signing_key_fingerprint }}"
+              - "{{ veracrypt_signing_key_fingerprint }}"
           changed_when: false
 
         - name: Download the pinned graphical VeraCrypt RPM
           ansible.builtin.get_url:
-            url: "{{ baseline_veracrypt_package_url }}"
-            dest: "{{ baseline_veracrypt_tempdir.path }}/{{ baseline_veracrypt_rpm_filename }}"
+            url: "{{ veracrypt_package_url }}"
+            dest: "{{ veracrypt_tempdir.path }}/{{ veracrypt_rpm_filename }}"
             mode: "0600"
 
         - name: Download the detached VeraCrypt RPM signature
           ansible.builtin.get_url:
-            url: "{{ baseline_veracrypt_signature_url }}"
-            dest: "{{ baseline_veracrypt_tempdir.path }}/{{ baseline_veracrypt_rpm_filename }}.sig"
+            url: "{{ veracrypt_signature_url }}"
+            dest: "{{ veracrypt_tempdir.path }}/{{ veracrypt_rpm_filename }}.sig"
             mode: "0600"
 
         - name: Verify the VeraCrypt RPM with the isolated keyring
@@ -119,23 +124,23 @@
             argv:
               - gpgv
               - --keyring
-              - "{{ baseline_veracrypt_tempdir.path }}/trustedkeys.gpg"
-              - "{{ baseline_veracrypt_tempdir.path }}/{{ baseline_veracrypt_rpm_filename }}.sig"
-              - "{{ baseline_veracrypt_tempdir.path }}/{{ baseline_veracrypt_rpm_filename }}"
+              - "{{ veracrypt_tempdir.path }}/trustedkeys.gpg"
+              - "{{ veracrypt_tempdir.path }}/{{ veracrypt_rpm_filename }}.sig"
+              - "{{ veracrypt_tempdir.path }}/{{ veracrypt_rpm_filename }}"
           changed_when: false
 
         - name: Import the verified VeraCrypt RPM-signing key
           ansible.builtin.rpm_key:
-            key: "{{ baseline_veracrypt_tempdir.path }}/signing-key.asc"
-            fingerprint: "{{ baseline_veracrypt_signing_key_fingerprint }}"
+            key: "{{ veracrypt_tempdir.path }}/signing-key.asc"
+            fingerprint: "{{ veracrypt_signing_key_fingerprint }}"
             state: present
 
         - name: Install the graphical VeraCrypt RPM
           ansible.builtin.dnf:
-            name: "{{ baseline_veracrypt_tempdir.path }}/{{ baseline_veracrypt_rpm_filename }}"
+            name: "{{ veracrypt_tempdir.path }}/{{ veracrypt_rpm_filename }}"
             state: present
       always:
         - name: Remove the VeraCrypt verification directory
           ansible.builtin.file:
-            path: "{{ baseline_veracrypt_tempdir.path }}"
+            path: "{{ veracrypt_tempdir.path }}"
             state: absent

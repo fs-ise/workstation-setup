@@ -1,5 +1,5 @@
 ---
-- name: Test VeraCrypt baseline selection and safety defaults
+- name: Test VeraCrypt role selection and safety defaults
   hosts: local
   gather_facts: false
   vars:
@@ -8,36 +8,48 @@
       distribution_major_version: "44"
       architecture: x86_64
   tasks:
-    - name: Load baseline role defaults
+    - name: Read the VeraCrypt role tasks
+      ansible.builtin.set_fact:
+        veracrypt_tasks: >-
+          {{ lookup('ansible.builtin.file',
+                    playbook_dir ~ '/../../roles/veracrypt/tasks/main.yml') }}
+
+    - name: Load VeraCrypt role defaults
       ansible.builtin.include_vars:
-        file: ../../roles/baseline/defaults/main.yml
+        file: ../../roles/veracrypt/defaults/main.yml
 
     - name: Check pinned VeraCrypt security defaults
       ansible.builtin.assert:
         that:
-          - baseline_veracrypt_version == "1.26.29"
-          - baseline_veracrypt_supported_fedora_versions == ["42", "43", "44"]
+          - veracrypt_version == "1.26.29"
+          - veracrypt_supported_fedora_versions == ["42", "43", "44"]
           - >-
-            baseline_veracrypt_rpm_filename ==
+            veracrypt_rpm_filename ==
             'veracrypt-1.26.29-Fedora-44-x86_64.rpm'
           - >-
-            baseline_veracrypt_package_url ==
+            veracrypt_package_url ==
             'https://launchpad.net/veracrypt/trunk/1.26.29/+download/'
             ~ 'veracrypt-1.26.29-Fedora-44-x86_64.rpm'
-          - baseline_veracrypt_signature_url == baseline_veracrypt_package_url ~ '.sig'
+          - veracrypt_signature_url == veracrypt_package_url ~ '.sig'
           - >-
-            baseline_veracrypt_signing_key_fingerprint ==
+            veracrypt_signing_key_fingerprint ==
             '5069A233D55A0EEB174A5FC3821ACD02680D16DE'
           - >-
-            'allow_downgrade' not in
-            lookup('ansible.builtin.file',
-                   playbook_dir ~ '/../../roles/baseline/tasks/veracrypt.yml')
+            'allow_downgrade' not in veracrypt_tasks
+          - >-
+            'veracrypt_signing_key_fingerprint' in veracrypt_tasks
+          - >-
+            'gpgv' in veracrypt_tasks
+          - >-
+            '--keyring' in veracrypt_tasks
+          - >-
+            'ansible.builtin.rpm_key' in veracrypt_tasks
 
     - name: Accept Fedora 44 for VeraCrypt
-      ansible.builtin.include_tasks: ../../roles/baseline/tasks/veracrypt-platform.yml
+      ansible.builtin.include_tasks: ../../roles/veracrypt/tasks/platform.yml
 
     - name: Reject unsupported VeraCrypt platforms
-      ansible.builtin.include_tasks: ../tasks/unsupported-veracrypt-platform.yml
+      ansible.builtin.include_tasks: ../tasks/unsupported-platform.yml
       loop:
         - distribution: Ubuntu
           distribution_major_version: "44"
@@ -51,68 +63,67 @@
       loop_control:
         loop_var: unsupported_facts
 
-    - name: Exercise the disabled VeraCrypt include
-      ansible.builtin.include_tasks: ../../roles/baseline/tasks/veracrypt.yml
-      when: baseline_install_veracrypt | bool
-      vars:
-        baseline_install_veracrypt: false
-      register: baseline_veracrypt_disabled_include
-
-    - name: Check that disabled VeraCrypt tasks were skipped
-      ansible.builtin.assert:
-        that:
-          - baseline_veracrypt_disabled_include is skipped
-          - baseline_veracrypt_installed is not defined
-          - baseline_veracrypt_tempdir is not defined
-
     - name: Test equal installed VeraCrypt version
-      ansible.builtin.include_tasks: ../../roles/baseline/tasks/veracrypt-decision.yml
+      ansible.builtin.include_tasks: ../../roles/veracrypt/tasks/decision.yml
       vars:
-        baseline_veracrypt_installed:
+        veracrypt_installed:
           rc: 0
-        baseline_veracrypt_version_comparison:
+        veracrypt_version_comparison:
           rc: 0
 
     - name: Check that an equal version is satisfactory
       ansible.builtin.assert:
         that:
-          - not baseline_veracrypt_install_required
+          - not veracrypt_install_required
 
     - name: Test newer installed VeraCrypt version
-      ansible.builtin.include_tasks: ../../roles/baseline/tasks/veracrypt-decision.yml
+      ansible.builtin.include_tasks: ../../roles/veracrypt/tasks/decision.yml
       vars:
-        baseline_veracrypt_installed:
+        veracrypt_installed:
           rc: 0
-        baseline_veracrypt_version_comparison:
+        veracrypt_version_comparison:
           rc: 0
 
     - name: Check that a newer version is satisfactory
       ansible.builtin.assert:
         that:
-          - not baseline_veracrypt_install_required
+          - not veracrypt_install_required
 
     - name: Test older installed VeraCrypt version
-      ansible.builtin.include_tasks: ../../roles/baseline/tasks/veracrypt-decision.yml
+      ansible.builtin.include_tasks: ../../roles/veracrypt/tasks/decision.yml
       vars:
-        baseline_veracrypt_installed:
+        veracrypt_installed:
           rc: 0
-        baseline_veracrypt_version_comparison:
+        veracrypt_version_comparison:
           rc: 1
 
     - name: Check that an older version requires an upgrade
       ansible.builtin.assert:
         that:
-          - baseline_veracrypt_install_required
+          - veracrypt_install_required
 
     - name: Test absent VeraCrypt installation
-      ansible.builtin.include_tasks: ../../roles/baseline/tasks/veracrypt-decision.yml
+      ansible.builtin.include_tasks: ../../roles/veracrypt/tasks/decision.yml
       vars:
-        baseline_veracrypt_installed:
+        veracrypt_installed:
           rc: 1
-        baseline_veracrypt_version_comparison:
+        veracrypt_version_comparison:
           rc: 1
 
     - name: Check that an absent version requires installation
       ansible.builtin.assert:
         that:
-          - baseline_veracrypt_install_required
+          - veracrypt_install_required
+
+    - name: Repeat the satisfied installation decision
+      ansible.builtin.include_tasks: ../../roles/veracrypt/tasks/decision.yml
+      vars:
+        veracrypt_installed:
+          rc: 0
+        veracrypt_version_comparison:
+          rc: 0
+
+    - name: Check that the repeated decision remains unchanged
+      ansible.builtin.assert:
+        that:
+          - not veracrypt_install_required

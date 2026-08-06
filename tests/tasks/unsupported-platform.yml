@@ -6,7 +6,7 @@
 - name: Exercise an unsupported VeraCrypt platform
   block:
     - name: Validate the unsupported platform
-      ansible.builtin.include_tasks: ../../roles/baseline/tasks/veracrypt-platform.yml
+      ansible.builtin.include_tasks: ../../roles/veracrypt/tasks/platform.yml
       vars:
         ansible_facts: "{{ unsupported_facts }}"
   rescue:

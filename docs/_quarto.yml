@@ -31,6 +31,7 @@ website:
       - section: Configuration
         contents:
           - baseline.qmd
+          - veracrypt.qmd
           - docker.qmd
           - thunderbird.qmd
           - keepassxc.qmd

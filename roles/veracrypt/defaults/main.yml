@@ -1,0 +1,21 @@
+---
+# Pin the audited artifact for reproducibility. The isolated keyring prevents
+# unrelated globally trusted keys from validating it, and a newer installed
+# version must never be downgraded automatically.
+veracrypt_version: "1.26.29"
+veracrypt_supported_fedora_versions:
+  - "42"
+  - "43"
+  - "44"
+veracrypt_architecture: x86_64
+veracrypt_verification_packages:
+  - gnupg2
+veracrypt_rpm_filename: >-
+  veracrypt-{{ veracrypt_version }}-Fedora-{{ ansible_facts["distribution_major_version"] }}-{{ veracrypt_architecture }}.rpm
+veracrypt_signing_key_url: >-
+  https://www.idrix.fr/VeraCrypt/VeraCrypt_PGP_public_key.asc
+veracrypt_signing_key_fingerprint: >-
+  5069A233D55A0EEB174A5FC3821ACD02680D16DE
+veracrypt_package_url: >-
+  https://launchpad.net/veracrypt/trunk/{{ veracrypt_version }}/+download/{{ veracrypt_rpm_filename }}
+veracrypt_signature_url: "{{ veracrypt_package_url }}.sig"

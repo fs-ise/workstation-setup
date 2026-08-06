@@ -10,7 +10,6 @@
     baseline_remove_packages_best_effort: []
     baseline_install_packages_best_effort: []
     baseline_install_texlive_scheme: false
-    baseline_install_veracrypt: false
     baseline_configure_flathub: false
     keepassxc_packages: []
     default_applications_associations:

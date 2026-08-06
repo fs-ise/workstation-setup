@@ -1,0 +1,34 @@
+---
+title: "VeraCrypt"
+---
+
+Install VeraCrypt to create and open cross-platform encrypted volumes on Linux, Windows, and macOS.
+
+```sh
+ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags veracrypt
+```
+
+The role installs a pinned graphical RPM only on its supported Fedora releases and architecture. Before installation, it validates the downloaded signing key against the pinned fingerprint and verifies the RPM's detached signature in an isolated keyring. It upgrades older installations but does not automatically downgrade a newer installed version.
+
+::: {.callout-manual}
+**🔧 Manual setup and configuration**
+
+- Create or open encrypted volumes in the VeraCrypt application.
+- Choose and protect volume passwords and optional keyfiles yourself. Ansible does not create, open, or manage volumes, passwords, or keyfiles.
+:::
+
+::: {.callout-check}
+**✅ Check**
+
+```sh
+rpm -q veracrypt
+veracrypt --version
+```
+:::
+
+## Best practices and useful links
+
+- [VeraCrypt documentation](https://veracrypt.io/en/Documentation.html)
+- [VeraCrypt security precautions](https://veracrypt.io/en/Security%20Requirements%20and%20Precautions.html)
+- [Install software](install_software.html)
+- [Baseline](baseline.html)

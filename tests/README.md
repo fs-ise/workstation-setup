@@ -74,6 +74,8 @@ the tag. Do not mark mutating commands unchanged merely to satisfy the test.
   GNOME sessions and dconf, Docker's systemd service, reboot behavior, VirtualBox
   kernel modules, hardware integration, and desktop-user ownership.
 
+The VeraCrypt test playbook separately exercises supported and unsupported platform decisions, pinned security settings, upgrade/no-downgrade decisions, and a repeated decision without downloading the RPM.
+
 Syntax checking resolves every referenced role, task include, handler, and
 installed collection without applying workstation changes. It cannot detect every
 runtime-only missing variable or platform failure, so those remain candidates for
