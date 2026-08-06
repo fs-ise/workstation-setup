@@ -191,10 +191,9 @@ package_audit_managed_packages:
   # roles/keepassxc
   - keepassxc
 
-  # roles/rstudio
+  # roles/r
   - R
   - R-devel
-  - rstudio
   - gcc
   - gcc-c++
   - gcc-gfortran
@@ -211,6 +210,9 @@ package_audit_managed_packages:
   - libtiff-devel
   - libuv-devel
   - zlib-devel
+
+  # roles/rstudio
+  - rstudio
 
   # roles/ocrmypdf
   - ocrmypdf

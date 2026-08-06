@@ -1,0 +1,41 @@
+---
+r_system_packages:
+  - R
+  - R-devel
+  - gcc
+  - gcc-c++
+  - gcc-gfortran
+  - make
+  - libcurl-devel
+  - openssl-devel
+  - libxml2-devel
+  - fontconfig-devel
+  - freetype-devel
+  - fribidi-devel
+  - harfbuzz-devel
+  - libjpeg-turbo-devel
+  - libpng-devel
+  - libtiff-devel
+  - libuv-devel
+  - zlib-devel
+
+r_cran_repository: "https://cloud.r-project.org"
+r_cran_download_timeout: 600
+r_cran_install_attempts: 3
+r_cran_retry_delay: 5
+r_install_cran_packages: true
+r_user_library: "{{ target_home }}/R/library"
+r_packages:
+  - tidyverse
+  - tidymodels
+  - janitor
+  - skimr
+  - here
+  - writexl
+  - openxlsx
+  - knitr
+  - rmarkdown
+  - quarto
+  - renv
+  - testthat
+  - languageserver

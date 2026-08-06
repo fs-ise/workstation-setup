@@ -1,0 +1,40 @@
+---
+title: "R"
+---
+
+Install R, package compilation dependencies, and a practical user-level package set for data analysis, teaching, and research.
+
+```sh
+ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags r
+```
+
+The `r` role installs R without installing RStudio Desktop. It creates `~/R/library`, records that location as `R_LIBS_USER` in the Ansible-managed block of `~/.Renviron`, and installs the configured CRAN packages there.
+
+## Use project environments
+
+Use `renv` in each project to record and restore exact package versions. The shared user library supplies useful starting packages, but it does not replace a project lockfile.
+
+```r
+renv::init()
+renv::snapshot()
+renv::restore()
+```
+
+If installation reports a package lock, close R, Rscript, RStudio, and rsession, then rerun the role. The role never kills these processes. It removes stale `00LOCK*` directories only when none of them is running, and installs only configured top-level packages that are missing.
+
+::: {.callout-check}
+**✅ Check**
+
+```sh
+R --version
+Rscript -e 'cat(Sys.getenv("R_LIBS_USER"), "\n")'
+Rscript -e 'library(tidyverse); library(renv); sessionInfo()'
+```
+:::
+
+## Best practices and useful links
+
+- [R project](https://www.r-project.org/)
+- [R package installation documentation](https://stat.ethz.ch/R-manual/R-devel/library/utils/html/install.packages.html)
+- [`renv` documentation](https://rstudio.github.io/renv/)
+- [RStudio setup](rstudio.qmd)

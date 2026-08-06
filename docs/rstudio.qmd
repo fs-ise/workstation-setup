@@ -1,19 +1,14 @@
 ---
-title: "R and RStudio"
+title: "RStudio Desktop"
 ---
 
-Install R, RStudio Desktop, and a practical user-level package set for data analysis, teaching, and research.
+Install the pinned RStudio Desktop IDE from Posit. Selecting the `rstudio` tag also runs the `r` role first, so R, the user library, and configured CRAN packages are available to the IDE.
 
 ```sh
 ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags rstudio
 ```
 
-| Component | Purpose |
-|---|---|
-| R | Statistical computing language and development files for compiling packages. |
-| RStudio Desktop | Local open-source IDE for interactive R work. |
-| Analysis packages | tidyverse, tidymodels, janitor, skimr, here, writexl, and openxlsx. |
-| Authoring and development packages | knitr, rmarkdown, quarto, renv, testthat, and languageserver. |
+To install R without the IDE, use the [`r` tag](r.qmd) instead.
 
 ## Launch RStudio
 
@@ -23,36 +18,18 @@ Open **RStudio** from the desktop application menu, or launch it from a terminal
 rstudio
 ```
 
-Packages managed by this role are installed in `~/R/library`, so they are owned by the workstation user rather than root.
-
-Use `renv` within individual projects to record and restore project-specific package versions. The shared user library is a practical starting set, not a replacement for a reproducible project environment.
-
-[Rocker](https://rocker-project.org/) images remain available through Docker when a project requires container-level reproducibility. Containers are optional and are not required for normal local RStudio use.
-
-## Troubleshoot package installation
-
-Fedora compiles CRAN packages from source. The role installs the required system
-development libraries and automatically retries transient download failures. The
-first package installation can therefore take several minutes.
-
-If the role reports a package lock, close R and RStudio before rerunning it. A
-rerun is safe: the role skips configured top-level packages that are already
-installed and retries only those still missing.
-
 ::: {.callout-check}
 **✅ Check**
 
 ```sh
-R --version
 rstudio --version
-Rscript -e 'library(tidyverse); library(tidymodels); sessionInfo()'
+R --version
+rpm -q rstudio
 ```
 :::
 
 ## Best practices and useful links
 
-- [R project](https://www.r-project.org/)
 - [RStudio Desktop documentation](https://docs.posit.co/ide/user/)
-- [tidyverse](https://www.tidyverse.org/)
-- [`renv` documentation](https://rstudio.github.io/renv/)
-- [Rocker project](https://rocker-project.org/)
+- [RStudio Desktop download page](https://posit.co/download/rstudio-desktop/)
+- [R installation and package setup](r.qmd)

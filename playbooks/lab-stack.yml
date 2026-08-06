@@ -40,6 +40,9 @@
     - role: quarto
       tags: [quarto]
 
+    - role: r
+      tags: [r, rstudio]
+
     - role: rstudio
       tags: [rstudio]
 

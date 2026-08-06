@@ -1,0 +1,150 @@
+---
+- name: Validate CRAN installation settings
+  ansible.builtin.assert:
+    that:
+      - (r_cran_download_timeout | string) is match('^[0-9]+$')
+      - r_cran_download_timeout | int > 0
+      - (r_cran_install_attempts | string) is match('^[0-9]+$')
+      - r_cran_install_attempts | int >= 1
+      - (r_cran_retry_delay | string) is match('^[0-9]+$')
+      - r_cran_retry_delay | int >= 0
+    fail_msg: >-
+      CRAN settings must use integer values: download timeout must be positive,
+      install attempts must be at least one, and retry delay must be non-negative.
+
+- name: Install R and CRAN package build dependencies
+  ansible.builtin.dnf:
+    name: "{{ r_system_packages }}"
+    state: present
+
+- name: Create the user R package library
+  ansible.builtin.file:
+    path: "{{ r_user_library }}"
+    state: directory
+    owner: "{{ target_user }}"
+    group: "{{ target_user }}"
+    mode: "0755"
+
+- name: Configure the user R package library
+  ansible.builtin.blockinfile:
+    path: "{{ target_home }}/.Renviron"
+    marker: "# {mark} ANSIBLE MANAGED R USER LIBRARY"
+    block: 'R_LIBS_USER={{ r_user_library }}'
+    create: true
+    owner: "{{ target_user }}"
+    group: "{{ target_user }}"
+    mode: "0600"
+
+- name: Find R package lock directories
+  when: r_install_cran_packages | bool
+  ansible.builtin.find:
+    paths: "{{ r_user_library }}"
+    patterns: "00LOCK*"
+    file_type: directory
+    recurse: false
+  register: r_package_locks
+
+- name: Check for active user R processes when package locks exist
+  when:
+    - r_install_cran_packages | bool
+    - r_package_locks.matched | int > 0
+  become: true
+  become_user: "{{ target_user }}"
+  ansible.builtin.command:
+    argv:
+      - pgrep
+      - --uid
+      - "{{ target_user }}"
+      - --full
+      - '(^|/)(R|Rscript|rstudio|rsession)([[:space:]]|$)'
+  register: r_active_processes
+  changed_when: false
+  failed_when: r_active_processes.rc not in [0, 1]
+
+- name: Require R and RStudio to be closed before clearing package locks
+  when:
+    - r_install_cran_packages | bool
+    - r_package_locks.matched | int > 0
+    - r_active_processes.rc == 0
+  ansible.builtin.fail:
+    msg: >-
+      R package lock directories exist while an R or RStudio process is running
+      for {{ target_user }}. Close R and RStudio, then rerun the r role.
+
+- name: Remove stale R package lock directories
+  when:
+    - r_install_cran_packages | bool
+    - r_package_locks.matched | int > 0
+    - r_active_processes.rc == 1
+  become: true
+  become_user: "{{ target_user }}"
+  ansible.builtin.file:
+    path: "{{ item.path }}"
+    state: absent
+  loop: "{{ r_package_locks.files }}"
+  loop_control:
+    label: "{{ item.path }}"
+
+- name: Install missing user R packages from CRAN
+  when: r_install_cran_packages | bool
+  become: true
+  become_user: "{{ target_user }}"
+  ansible.builtin.command:
+    argv:
+      - Rscript
+      - --vanilla
+      - -e
+      - |
+        timeout <- as.integer(Sys.getenv("R_CRAN_DOWNLOAD_TIMEOUT", "600"))
+        attempts <- as.integer(Sys.getenv("R_CRAN_INSTALL_ATTEMPTS", "3"))
+        retry_delay <- as.integer(Sys.getenv("R_CRAN_RETRY_DELAY", "5"))
+        options(timeout = timeout)
+        library_path <- Sys.getenv("R_LIBS_USER")
+        repository <- Sys.getenv("R_CRAN_REPOSITORY")
+        wanted <- strsplit(Sys.getenv("R_PACKAGES"), ",", fixed = TRUE)[[1]]
+        wanted <- trimws(wanted)
+        wanted <- unique(wanted[nzchar(wanted)])
+
+        installed_names <- function() {
+          rownames(installed.packages(lib.loc = library_path, noCache = TRUE))
+        }
+
+        missing_before <- setdiff(wanted, installed_names())
+        for (package in missing_before) {
+          for (attempt in seq_len(attempts)) {
+            message(sprintf("Installing %s: attempt %d of %d", package, attempt, attempts))
+            try(
+              install.packages(
+                package,
+                repos = repository,
+                lib = library_path,
+                dependencies = c("Depends", "Imports", "LinkingTo")
+              ),
+              silent = FALSE
+            )
+            if (package %in% installed_names()) break
+            if (attempt < attempts && retry_delay > 0) Sys.sleep(retry_delay * attempt)
+          }
+        }
+
+        still_missing <- setdiff(wanted, installed_names())
+        if (length(still_missing)) {
+          stop(
+            "Failed to install the following configured R packages after retries: ",
+            paste(still_missing, collapse = ", ")
+          )
+        }
+        if (length(missing_before)) {
+          cat("R_PACKAGES_INSTALLED:", paste(missing_before, collapse = ","), "\n")
+        }
+  environment:
+    HOME: "{{ target_home }}"
+    R_LIBS_USER: "{{ r_user_library }}"
+    R_CRAN_REPOSITORY: "{{ r_cran_repository }}"
+    R_PACKAGES: "{{ r_packages | join(',') }}"
+    R_CRAN_DOWNLOAD_TIMEOUT: "{{ r_cran_download_timeout | string }}"
+    R_CRAN_INSTALL_ATTEMPTS: "{{ r_cran_install_attempts | string }}"
+    R_CRAN_RETRY_DELAY: "{{ r_cran_retry_delay | string }}"
+  register: r_package_install
+  changed_when: "'R_PACKAGES_INSTALLED:' in r_package_install.stdout"
+  no_log: false
