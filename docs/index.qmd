@@ -13,7 +13,7 @@ The workstation stack includes:
 - Research: LaTeX, Pandoc tooling, Quarto, Obsidian
 - Documents: Okular, OCR, GROBID, Recoll
 - Productivity & Media: Thunderbird, Chrome, GIMP, Audacity, OBS Studio
-- Security: [KeePassXC](keepassxc.html), ClamAV, VeraCrypt
+- Security: KeePassXC, ClamAV, VeraCrypt
 
 We use Ansible to translate the following pragmatic principles into a reproducible workstation setup:
 
