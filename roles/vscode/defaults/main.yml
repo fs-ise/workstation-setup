@@ -31,17 +31,13 @@ vscode_settings:
   "update.showReleaseNotes": false
   "telemetry.telemetryLevel": "off"
   "workbench.editor.enablePreview": false
-  "files.trimTrailingWhitespace": true
+  "files.trimTrailingWhitespace": false
+  "editor.trimAutoWhitespace": false
   "editor.formatOnSave": true
   "MarkdownPaste.path": "${fileDirname}/images"
   "MarkdownPaste.silence": false
   "languageToolLinter.serviceType": "external"
   "languageToolLinter.external.url": "http://localhost:8081"
-  "editor.trimAutoWhitespace": true
-  "[markdown]":
-    "editor.trimAutoWhitespace": false
-  "[jupyter]":
-    "editor.trimAutoWhitespace": false
 
 vscode_keybindings:
   - key: "ctrl+pageup"
