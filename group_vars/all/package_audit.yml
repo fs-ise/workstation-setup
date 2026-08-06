@@ -171,14 +171,9 @@ package_audit_managed_packages:
   - ruby
   - rubygem-bundler
   - sqlitebrowser
-  - texlive-lang-german
-  - texlive-latex-extra
-  - texlive-xetex
-  - texstudio
   - tldr
   - unifont-fonts
   - unrtf
-  - untex
   - vim
   - wv
   - xclip
@@ -186,6 +181,13 @@ package_audit_managed_packages:
   - xournalpp
   - xsel
   - ydotool
+
+  # roles/latex
+  - texlive-lang-german
+  - texlive-latex-extra
+  - texlive-xetex
+  - texstudio
+  - untex
   - texlive-scheme-full
 
   # roles/keepassxc

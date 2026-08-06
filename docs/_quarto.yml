@@ -40,6 +40,7 @@ website:
           - languagetool.qmd
           - teams.qmd
           - virtualbox.qmd
+          - latex.qmd
           - quarto.qmd
           - r.qmd
           - rstudio.qmd

@@ -85,14 +85,9 @@ baseline_install_packages_best_effort:
   - ruby
   - rubygem-bundler
   - sqlitebrowser
-  - texlive-lang-german
-  - texlive-latex-extra
-  - texlive-xetex
-  - texstudio
   - tldr
   - unifont-fonts
   - unrtf
-  - untex
   - vim
   - wv
   - xclip
@@ -103,5 +98,4 @@ baseline_install_packages_best_effort:
 
 # These switches preserve workstation behavior while allowing the role's safe
 # configuration tasks to be exercised in a disposable CI container.
-baseline_install_texlive_scheme: true
 baseline_configure_flathub: true

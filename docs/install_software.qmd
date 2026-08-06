@@ -30,6 +30,7 @@ After the automated installation, complete only the manual steps for software yo
 - Sign in to editors, extensions, and settings sync in [VS Code](vscode.html) if needed.
 - Start or verify local research services in [GROBID](grobid.html) and [LanguageTool](languagetool.html) if you use them.
 - Configure OCR workflows in [OCR](ocr.html) and Quarto publishing in [Quarto](quarto.html) if relevant.
+- Choose the full or selected-package TeX Live installation in [LaTeX](latex.html) if needed.
 :::
 
 ::: {.callout-note title="Advanced: explicit commands and tags" collapse=true}
@@ -44,6 +45,7 @@ ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags virtualbox
 ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags docker
 ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags grobid
 ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags languagetool
+ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags latex
 ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags quarto
 ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags rstudio
 ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags keepassxc

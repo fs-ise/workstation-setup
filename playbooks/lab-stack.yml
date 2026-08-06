@@ -37,6 +37,9 @@
     - role: languagetool
       tags: [languagetool]
 
+    - role: latex
+      tags: [latex]
+
     - role: quarto
       tags: [quarto]
 

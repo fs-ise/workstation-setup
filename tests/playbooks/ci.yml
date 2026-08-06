@@ -9,7 +9,6 @@
     baseline_base_packages: []
     baseline_remove_packages_best_effort: []
     baseline_install_packages_best_effort: []
-    baseline_install_texlive_scheme: false
     baseline_configure_flathub: false
     keepassxc_packages: []
     r_system_packages: []
@@ -104,6 +103,11 @@
         - thunderbird.desktop
   roles:
     - role: baseline
+    - role: latex
+      vars:
+        latex_install_texlive_scheme_full: false
+        latex_texlive_packages: []
+        latex_additional_packages: []
     - role: r
     - role: keepassxc
     - role: default_applications

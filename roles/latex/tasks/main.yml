@@ -1,0 +1,20 @@
+---
+- name: Install additional LaTeX packages
+  ansible.builtin.dnf:
+    name: "{{ latex_additional_packages }}"
+    state: present
+  when: latex_additional_packages | length > 0
+
+- name: Install the full TeX Live scheme
+  ansible.builtin.dnf:
+    name: texlive-scheme-full
+    state: present
+  when: latex_install_texlive_scheme_full | bool
+
+- name: Install the selected TeX Live packages
+  ansible.builtin.dnf:
+    name: "{{ latex_texlive_packages }}"
+    state: present
+  when:
+    - not (latex_install_texlive_scheme_full | bool)
+    - latex_texlive_packages | length > 0
