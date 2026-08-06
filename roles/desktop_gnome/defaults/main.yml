@@ -17,13 +17,8 @@ desktop_gnome_navigation_shortcuts:
   - key: "/org/gnome/desktop/wm/keybindings/switch-windows-backward"
     value: "['<Shift><Alt>Tab']"
 
+desktop_gnome_ptyxis_shortcut_path: /org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/
 desktop_gnome_custom_shortcuts:
-  # Ensure custom shortcuts are visible in GNOME keyboard shortcuts
-  - key: "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings"
-    value: >
-      ['/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/',
-      '/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1/']
-
   # Terminal (Ctrl+Alt+T)
   - key: "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/name"
     value: "'terminal ptyxis'"
@@ -32,13 +27,6 @@ desktop_gnome_custom_shortcuts:
   - key: "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/binding"
     value: "'<Control><Alt>t'"
 
-  # Files/Nemo (Win+E)
-  - key: "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1/name"
-    value: "'files-nemo'"
-  - key: "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1/command"
-    value: "'nemo'"
-  - key: "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1/binding"
-    value: "'<Super>e'"
 
 desktop_gnome_time_and_calendar_properties:
   - key: "/org/gnome/desktop/calendar/show-weekdate"
@@ -65,16 +53,6 @@ desktop_gnome_mouse_touchpad:
 desktop_gnome_hot_corner:
   - key: "/org/gnome/desktop/interface/enable-hot-corners"
     value: false
-
-desktop_gnome_nemo_preview_preferences:
-  - key: "/org/nemo/preferences/show-image-thumbnails"
-    value: "'local-only'"
-
-  - key: "/org/nemo/preferences/inherit-show-thumbnails"
-    value: false
-
-  - key: "/org/nemo/preferences/thumbnail-limit"
-    value: "uint64 104857600"
 
 desktop_gnome_german_us_keyboard_layout:
   - key: "/org/gnome/desktop/input-sources/sources"

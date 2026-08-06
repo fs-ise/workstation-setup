@@ -1,0 +1,4 @@
+---
+- name: Report Thunderbird MCP policy change
+  ansible.builtin.debug:
+    msg: Thunderbird MCP policy changed. Restart Thunderbird for the change to apply.

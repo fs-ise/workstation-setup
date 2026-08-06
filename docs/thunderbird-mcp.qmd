@@ -1,0 +1,78 @@
+---
+title: "Thunderbird MCP"
+---
+
+Install Thunderbird first, then the pinned Thunderbird MCP bridge and its extension policy entry.
+
+```sh
+ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags thunderbird_mcp
+```
+
+The playbook gives the base `thunderbird` role both tags, so this command installs Thunderbird before the MCP role. Running `--tags thunderbird` alone never installs MCP.
+
+The default bootstrap release is pinned to `v0.7.4` instead of an uncontrolled `latest` URL. Releases from `v0.7.3` onward support subsequent automatic extension updates through Thunderbird. Automatic updates still depend on Thunderbird's add-on update settings and continued trust in the upstream update channel.
+
+The bridge command for MCP clients is:
+
+```sh
+node /opt/thunderbird-mcp/mcp-bridge.cjs
+```
+
+The role does not copy session tokens or `connection.json`.
+The bridge discovers the current Thunderbird extension connection dynamically, so Thunderbird must be running for bridge calls to reach the extension.
+
+::: {.callout-manual}
+**🔧 Manual setup and configuration**
+
+- Restart Thunderbird after the initial extension-policy installation.
+- Review Thunderbird MCP account access, enabled tools, and send-safety settings inside Thunderbird before connecting an MCP client.
+- Treat Thunderbird MCP as sensitive access to email, contacts, calendars, filters, and message-management operations.
+- Set `thunderbird_mcp_enabled: false` if this workstation should not expose Thunderbird through MCP during a full playbook run.
+:::
+
+## Optional MCP client fragment
+
+The role does not modify `~/.claude.json`, Codex configuration, or another MCP client's live configuration automatically.
+To generate a fragment that users can merge manually, set:
+
+```yaml
+thunderbird_mcp_write_client_fragment: true
+```
+
+The fragment is written with user ownership and restrictive permissions under:
+
+```text
+~/.config/workstation-setup/mcp/thunderbird-mail.json
+```
+
+It contains the configured bridge path:
+
+```json
+{
+  "mcpServers": {
+    "thunderbird-mail": {
+      "command": "node",
+      "args": ["/opt/thunderbird-mcp/mcp-bridge.cjs"]
+    }
+  }
+}
+```
+
+Merge the `mcpServers.thunderbird-mail` entry into the configuration used by your MCP client, then restart or reload that client.
+
+::: {.callout-check}
+**✅ Check**
+
+```sh
+git -C /opt/thunderbird-mcp describe --tags --exact-match
+node /opt/thunderbird-mcp/mcp-bridge.cjs --help
+python -m json.tool /etc/thunderbird/policies/policies.json >/dev/null
+stat -c '%a %U %G %n' ~/.config/workstation-setup/mcp/thunderbird-mail.json
+```
+:::
+
+## Best practices and useful links
+
+- [Thunderbird MCP project](https://github.com/TKasperczyk/thunderbird-mcp)
+- [Thunderbird Enterprise Policies](https://mozilla.github.io/policy-templates/)
+- [Thunderbird setup](thunderbird.html)

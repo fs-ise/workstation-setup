@@ -1,0 +1,17 @@
+---
+thunderbird_mcp_enabled: true
+thunderbird_mcp_version: "0.7.4"
+thunderbird_mcp_install_dir: /opt/thunderbird-mcp
+thunderbird_mcp_repository: https://github.com/TKasperczyk/thunderbird-mcp.git
+thunderbird_mcp_extension_id: thunderbird-mcp@tkasperczyk.dev
+thunderbird_mcp_xpi_url: >-
+  https://github.com/TKasperczyk/thunderbird-mcp/releases/download/v{{ thunderbird_mcp_version }}/thunderbird-mcp-v{{ thunderbird_mcp_version }}.xpi
+thunderbird_mcp_write_client_fragment: false
+thunderbird_mcp_client_fragment_dir: "{{ target_home }}/.config/workstation-setup/mcp"
+thunderbird_mcp_client_fragment_file: "{{ thunderbird_mcp_client_fragment_dir }}/thunderbird-mail.json"
+thunderbird_mcp_policies_dir: /etc/thunderbird/policies
+thunderbird_mcp_policies_file: "{{ thunderbird_mcp_policies_dir }}/policies.json"
+thunderbird_mcp_extension:
+  id: "{{ thunderbird_mcp_extension_id }}"
+  installation_mode: normal_installed
+  install_url: "{{ thunderbird_mcp_xpi_url }}"

@@ -124,6 +124,12 @@ jobs:
         run: |
           python -m unittest tests/test_latex_role.py
           python -m unittest tests/test_r_role.py tests/test_rstudio_role.py
+          python -m unittest \
+            tests/test_git_tools_role.py \
+            tests/test_dropbox_role.py \
+            tests/test_backup_borg_role.py \
+            tests/test_nemo_role.py \
+            tests/test_thunderbird_mcp_role.py
 
           ansible-playbook \
             --syntax-check \

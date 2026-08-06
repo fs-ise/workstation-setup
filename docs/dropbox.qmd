@@ -1,0 +1,28 @@
+---
+title: "Dropbox"
+---
+
+Install Dropbox and its Nautilus integration. This tag enables the required RPM Fusion repository.
+
+```sh
+ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags dropbox
+```
+
+::: {.callout-manual}
+**🔧 Manual setup and configuration**
+
+Start Dropbox and sign in deliberately. Account credentials and sync-folder choices are not automated.
+:::
+
+::: {.callout-check}
+**✅ Check**
+
+```sh
+rpm -q dropbox nautilus-dropbox
+```
+:::
+
+## Best practices and useful links
+
+- [Dropbox help](https://help.dropbox.com/)
+- [RPM Fusion](https://rpmfusion.org/)

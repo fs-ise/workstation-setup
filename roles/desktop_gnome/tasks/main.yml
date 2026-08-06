@@ -1,8 +1,4 @@
 ---
-- name: Ensure RPM Fusion repos are available
-  ansible.builtin.include_role:
-    name: repo_rpmfusion
-
 - name: Read WIFIonICE cloned MAC address setting
   ansible.builtin.command:
     argv:
@@ -31,22 +27,10 @@
     - desktop_gnome_wifionice_cloned_mac.rc == 0
     - desktop_gnome_wifionice_cloned_mac.stdout | trim != "permanent"
 
-- name: Install Dropbox and Nautilus extension (RPMFusion)
-  ansible.builtin.dnf:
-    name:
-      - dropbox
-      - nautilus-dropbox
-    state: present
-    update_cache: true
-  failed_when: false
-
-- name: Install Obsidian and Vorta via Flatpak
+- name: Install Obsidian via Flatpak
   community.general.flatpak:
-    name: "{{ item }}"
+    name: md.obsidian.Obsidian
     state: present
-  loop:
-    - md.obsidian.Obsidian
-    - com.borgbase.Vorta
 
 - name: Install GNOME Shell extension dependencies
   ansible.builtin.dnf:
@@ -148,13 +132,43 @@
     value: "{{ item.value }}"
   loop: "{{ desktop_gnome_time_and_calendar_properties }}"
 
-- name: Add Ubuntu-like shortcuts
+- name: Set GNOME navigation shortcuts
   become: true
   become_user: "{{ target_user }}"
   community.general.dconf:
     key: "{{ item.key }}"
     value: "{{ item.value }}"
-  loop: "{{ desktop_gnome_navigation_shortcuts + desktop_gnome_custom_shortcuts }}"
+  loop: "{{ desktop_gnome_navigation_shortcuts }}"
+
+- name: Read GNOME custom keyboard shortcuts
+  become: true
+  become_user: "{{ target_user }}"
+  ansible.builtin.command:
+    argv:
+      - dconf
+      - read
+      - /org/gnome/settings-daemon/plugins/media-keys/custom-keybindings
+  register: desktop_gnome_custom_shortcuts_read
+  changed_when: false
+  failed_when: false
+
+- name: Merge the Ptyxis shortcut into GNOME custom keyboard shortcuts
+  become: true
+  become_user: "{{ target_user }}"
+  community.general.dconf:
+    key: /org/gnome/settings-daemon/plugins/media-keys/custom-keybindings
+    value: >-
+      {{ ((desktop_gnome_custom_shortcuts_read.stdout | default(''))
+          | regex_findall("(?<=')[^']+/(?=')")
+          + [desktop_gnome_ptyxis_shortcut_path]) | unique | list | to_json }}
+
+- name: Configure the Ptyxis shortcut
+  become: true
+  become_user: "{{ target_user }}"
+  community.general.dconf:
+    key: "{{ item.key }}"
+    value: "{{ item.value }}"
+  loop: "{{ desktop_gnome_custom_shortcuts }}"
 
 - name: Disable alert sound (terminal 'dingding' noise)
   become: true
@@ -187,14 +201,6 @@
     key: "{{ item.key }}"
     value: "{{ item.value }}"
   loop: "{{ desktop_gnome_hot_corner }}"
-
-- name: Configure Nemo thumbnail previews
-  become: true
-  become_user: "{{ target_user }}"
-  community.general.dconf:
-    key: "{{ item.key }}"
-    value: "{{ item.value }}"
-  loop: "{{ desktop_gnome_nemo_preview_preferences }}"
 
 - name: Add both DE and US keyboard layout
   become: true

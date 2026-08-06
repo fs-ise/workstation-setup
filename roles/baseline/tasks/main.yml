@@ -21,18 +21,6 @@
   loop: "{{ baseline_install_packages_best_effort }}"
   failed_when: false
 
-- name: Configure global git settings
-  become: false
-  community.general.git_config:
-    scope: global
-    name: "{{ item.name }}"
-    value: "{{ item.value }}"
-  loop:
-    - {name: "log.date", value: "iso"}
-    - {name: "push.autoSetupRemote", value: "true"}
-    - {name: "core.editor", value: "vim"}
-    - {name: "init.defaultBranch", value: "main"}
-
 - name: Ensure Flathub remote exists
   community.general.flatpak_remote:
     name: flathub

@@ -1,0 +1,31 @@
+---
+title: "Git tools"
+---
+
+Install Git, Git LFS, Gitk, and the shared global Git defaults.
+
+```sh
+ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags git
+```
+
+::: {.callout-manual}
+**🔧 Manual setup and configuration**
+
+Configure your identity and register SSH or GPG keys with your Git hosting provider. The role deliberately does not set a name, email address, or credentials.
+:::
+
+::: {.callout-check}
+**✅ Check**
+
+```sh
+git --version
+git lfs version
+git config --global init.defaultBranch
+```
+:::
+
+## Best practices and useful links
+
+- [Git documentation](https://git-scm.com/doc)
+- [Git LFS documentation](https://git-lfs.com/)
+- [Baseline setup](baseline.html)

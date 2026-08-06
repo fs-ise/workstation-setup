@@ -134,7 +134,6 @@ package_audit_managed_packages:
   - artha
   - audacity
   - autokey-gtk
-  - borgbackup
   - catdoc
   - clamav
   - clamav-update
@@ -144,8 +143,6 @@ package_audit_managed_packages:
   - diffpdf
   - flatpak
   - gimp
-  - git-lfs
-  - gitk
   - gnome-clocks
   - gnome-commander
   - gnupg2
@@ -153,9 +150,6 @@ package_audit_managed_packages:
   - hplip-gui
   - jdupes
   - libxslt
-  - nemo
-  - nemo-fileroller
-  - nemo-preview
   - nextcloud-client
   - obs-studio
   - openssh-clients
@@ -239,13 +233,30 @@ package_audit_managed_packages:
   # roles/chrome
   - google-chrome-stable
 
-  # roles/desktop_gnome
+  # roles/git_tools
+  - git-lfs
+  - gitk
+
+  # roles/backup_borg
+  - borgbackup
+
+  # roles/nemo
+  - nemo
+  - nemo-fileroller
+  - nemo-preview
+
+  # roles/dropbox
   - dropbox
   - nautilus-dropbox
+
+  # roles/desktop_gnome
   - python3-psutil
 
   # roles/thunderbird
   - thunderbird
+
+  # roles/thunderbird_mcp (git remains under baseline)
+  - nodejs
 
   # roles/teams_for_linux
   - teams-for-linux

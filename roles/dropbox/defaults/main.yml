@@ -1,0 +1,5 @@
+---
+dropbox_install: true
+dropbox_packages:
+  - dropbox
+  - nautilus-dropbox

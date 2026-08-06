@@ -103,6 +103,25 @@
         - thunderbird.desktop
   roles:
     - role: baseline
+    - role: git_tools
+      vars:
+        git_tools_packages: []
+    - role: backup_borg
+      vars:
+        backup_borg_packages: []
+        backup_borg_install_vorta: false
+    - role: nemo
+      vars:
+        nemo_packages: []
+        nemo_configure_preferences: false
+        nemo_configure_shortcut: false
+    - role: dropbox
+      vars:
+        dropbox_install: false
+        dropbox_packages: []
+    - role: thunderbird_mcp
+      vars:
+        thunderbird_mcp_enabled: false
     - role: latex
       vars:
         latex_install_texlive_scheme_full: false
@@ -119,11 +138,11 @@
       register: ci_git_default_branch
       changed_when: false
 
-    - name: Verify the baseline role configured Git
+    - name: Verify the git_tools role configured Git
       ansible.builtin.assert:
         that:
           - ci_git_default_branch.stdout == "main"
-        fail_msg: The baseline role did not configure Git as expected.
+        fail_msg: The git_tools role did not configure Git as expected.
 
     - name: Read the CI default applications
       ansible.builtin.slurp:

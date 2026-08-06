@@ -1,0 +1,15 @@
+---
+git_tools_packages:
+  - git
+  - git-lfs
+  - gitk
+
+git_tools_global_config:
+  - name: log.date
+    value: iso
+  - name: push.autoSetupRemote
+    value: "true"
+  - name: core.editor
+    value: vim
+  - name: init.defaultBranch
+    value: main

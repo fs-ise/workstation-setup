@@ -1,0 +1,20 @@
+---
+nemo_packages:
+  - nemo
+  - nemo-fileroller
+  - nemo-preview
+
+nemo_configure_preferences: true
+nemo_preview_preferences:
+  - key: /org/nemo/preferences/show-image-thumbnails
+    value: "'local-only'"
+  - key: /org/nemo/preferences/inherit-show-thumbnails
+    value: false
+  - key: /org/nemo/preferences/thumbnail-limit
+    value: "uint64 104857600"
+
+nemo_configure_shortcut: true
+nemo_shortcut_path: /org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1/
+nemo_shortcut_name: files-nemo
+nemo_shortcut_command: nemo
+nemo_shortcut_binding: <Super>e

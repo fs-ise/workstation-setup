@@ -1,0 +1,54 @@
+---
+- name: Install Nemo
+  ansible.builtin.dnf:
+    name: "{{ nemo_packages }}"
+    state: present
+  when: nemo_packages | length > 0
+
+- name: Configure Nemo preview preferences
+  become: true
+  become_user: "{{ target_user }}"
+  community.general.dconf:
+    key: "{{ item.key }}"
+    value: "{{ item.value }}"
+  loop: "{{ nemo_preview_preferences }}"
+  when: nemo_configure_preferences | bool
+
+- name: Read GNOME custom keyboard shortcuts for Nemo
+  become: true
+  become_user: "{{ target_user }}"
+  ansible.builtin.command:
+    argv:
+      - dconf
+      - read
+      - /org/gnome/settings-daemon/plugins/media-keys/custom-keybindings
+  register: nemo_custom_shortcuts_read
+  changed_when: false
+  failed_when: false
+  when: nemo_configure_shortcut | bool
+
+- name: Merge the Nemo shortcut into GNOME custom keyboard shortcuts
+  become: true
+  become_user: "{{ target_user }}"
+  community.general.dconf:
+    key: /org/gnome/settings-daemon/plugins/media-keys/custom-keybindings
+    value: >-
+      {{ ((nemo_custom_shortcuts_read.stdout | default(''))
+          | regex_findall("(?<=')[^']+/(?=')")
+          + [nemo_shortcut_path]) | unique | list | to_json }}
+  when: nemo_configure_shortcut | bool
+
+- name: Configure the Nemo shortcut
+  become: true
+  become_user: "{{ target_user }}"
+  community.general.dconf:
+    key: "{{ nemo_shortcut_path }}{{ item.key }}"
+    value: "{{ item.value | string }}"
+  loop:
+    - key: name
+      value: "'{{ nemo_shortcut_name }}'"
+    - key: command
+      value: "'{{ nemo_shortcut_command }}'"
+    - key: binding
+      value: "'{{ nemo_shortcut_binding }}'"
+  when: nemo_configure_shortcut | bool

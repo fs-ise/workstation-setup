@@ -1,0 +1,15 @@
+---
+- name: Install Git tools
+  ansible.builtin.dnf:
+    name: "{{ git_tools_packages }}"
+    state: present
+  when: git_tools_packages | length > 0
+
+- name: Configure global Git settings
+  become: true
+  become_user: "{{ target_user }}"
+  community.general.git_config:
+    scope: global
+    name: "{{ item.name }}"
+    value: "{{ item.value }}"
+  loop: "{{ git_tools_global_config }}"

@@ -16,11 +16,20 @@
     - role: baseline  # should include packages (except for those needed in the following roles)
       tags: [baseline]
 
+    - role: git_tools
+      tags: [git, git_tools]
+
+    - role: backup_borg
+      tags: [backup, borg, vorta]
+
     - role: veracrypt
       tags: [veracrypt]
 
     - role: keyboard_copilot_rightctrl
       tags: [keyboard, copilot_key]
+
+    - role: nemo
+      tags: [nemo, file_manager]
 
     - role: ocrmypdf
       tags: [ocr]
@@ -62,7 +71,13 @@
       tags: [teams]
 
     - role: thunderbird
-      tags: [thunderbird]
+      tags: [thunderbird, thunderbird_mcp]
+
+    - role: thunderbird_mcp
+      tags: [thunderbird_mcp]
+
+    - role: dropbox
+      tags: [dropbox]
 
     - role: desktop_gnome
       tags: [desktop]

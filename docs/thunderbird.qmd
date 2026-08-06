@@ -8,6 +8,8 @@ Install Thunderbird and the curated extension policy through the `thunderbird` r
 ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags thunderbird
 ```
 
+This tag installs Thunderbird and its general extensions without Thunderbird MCP.
+
 If you restore the Thunderbird profile path from a previous installation, the manual account and workflow setup below should usually not be necessary.
 Restore profile data only from trusted backups and prefer normal account sign-in when possible.
 
@@ -33,7 +35,6 @@ They use `installation_mode: normal_installed`, so Thunderbird installs them aut
 | [mailmindr](https://mailmindr.net/) | Moves messages out of the inbox when you cannot currently act on them, then reminds you when follow-up is due. Use it for time-bound replies, delegated work, and review tasks. |
 | [Move Mail Shortcuts](https://services.addons.thunderbird.net/en-US/thunderbird/addon/move-mail-shortcuts/) | Adds keyboard shortcuts for moving and copying mail to folders. Use it to file messages quickly without interrupting reading flow. |
 | [Owl for Exchange](https://services.addons.thunderbird.net/en-US/thunderbird/addon/owl-for-exchange/) | Connects Thunderbird to Exchange and Microsoft 365 accounts through Outlook Web Access when standard IMAP/SMTP or OAuth setup is not sufficient. Check license terms before relying on it. |
-| [Thunderbird MCP](https://github.com/TKasperczyk/thunderbird-mcp) | Exposes Thunderbird mail, contacts, calendars, filters, and message-management operations to local AI assistants through MCP. Treat it as sensitive access: disable it unless needed and review its configuration carefully. |
 
 ## Email workflow best practices
 
@@ -74,61 +75,6 @@ Use a dedicated waiting-for workflow for messages where you need a reply or exte
 
 - `F6`: cycles forward through Folder Pane → Message List → Message Pane → Spaces Toolbar.
 
-::: {.callout-note title="Thunderbird MCP bridge" collapse="true"}
-The `thunderbird` role can install Thunderbird MCP reproducibly when `thunderbird_mcp_enabled` is `true`. The role installs the extension through Enterprise Policies and clones the Node.js bridge to `/opt/thunderbird-mcp`.
-
-The default bootstrap release is pinned to `v0.7.4` instead of an uncontrolled `latest` URL. Releases from `v0.7.3` onward support subsequent automatic extension updates through Thunderbird. Automatic updates still depend on Thunderbird's add-on update settings and continued trust in the upstream update channel.
-
-The bridge command for MCP clients is:
-
-```sh
-node /opt/thunderbird-mcp/mcp-bridge.cjs
-```
-
-The role does not copy session tokens or `connection.json`.
-The bridge discovers the current Thunderbird extension connection dynamically, so Thunderbird must be running for bridge calls to reach the extension.
-
-::: {.callout-manual}
-**🔧 Manual setup and configuration**
-
-- Restart Thunderbird after the initial extension-policy installation.
-- Review Thunderbird MCP account access, enabled tools, and send-safety settings inside Thunderbird before connecting an MCP client.
-- Treat Thunderbird MCP as sensitive access to email, contacts, calendars, filters, and message-management operations.
-- Leave `thunderbird_mcp_enabled: false` if this workstation should not expose Thunderbird through MCP.
-:::
-
-### Optional MCP client fragment
-
-The role does not modify `~/.claude.json`, Codex configuration, or another MCP client's live configuration automatically.
-To generate a fragment that users can merge manually, set:
-
-```yaml
-thunderbird_mcp_write_client_fragment: true
-```
-
-The fragment is written with user ownership and restrictive permissions under:
-
-```text
-~/.config/workstation-setup/mcp/thunderbird-mail.json
-```
-
-It contains the configured bridge path:
-
-```json
-{
-  "mcpServers": {
-    "thunderbird-mail": {
-      "command": "node",
-      "args": ["/opt/thunderbird-mcp/mcp-bridge.cjs"]
-    }
-  }
-}
-```
-
-Merge the `mcpServers.thunderbird-mail` entry into the configuration used by your MCP client, then restart or reload that client.
-
-:::
-
 ## Best practices and useful links
 
 - [Thunderbird support](https://support.mozilla.org/products/thunderbird)
@@ -136,4 +82,3 @@ Merge the `mcpServers.thunderbird-mail` entry into the configuration used by you
 - [LanguageTool setup in this repository](languagetool.qmd)
 - [LanguageTool for Thunderbird](https://languagetool.org/thunderbird)
 - [mailmindr documentation](https://mailmindr.net/)
-- [Thunderbird MCP project](https://github.com/TKasperczyk/thunderbird-mcp)

@@ -1,0 +1,16 @@
+---
+- name: Ensure RPM Fusion is available for Dropbox
+  ansible.builtin.include_role:
+    name: repo_rpmfusion
+  when:
+    - dropbox_install | bool
+    - dropbox_packages | length > 0
+
+- name: Install Dropbox and its Nautilus integration
+  ansible.builtin.dnf:
+    name: "{{ dropbox_packages }}"
+    state: present
+    update_cache: true
+  when:
+    - dropbox_install | bool
+    - dropbox_packages | length > 0

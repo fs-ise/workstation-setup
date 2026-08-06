@@ -1,0 +1,32 @@
+---
+title: "Nemo file manager"
+---
+
+Install Nemo, configure generic thumbnail preferences, and add the `Super+E` shortcut without replacing existing GNOME shortcuts.
+
+```sh
+ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags nemo
+```
+
+OCRmyPDF and GROBID continue to own their application-specific Nemo actions; run their tags separately.
+
+::: {.callout-manual}
+**🔧 Manual setup and configuration**
+
+Log out and back in if the desktop session does not immediately show the shortcut or application actions.
+:::
+
+::: {.callout-check}
+**✅ Check**
+
+```sh
+nemo --version
+dconf read /org/gnome/settings-daemon/plugins/media-keys/custom-keybindings
+```
+:::
+
+## Best practices and useful links
+
+- [Nemo project](https://github.com/linuxmint/nemo)
+- [OCR setup](ocr.html)
+- [GROBID setup](grobid.html)

@@ -48,7 +48,6 @@ baseline_install_packages_best_effort:
   - artha
   - audacity
   - autokey-gtk
-  - borgbackup
   - catdoc
   - clamav
   - clamav-update
@@ -58,8 +57,6 @@ baseline_install_packages_best_effort:
   - diffpdf
   - flatpak
   - gimp
-  - git-lfs
-  - gitk
   - gnome-clocks
   - gnome-commander
   - gnupg2
@@ -67,9 +64,6 @@ baseline_install_packages_best_effort:
   - hplip-gui
   - jdupes
   - libxslt
-  - nemo
-  - nemo-fileroller
-  - nemo-preview
   - nextcloud-client
   - obs-studio
   - openssh-clients

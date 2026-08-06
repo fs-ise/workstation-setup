@@ -1,0 +1,33 @@
+---
+- name: Install BorgBackup
+  ansible.builtin.dnf:
+    name: "{{ backup_borg_packages }}"
+    state: present
+  when: backup_borg_packages | length > 0
+
+- name: Ensure Flatpak is installed for Vorta
+  ansible.builtin.dnf:
+    name: flatpak
+    state: present
+  when: backup_borg_install_vorta | bool
+
+- name: Ensure Flathub is available for Vorta
+  become: true
+  become_user: "{{ target_user }}"
+  community.general.flatpak_remote:
+    name: flathub
+    state: present
+    flatpakrepo_url: https://flathub.org/repo/flathub.flatpakrepo
+    method: user
+  when:
+    - backup_borg_install_vorta | bool
+    - backup_borg_configure_flathub | bool
+
+- name: Install Vorta
+  become: true
+  become_user: "{{ target_user }}"
+  community.general.flatpak:
+    name: "{{ backup_borg_vorta_flatpak_id }}"
+    state: present
+    method: user
+  when: backup_borg_install_vorta | bool

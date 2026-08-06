@@ -18,7 +18,7 @@ class DesktopGnomeWifioniceTests(unittest.TestCase):
         modify_start = cls.tasks.index(
             "- name: Configure WIFIonICE to use the permanent MAC address"
         )
-        next_task = cls.tasks.index("- name: Install Dropbox", modify_start)
+        next_task = cls.tasks.index("- name: Install Obsidian", modify_start)
         cls.read_task = cls.tasks[read_start:modify_start]
         cls.modify_task = cls.tasks[modify_start:next_task]
 

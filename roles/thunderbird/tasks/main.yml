@@ -12,53 +12,6 @@
     state: present
   when: thunderbird_dnf is failed
 
-- name: Ensure Thunderbird MCP bridge prerequisites are installed
-  ansible.builtin.package:
-    name:
-      - git
-      - nodejs
-    state: present
-  when: thunderbird_mcp_enabled | bool
-
-- name: Install Thunderbird MCP bridge from pinned release tag
-  ansible.builtin.git:
-    repo: "{{ thunderbird_mcp_repository }}"
-    dest: "{{ thunderbird_mcp_install_dir }}"
-    version: "v{{ thunderbird_mcp_version }}"
-    update: true
-  when: thunderbird_mcp_enabled | bool
-
-- name: Ensure Thunderbird MCP bridge is readable by workstation users
-  ansible.builtin.file:
-    path: "{{ thunderbird_mcp_install_dir }}"
-    state: directory
-    owner: root
-    group: root
-    mode: "0755"
-  when: thunderbird_mcp_enabled | bool
-
-- name: Ensure Thunderbird MCP client fragment directory exists
-  ansible.builtin.file:
-    path: "{{ thunderbird_mcp_client_fragment_dir }}"
-    state: directory
-    owner: "{{ target_user }}"
-    group: "{{ target_user }}"
-    mode: "0700"
-  when:
-    - thunderbird_mcp_enabled | bool
-    - thunderbird_mcp_write_client_fragment | bool
-
-- name: Write optional Thunderbird MCP client configuration fragment
-  ansible.builtin.template:
-    src: mcp-client-fragment.json.j2
-    dest: "{{ thunderbird_mcp_client_fragment_file }}"
-    owner: "{{ target_user }}"
-    group: "{{ target_user }}"
-    mode: "0600"
-  when:
-    - thunderbird_mcp_enabled | bool
-    - thunderbird_mcp_write_client_fragment | bool
-
 - name: Ensure Thunderbird policies directory exists
   ansible.builtin.file:
     path: "{{ thunderbird_policies_dir }}"

@@ -1,0 +1,101 @@
+---
+- name: Install Thunderbird MCP bridge prerequisites
+  ansible.builtin.dnf:
+    name:
+      - git
+      - nodejs
+    state: present
+  when: thunderbird_mcp_enabled | bool
+
+- name: Install Thunderbird MCP bridge from pinned release tag
+  ansible.builtin.git:
+    repo: "{{ thunderbird_mcp_repository }}"
+    dest: "{{ thunderbird_mcp_install_dir }}"
+    version: "v{{ thunderbird_mcp_version }}"
+    update: true
+  when: thunderbird_mcp_enabled | bool
+
+- name: Keep the Thunderbird MCP bridge root-owned and readable
+  ansible.builtin.file:
+    path: "{{ thunderbird_mcp_install_dir }}"
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+  when: thunderbird_mcp_enabled | bool
+
+- name: Ensure the optional Thunderbird MCP client fragment directory exists
+  ansible.builtin.file:
+    path: "{{ thunderbird_mcp_client_fragment_dir }}"
+    state: directory
+    owner: "{{ target_user }}"
+    group: "{{ target_user }}"
+    mode: "0700"
+  when:
+    - thunderbird_mcp_enabled | bool
+    - thunderbird_mcp_write_client_fragment | bool
+
+- name: Write the optional Thunderbird MCP client fragment
+  ansible.builtin.template:
+    src: mcp-client-fragment.json.j2
+    dest: "{{ thunderbird_mcp_client_fragment_file }}"
+    owner: "{{ target_user }}"
+    group: "{{ target_user }}"
+    mode: "0600"
+  when:
+    - thunderbird_mcp_enabled | bool
+    - thunderbird_mcp_write_client_fragment | bool
+
+- name: Ensure the Thunderbird MCP policy directory exists
+  ansible.builtin.file:
+    path: "{{ thunderbird_mcp_policies_dir }}"
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+  when: thunderbird_mcp_enabled | bool
+
+- name: Check for an existing Thunderbird policy document
+  ansible.builtin.stat:
+    path: "{{ thunderbird_mcp_policies_file }}"
+  register: thunderbird_mcp_policies_stat
+  when: thunderbird_mcp_enabled | bool
+
+- name: Read the existing Thunderbird policy document
+  ansible.builtin.slurp:
+    path: "{{ thunderbird_mcp_policies_file }}"
+  register: thunderbird_mcp_existing_policies_slurp
+  when:
+    - thunderbird_mcp_enabled | bool
+    - thunderbird_mcp_policies_stat.stat.exists
+
+- name: Parse the existing Thunderbird policy document
+  ansible.builtin.set_fact:
+    thunderbird_mcp_existing_policies: >-
+      {{ (thunderbird_mcp_existing_policies_slurp.content | b64decode | from_json)
+         if thunderbird_mcp_policies_stat.stat.exists else {'policies': {}} }}
+  when: thunderbird_mcp_enabled | bool
+
+- name: Merge only the Thunderbird MCP extension policy
+  ansible.builtin.set_fact:
+    thunderbird_mcp_policies_document: >-
+      {{ thunderbird_mcp_existing_policies | combine({
+        'policies': (thunderbird_mcp_existing_policies.policies | default({})) | combine({
+          'ExtensionSettings': (thunderbird_mcp_existing_policies.policies.ExtensionSettings | default({}))
+            | combine({thunderbird_mcp_extension.id: {
+              'installation_mode': thunderbird_mcp_extension.installation_mode,
+              'install_url': thunderbird_mcp_extension.install_url
+            }}, recursive=True)
+        }, recursive=True)
+      }, recursive=True) }}
+  when: thunderbird_mcp_enabled | bool
+
+- name: Write the merged Thunderbird MCP policy
+  ansible.builtin.template:
+    src: policies.json.j2
+    dest: "{{ thunderbird_mcp_policies_file }}"
+    owner: root
+    group: root
+    mode: "0644"
+  notify: Report Thunderbird MCP policy change
+  when: thunderbird_mcp_enabled | bool

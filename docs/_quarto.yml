@@ -26,14 +26,18 @@ website:
       - section: Day-to-day operations
         contents:
           - update_software.qmd
-          - backup.qmd
 
       - section: Configuration
         contents:
           - baseline.qmd
+          - git.qmd
+          - backup.qmd
+          - dropbox.qmd
+          - nemo.qmd
           - veracrypt.qmd
           - docker.qmd
           - thunderbird.qmd
+          - thunderbird-mcp.qmd
           - keepassxc.qmd
           - chrome.qmd
           - vscode.qmd
