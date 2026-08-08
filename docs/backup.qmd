@@ -25,6 +25,14 @@ flatpak info com.borgbase.Vorta
 
 This page describes the intended roles of GitHub, Nextcloud, and HDD backups.
 
+::: {.callout-note collapse="true" title="Alternative: rclone"}
+Keep the native Dropbox/Nextcloud clients as the recommended approach for workstations.
+They react automatically to filesystem changes and provide desktop integration, including visible sync status and interactive conflict handling.
+
+[rclone](https://github.com/rclone/rclone) may be suitable when synchronization is explicitly scripted or scheduled, when working with multiple servers, remote storage providers, or headless systems, or when reproducible command-line automation matters more than desktop integration.
+It is an alternative for those workflows, not a replacement for the Nextcloud/Dropbox clients.
+:::
+
 The workstation setup uses the following default directory conventions:
 
 | Area                   |            Default location | Purpose                                                                       |
