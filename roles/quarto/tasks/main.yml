@@ -1,42 +1,36 @@
 ---
-- name: Check installation path {{ quarto_install_dir }}
+- name: Inspect the legacy Quarto installation symlink
   ansible.builtin.stat:
-    path: "{{ quarto_install_dir }}"
-  register: quarto_path_stat
-
-- name: Remove installation path if it is a directory {{ quarto_install_dir }}
-  ansible.builtin.file:
-    path: "{{ quarto_install_dir }}"
-    state: absent
-  when: quarto_path_stat.stat.exists and quarto_path_stat.stat.isdir
-  register: quarto_remove_result
-
-- name: Install Quarto archive
-  when: not quarto_path_stat.stat.exists or quarto_remove_result.changed
-  block:
-    - name: Download Quarto tarball
-      ansible.builtin.get_url:
-        url: "{{ quarto_url }}"
-        dest: "/tmp/{{ quarto_tarball }}"
-        mode: "0644"
-
-    - name: Unpack Quarto tarball to versioned installation directory
-      ansible.builtin.unarchive:
-        src: "/tmp/{{ quarto_tarball }}"
-        dest: /opt
-        remote_src: true
-
-- name: Symlink the versioned directory to the installation path {{ quarto_install_dir }}
-  ansible.builtin.file:
-    src: "{{ quarto_install_dir }}-{{ quarto_version }}"
-    dest: "{{ quarto_install_dir }}"
-    state: link
-    force: true
+    path: /opt/quarto
     follow: false
+  register: quarto_legacy_link
 
-- name: Add Quarto bin directory to system PATH
-  ansible.builtin.copy:
-    dest: /etc/profile.d/quarto.sh
+- name: Remove the legacy Quarto installation symlink
+  ansible.builtin.file:
+    path: /opt/quarto
+    state: absent
+  when:
+    - quarto_legacy_link.stat.islnk | default(false)
+    - quarto_legacy_link.stat.lnk_source == '/opt/quarto-1.6.42'
+
+- name: Remove the legacy Quarto 1.6.42 installation
+  ansible.builtin.file:
+    path: /opt/quarto-1.6.42
+    state: absent
+
+- name: Remove the legacy Quarto PATH configuration
+  ansible.builtin.file:
+    path: /etc/profile.d/quarto.sh
+    state: absent
+
+- name: Download the Quarto RPM
+  ansible.builtin.get_url:
+    url: "{{ quarto_url }}"
+    dest: "{{ quarto_rpm_path }}"
     mode: "0644"
-    content: |
-      export PATH={{ quarto_install_dir }}/bin:$PATH
+
+- name: Install the Quarto RPM
+  ansible.builtin.dnf:
+    name: "{{ quarto_rpm_path }}"
+    state: present
+    disable_gpg_check: true

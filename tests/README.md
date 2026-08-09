@@ -69,7 +69,8 @@ the tag. Do not mark mutating commands unchanged merely to satisfy the test.
   cleanup, desktop-entry validation, optional-application skip, `mimeapps.list`
   updates, and queries. Package loops are loaded but intentionally empty.
 - **Static validation only:** all roles in `playbooks/lab-stack.yml`, including
-  package repositories, downloads, Docker and LanguageTool containers, Quarto,
+  package repositories, downloads, Docker and LanguageTool containers, Quarto's
+  official RPM download and installation,
   OCR, Chrome, VS Code, Teams for Linux, Thunderbird, and desktop configuration.
 - **Future VM tests:** real package installation/removal, Flatpak and GUI behavior,
   GNOME sessions and dconf, Docker's systemd service, reboot behavior, VirtualBox

@@ -2,7 +2,7 @@
 title: "Quarto"
 ---
 
-Install Quarto for rendering reproducible documents, reports, and documentation websites.
+Install Quarto for rendering reproducible documents, reports, and documentation websites. The role downloads Quarto's official RPM and installs its system executable at `/usr/bin/quarto`.
 
 ```sh
 ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags quarto
@@ -14,6 +14,8 @@ ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags quarto
 ```sh
 # Check the Quarto installation — expected: version and successful diagnostics
 quarto --version
+command -v quarto
+rpm -q quarto
 quarto check
 
 # Render a minimal document — expected: test.html
@@ -36,4 +38,8 @@ test -f test.html && echo "Render successful"
 
 :::
 
-[Positron](https://positron.posit.co/) is a good Quarto editor.
+## Best practices and useful links
+
+- [Quarto installation documentation](https://quarto.org/docs/get-started/)
+- [Quarto command-line reference](https://quarto.org/docs/reference/commands.html)
+- [Positron](https://positron.posit.co/) is a Quarto-capable editor.
