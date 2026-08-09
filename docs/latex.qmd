@@ -2,13 +2,13 @@
 title: "LaTeX"
 ---
 
-Install TeX Live for LaTeX document production, the TeXstudio editor, and supporting utilities.
+Install TeX Live for LaTeX document production and the TeXstudio editor.
 
 ```sh
 ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags latex
 ```
 
-By default, the role installs `texlive-scheme-full`, plus TeXstudio and `untex`.
+By default, the role installs `texlive-scheme-full` and TeXstudio.
 The full scheme is large, but provides a comprehensive TeX Live environment without
 requiring individual TeX Live packages to be selected.
 
@@ -31,12 +31,11 @@ latex_texlive_packages:
 ```
 
 Use `latex_additional_packages` to configure utilities installed with either TeX Live
-option. Its defaults install the TeXstudio graphical editor and `untex`:
+option. Its default installs the TeXstudio graphical editor:
 
 ```yaml
 latex_additional_packages:
   - texstudio
-  - untex
 ```
 
 ::: {.callout-check}

@@ -20,7 +20,6 @@ LATEX_PACKAGES = {
     "texlive-latex-extra",
     "texlive-xetex",
     "texstudio",
-    "untex",
 }
 
 
@@ -43,7 +42,12 @@ class LatexRoleTests(unittest.TestCase):
             self.defaults["latex_texlive_packages"],
             ["texlive-lang-german", "texlive-latex-extra", "texlive-xetex"],
         )
-        self.assertEqual(self.defaults["latex_additional_packages"], ["texstudio", "untex"])
+        self.assertEqual(self.defaults["latex_additional_packages"], ["texstudio"])
+
+    def test_obsolete_packages_are_not_declared(self):
+        obsolete_package = "un" + "tex"
+        self.assertNotIn(obsolete_package, self.defaults["latex_additional_packages"])
+        self.assertNotIn(obsolete_package, self.audit["package_audit_managed_packages"])
 
     def test_install_conditions_are_mutually_exclusive_and_empty_safe(self):
         tasks = {task["name"]: task for task in self.tasks}

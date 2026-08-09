@@ -181,7 +181,6 @@ package_audit_managed_packages:
   - texlive-latex-extra
   - texlive-xetex
   - texstudio
-  - untex
   - texlive-scheme-full
 
   # roles/keepassxc
