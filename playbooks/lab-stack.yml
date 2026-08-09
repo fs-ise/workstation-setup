@@ -19,8 +19,8 @@
     - role: git_tools
       tags: [git, git_tools]
 
-    - role: backup_borg
-      tags: [backup, borg, vorta]
+    - role: borg_vorta
+      tags: [borg_vorta, backup, borg, vorta]
 
     - role: veracrypt
       tags: [veracrypt]

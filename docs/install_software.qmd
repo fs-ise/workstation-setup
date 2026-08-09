@@ -40,7 +40,7 @@ Run only one playbook tag when you need to test or reapply a specific area:
 ```sh
 ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags baseline
 ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags git
-ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags backup
+ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags borg_vorta
 ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags dropbox
 ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags nemo
 ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags veracrypt

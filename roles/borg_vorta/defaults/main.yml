@@ -1,0 +1,7 @@
+---
+borg_vorta_packages:
+  - borgbackup
+
+borg_vorta_install_vorta: true
+borg_vorta_vorta_flatpak_id: com.borgbase.Vorta
+borg_vorta_configure_flathub: true

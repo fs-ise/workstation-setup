@@ -8,7 +8,7 @@ Install core workstation packages and tools that other lab setup steps rely on.
 ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags baseline
 ```
 
-Baseline retains Git as a bootstrap dependency, but no longer installs Git LFS, Gitk, BorgBackup, Nemo, Dropbox, Vorta, or Thunderbird MCP. Use their focused tags instead.
+Baseline retains Git as a bootstrap dependency, but no longer installs Git LFS, Gitk, BorgBackup, Nemo, Dropbox, Vorta, or Thunderbird MCP. Use their focused roles and tags instead; BorgBackup and Vorta are owned by `borg_vorta`.
 
 ::: {.callout-manual}
 **🔧 Manual setup and configuration**

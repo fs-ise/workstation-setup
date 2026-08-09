@@ -236,7 +236,7 @@ package_audit_managed_packages:
   - git-lfs
   - gitk
 
-  # roles/backup_borg
+  # roles/borg_vorta
   - borgbackup
 
   # roles/nemo

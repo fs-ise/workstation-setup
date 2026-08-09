@@ -106,10 +106,10 @@
     - role: git_tools
       vars:
         git_tools_packages: []
-    - role: backup_borg
+    - role: borg_vorta
       vars:
-        backup_borg_packages: []
-        backup_borg_install_vorta: false
+        borg_vorta_packages: []
+        borg_vorta_install_vorta: false
     - role: nemo
       vars:
         nemo_packages: []

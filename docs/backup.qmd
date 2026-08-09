@@ -2,10 +2,10 @@
 title: "Backup and sync"
 ---
 
-Install BorgBackup and the optional Vorta GUI. The role installs tools only; it does not create repositories, store credentials, choose destinations, or schedule backups.
+Install BorgBackup and the optional Vorta GUI. The `borg_vorta` role installs tools only; it does not create repositories, store credentials, choose destinations, or schedule backups.
 
 ```sh
-ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags backup
+ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags borg_vorta
 ```
 
 ::: {.callout-manual}
