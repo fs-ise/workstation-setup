@@ -1,0 +1,40 @@
+---
+- name: Collect unmanaged filesystem installation candidates
+  ansible.builtin.script:
+    cmd: ../scripts/audit_manual_installations.py
+    executable: /usr/bin/python3
+  register: manual_install_audit_scan
+  changed_when: false
+  environment:
+    MANUAL_INSTALL_AUDIT_ALLOWLIST: "{{ manual_install_audit_allowlist | to_json }}"
+    MANUAL_INSTALL_AUDIT_ALLOWLIST_PATTERNS: "{{ manual_install_audit_allowlist_patterns | to_json }}"
+
+- name: Parse unmanaged filesystem installations
+  ansible.builtin.set_fact:
+    manual_install_audit_unmanaged: "{{ manual_install_audit_scan.stdout | from_json }}"
+
+- name: Report unmanaged filesystem installations
+  ansible.builtin.debug:
+    msg: |-
+      {{ item.name }}
+        path: {{ item.path }}
+        target: {{ item.target | default('not a symlink', true) }}{% if item.broken_symlink %} (broken symlink){% endif %}
+        RPM owner: none
+        recommendation: {{ manual_install_audit_recommendations.get(item.name, 'Prefer an official RPM/package when one is available; otherwise allowlist this intentional manual installation.') }}
+  loop: "{{ manual_install_audit_unmanaged }}"
+  loop_control:
+    label: "{{ item.name }}"
+
+- name: Show unmanaged filesystem installation summary
+  ansible.builtin.debug:
+    msg: "Unmanaged filesystem installations remaining: {{ manual_install_audit_unmanaged | length }}"
+
+- name: Fail when unmanaged filesystem installations are found
+  ansible.builtin.fail:
+    msg: >-
+      Found {{ manual_install_audit_unmanaged | length }} unmanaged filesystem installation(s).
+      Add intentional names or paths to manual_install_audit_allowlist or use a narrow
+      manual_install_audit_allowlist_patterns entry.
+  when:
+    - manual_install_audit_fail_on_unmanaged | bool
+    - manual_install_audit_unmanaged | length > 0

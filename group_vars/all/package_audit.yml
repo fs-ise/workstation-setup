@@ -1,5 +1,13 @@
 ---
 # Fedora/DNF package drift audit settings.
+# Filesystem/manual installation audit settings. Exact entries may be normalized
+# names (for example, "quarto") or full paths.
+manual_install_audit_allowlist: []
+manual_install_audit_allowlist_patterns: []
+manual_install_audit_fail_on_unmanaged: false
+manual_install_audit_recommendations:
+  quarto: "Install the official Quarto RPM through the quarto role."
+
 # This allowlist is intentionally local/workstation-specific and may vary by team image.
 package_audit_allowlist:
   - NetworkManager
@@ -250,6 +258,9 @@ package_audit_managed_packages:
 
   # roles/desktop_gnome
   - python3-psutil
+
+  # roles/quarto
+  - quarto
 
   # roles/thunderbird
   - thunderbird

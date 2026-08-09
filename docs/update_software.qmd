@@ -15,21 +15,20 @@ git pull
 # Re-run the managed lab-stack setup
 ansible-playbook -i inventory -K playbooks/lab-stack.yml
 
-# Audit unmanaged packages
+# Audit DNF packages and manual filesystem installations
 ansible-playbook -i inventory -K playbooks/audit-unmanaged-packages.yml
 ```
 
 The first command updates this repository.
 The second command re-applies the managed workstation configuration.
-The third command checks whether additional local packages are installed outside the managed setup.
+The third command runs two related, separate audits: DNF package drift and high-signal manual filesystem installations.
 
 ::: {.callout-note title="What is an unmanaged package?"}
 
-An unmanaged package is a package that is:
+The audit reports two kinds of unmanaged software:
 
-- installed on the workstation,
-- not declared in this repository's Ansible-managed package lists,
-- and not allowlisted by exact name or allowlist pattern.
+- A **DNF user-installed but Ansible-unmanaged package** is tracked by RPM/DNF, but is not declared in this repository's managed package lists or package allowlists.
+- An **unmanaged filesystem installation** is a file, symlink, or `/opt` installation that is not owned by an RPM and is not in the separate manual-install allowlists. This commonly includes software unpacked from tarballs.
 :::
 
 ## Audit unmanaged packages
@@ -77,6 +76,27 @@ To keep the audit actionable, this repository supports two filtering mechanisms:
 Use exact [allowlist](https://github.com/fs-ise/workstation-setup/blob/main/group_vars/all/package_audit.yml) entries whenever possible. Use regex patterns only when exact names are too noisy, for example for expected Fedora or system package families.
 
 Keep patterns narrow. Broad patterns can hide real workstation drift.
+
+## Audit manual filesystem installations
+
+The filesystem category checks regular files and symlinks in `/usr/local/bin` and `/usr/local/sbin`, plus direct directory and symlink children of `/opt`. It resolves executable symlinks where possible and asks RPM which package owns the effective path. RPM-owned entries are not findings, and broken symlinks are reported safely. The audit intentionally does not scan `~/.local`, where tools such as uv, pipx, Cargo, and npm commonly create legitimate user-managed files.
+
+Configure this category independently in `group_vars/all/package_audit.yml`:
+
+```yaml
+manual_install_audit_allowlist:
+  - local-tool
+  - /opt/institution-tool
+manual_install_audit_allowlist_patterns:
+  - '^lab-'
+manual_install_audit_fail_on_unmanaged: false
+manual_install_audit_recommendations:
+  quarto: "Install the official Quarto RPM through the quarto role."
+```
+
+Exact and regex allowlists match either the normalized installation name or its reported path. Prefer exact entries and keep patterns narrow. The default is report-only; set `manual_install_audit_fail_on_unmanaged` to `true` to make remaining findings fail the playbook.
+
+Prefer a suitable official RPM or package-managed installation over a tarball/manual installation. Allowlist intentional exceptions rather than deleting them: this audit is read-only and never changes detected software.
 
 ## Best practices and useful links
 

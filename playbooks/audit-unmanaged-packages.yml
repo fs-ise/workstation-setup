@@ -80,7 +80,10 @@
         msg: "{{ package_audit_unmanaged | to_nice_yaml(indent=2) }}"
       when: package_audit_unmanaged | length > 0
 
-    - name: Fail when unmanaged packages are found (default)
+    - name: Audit unmanaged filesystem installations
+      ansible.builtin.include_tasks: tasks/audit-manual-installations.yml
+
+    - name: Fail when unmanaged DNF packages are found
       ansible.builtin.fail:
         msg: |-
           Found unmanaged manually installed packages:
