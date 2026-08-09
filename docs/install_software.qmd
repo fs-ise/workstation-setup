@@ -47,6 +47,8 @@ ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags veracrypt
 ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags ocr
 ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags virtualbox
 ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags docker
+ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags ocr_containers
+ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags development_containers
 ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags grobid
 ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags languagetool
 ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags latex

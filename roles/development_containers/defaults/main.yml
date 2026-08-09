@@ -1,0 +1,4 @@
+---
+development_container_images:
+  - python:3
+  - alekzonder/puppeteer

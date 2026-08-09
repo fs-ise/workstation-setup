@@ -40,6 +40,13 @@
     - role: docker
       tags: [docker]
 
+    # Image-only roles are opt-in; their Docker dependency installs the engine first.
+    - role: ocr_containers
+      tags: [never, ocr_containers]
+
+    - role: development_containers
+      tags: [never, development_containers]
+
     - role: grobid
       tags: [grobid]
 

@@ -41,23 +41,3 @@
     name: "{{ target_user }}"
     groups: docker
     append: true
-
-- name: Check which Docker images already exist locally
-  ansible.builtin.command: "docker image inspect {{ docker_image }}"
-  register: docker_image_inspect
-  failed_when: false
-  changed_when: false
-  loop: "{{ docker_images }}"
-  loop_control:
-    loop_var: docker_image
-    label: "{{ docker_image }}"
-
-- name: Pull missing Docker images
-  community.docker.docker_image_pull:
-    name: "{{ image_check.docker_image }}"
-    platform: amd64
-  loop: "{{ docker_image_inspect.results }}"
-  loop_control:
-    loop_var: image_check
-    label: "{{ image_check.docker_image }}"
-  when: image_check.rc != 0

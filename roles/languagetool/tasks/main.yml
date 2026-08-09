@@ -1,21 +1,4 @@
 ---
-- name: Install Docker Engine packages
-  ansible.builtin.dnf:
-    name: "{{ languagetool_docker_packages }}"
-    state: present
-    update_cache: true
-
-- name: Install Python Docker SDK dependency for Ansible modules
-  ansible.builtin.dnf:
-    name: "{{ languagetool_python_packages }}"
-    state: present
-
-- name: Enable and start Docker service
-  ansible.builtin.systemd:
-    name: docker
-    enabled: true
-    state: started
-
 - name: Create LanguageTool data directory
   ansible.builtin.file:
     path: "{{ languagetool_data_dir }}"

@@ -2,7 +2,7 @@
 title: "Docker"
 ---
 
-Install Docker so local services and containerized research tools can run on the workstation.
+Install and configure the Docker engine so containerized tools can run on the workstation. This role does not pull application images or create application containers.
 
 ```sh
 ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags docker
@@ -22,3 +22,11 @@ docker version
 docker run --rm hello-world
 ```
 :::
+
+Application roles own their images and containers. The `grobid` and `languagetool` tags install Docker automatically through role dependencies. Optional image sets are available with the `ocr_containers` and `development_containers` tags. R and RStudio are installed locally rather than through Docker.
+
+## Best practices and useful links
+
+- [Docker Engine installation documentation](https://docs.docker.com/engine/install/fedora/)
+- [Docker Linux post-installation steps](https://docs.docker.com/engine/install/linux-postinstall/)
+- [RStudio setup](rstudio.qmd)

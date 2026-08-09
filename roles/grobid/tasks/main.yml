@@ -1,7 +1,8 @@
 ---
 - name: Pull GROBID Docker image
-  ansible.builtin.command: "docker pull {{ grobid_image }}"
-  changed_when: false
+  community.docker.docker_image_pull:
+    name: "{{ grobid_image }}"
+    platform: amd64
 
 - name: Check if GROBID container exists
   ansible.builtin.command: "docker container inspect {{ grobid_container_name }}"

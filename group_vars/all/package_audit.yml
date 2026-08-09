@@ -219,7 +219,7 @@ package_audit_managed_packages:
   - jbig2enc-devel
   - jbig2
 
-  # roles/docker + roles/languagetool
+  # roles/docker (also a dependency of container workload roles)
   - docker-ce
   - docker-ce-cli
   - containerd.io
