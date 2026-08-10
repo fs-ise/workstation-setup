@@ -13,6 +13,10 @@
          else '/home/' ~ target_user }}
 
   roles:
+    # Fail before any installation or configuration role runs.
+    - role: preflight
+      tags: [always, preflight]
+
     - role: baseline  # should include packages (except for those needed in the following roles)
       tags: [baseline]
 

@@ -5,9 +5,15 @@ title: "workstation-setup"
 This repository documents a reproducible workstation setup used by [FS-ISE](https://fs-ise.github.io/handbook/).
 It treats a workstation as something that should be installed consistently, configured efficiently, and kept understandable for a small but growing team.
 
+::: {.callout-important title="Supported platform"}
+This setup is tested/supported on **Fedora Workstation 44 x86_64**. The main
+Ansible playbook rejects other distributions, Fedora major versions, and
+architectures before running installation or configuration roles.
+:::
+
 The workstation stack includes:
 
-- Base: Minimal Fedora, debloated GNOME
+- Base: Fedora Workstation 44 x86_64, with a debloated GNOME configuration
 - Sync & Backup: Vorta/Borg, Nextcloud, Git + LFS
 - Development: SSH, Docker, Visual Studio Code, Python, R, RStudio
 - Research: LaTeX, Pandoc tooling, Quarto, Obsidian

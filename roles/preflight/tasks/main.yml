@@ -1,0 +1,15 @@
+---
+- name: Verify the supported workstation platform
+  ansible.builtin.assert:
+    that:
+      - ansible_facts["distribution"] == "Fedora"
+      - ansible_facts["distribution_major_version"] == "44"
+      - ansible_facts["architecture"] == "x86_64"
+    fail_msg: >-
+      Unsupported platform: detected
+      {{ ansible_facts["distribution"] | default("unknown") }}
+      {{ ansible_facts["distribution_major_version"] | default("unknown") }}
+      {{ ansible_facts["architecture"] | default("unknown") }};
+      this workstation setup is tested/supported on Fedora 44 x86_64.
+    success_msg: >
+      Supported platform detected: Fedora 44 x86_64.

@@ -1,7 +1,8 @@
 # Ansible CI tests
 
 The CI checks the complete Ansible setup statically and runs a deliberately small,
-safe subset in a Fedora 44 container. The execution test runs the `baseline`,
+safe subset in a Fedora 44 x86_64 container, matching the repository's currently
+tested/supported Fedora Workstation 44 x86_64 platform. The execution test runs the `baseline`,
 `borg_vorta`, and `keepassxc` roles with package installation, package removal,
 TeX Live, and Flathub disabled. It
 also runs `default_applications` with a reduced fixture and a fake desktop entry,
@@ -39,6 +40,12 @@ python -m unittest tests.test_package_audit
 ansible-playbook \
   -i tests/inventory/hosts.yml \
   tests/playbooks/package-audit-derivation.yml
+
+python -m unittest tests.test_preflight_role
+
+ansible-playbook \
+  -i localhost, \
+  tests/playbooks/preflight.yml
 
 ansible-playbook \
   --list-tasks \

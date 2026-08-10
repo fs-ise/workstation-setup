@@ -12,6 +12,10 @@
 
 Documentation available at [https://fs-ise.github.io/workstation-setup/](https://fs-ise.github.io/workstation-setup/).
 
+> **Supported platform:** This repository is currently tested/supported on
+> **Fedora Workstation 44 x86_64**. The main playbook checks the operating
+> system, major version, and architecture before it changes the workstation.
+
 Automated checks lint and syntax-check the complete Ansible setup and exercise a
 container-safe subset twice for idempotence. See [the Ansible CI test guide](tests/README.md)
 for coverage, limitations, and local reproduction commands.

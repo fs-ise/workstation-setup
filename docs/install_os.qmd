@@ -2,11 +2,17 @@
 title: "Install OS/Ansible"
 ---
 
-Use this checklist for a new Fedora Workstation machine before running the full lab software setup.
+Use this checklist for a new workstation before running the full lab software setup.
+
+::: {.callout-important title="Supported platform"}
+The repository is tested/supported on **Fedora Workstation 44 x86_64**. Install
+that edition, major version, and architecture; the main playbook fails its
+preflight check before making changes on any other platform.
+:::
 
 ## 1. Install Fedora Workstation
 
-- Download Fedora Workstation from the [official Fedora website](https://fedoraproject.org/workstation/download/).
+- Download the Fedora Workstation 44 x86_64 installation image from the [official Fedora website](https://fedoraproject.org/workstation/download/).
 - Install it with the default GNOME desktop unless you have a documented reason to do otherwise.
 - Apply the first system update offered by GNOME Software or `dnf` before installing the lab stack.
 

@@ -5,6 +5,10 @@ title: "Install software"
 Use this page to apply the managed workstation configuration to a new or freshly prepared machine after completing [Install OS/Ansible](install_os.html).
 Installing software through Ansible makes the setup repeatable, reviewable, and easier to share across the team.
 
+This workflow is tested/supported on **Fedora Workstation 44 x86_64**. The
+playbook gathers platform facts first and stops with the detected platform if
+the distribution, major version, or architecture is unsupported.
+
 ```sh
 ansible-playbook -i inventory -K playbooks/lab-stack.yml
 ```
