@@ -31,19 +31,18 @@ sudo dnf -y install git ansible-core python3 python3-pip dnf-plugins-core
 ansible --version
 git --version
 python3 --version
-
-ansible-galaxy collection install community.general community.docker
 ```
 
 `dnf-plugins-core` provides `dnf config-manager`, which some repository setup tasks need.
 
-## 3. Clone the repository
+## 3. Clone the repository and install Ansible collections
 
 Clone the workstation setup repository and enter it:
 
 ```sh
 git clone git@github.com:fs-ise/workstation-setup.git
 cd workstation-setup
+ansible-galaxy collection install -r requirements.yml
 ```
 
 If SSH access to GitHub is not configured yet, use HTTPS for the first clone:
@@ -51,6 +50,7 @@ If SSH access to GitHub is not configured yet, use HTTPS for the first clone:
 ```sh
 git clone https://github.com/fs-ise/workstation-setup.git
 cd workstation-setup
+ansible-galaxy collection install -r requirements.yml
 ```
 
 ## 4. Create the inventory file

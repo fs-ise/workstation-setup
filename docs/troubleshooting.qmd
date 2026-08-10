@@ -27,10 +27,10 @@ ansible-inventory -i inventory --list
 
 ## Ansible collection is missing
 
-Install the required collections before running the playbooks:
+From the repository root, install the collections declared in `requirements.yml`:
 
 ```sh
-ansible-galaxy collection install community.general community.docker
+ansible-galaxy collection install -r requirements.yml
 ```
 
 Then rerun:
