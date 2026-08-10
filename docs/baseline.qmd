@@ -8,7 +8,14 @@ Install core workstation packages and tools that other lab setup steps rely on.
 ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags baseline
 ```
 
-Baseline retains Git as a bootstrap dependency, but no longer installs Git LFS, Gitk, BorgBackup, Nemo, Dropbox, Vorta, or Thunderbird MCP. Use their focused roles and tags instead; BorgBackup and Vorta are owned by `borg_vorta`.
+The role treats bootstrap dependencies such as CA certificates, Git, Python, and
+archive/download tools as required. The playbook stops if any required package
+cannot be installed. Desktop applications and convenience tools are optional;
+an unavailable optional package does not prevent the role from trying the rest.
+
+Baseline retains Git as a bootstrap dependency, but no longer installs Git LFS,
+Gitk, BorgBackup, Nemo, Dropbox, Vorta, or Thunderbird MCP. Use their focused
+roles and tags instead; BorgBackup and Vorta are owned by `borg_vorta`.
 
 ::: {.callout-manual}
 **🔧 Manual setup and configuration**
@@ -33,6 +40,8 @@ cat ~/.ssh/id_ed25519.pub | wl-copy
 git config --global user.name
 git config --global user.email
 
+python3 --version
+
 docker version
 docker run --rm hello-world
 
@@ -52,3 +61,8 @@ context menu, not the application's top menu.
 
 
 Future work: decide whether additional desktop GNOME setup should be documented here or kept in separate role pages.
+
+## Best practices and useful links
+
+- [Ansible package management modules](https://docs.ansible.com/ansible/latest/collections/ansible/builtin/package_module.html)
+- [Fedora package management with DNF](https://docs.fedoraproject.org/en-US/quick-docs/dnf/)

@@ -1,11 +1,10 @@
 ---
-- name: Install baseline packages
+- name: Install required baseline packages
   ansible.builtin.dnf:
     name: "{{ item }}"
     state: present
     update_cache: true
-  loop: "{{ baseline_base_packages }}"
-  failed_when: false
+  loop: "{{ baseline_required_packages }}"
 
 - name: Remove unwanted packages (best effort)
   ansible.builtin.dnf:
@@ -14,11 +13,11 @@
   loop: "{{ baseline_remove_packages_best_effort }}"
   failed_when: false
 
-- name: Install desired packages (best effort)
+- name: Install optional baseline packages (best effort)
   ansible.builtin.dnf:
     name: "{{ item }}"
     state: present
-  loop: "{{ baseline_install_packages_best_effort }}"
+  loop: "{{ baseline_optional_packages }}"
   failed_when: false
 
 - name: Ensure Flathub remote exists

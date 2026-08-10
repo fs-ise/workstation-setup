@@ -1,5 +1,5 @@
 ---
-baseline_base_packages:
+baseline_required_packages:
   - ca-certificates
   - curl
   - dnf-plugins-core
@@ -44,7 +44,7 @@ baseline_remove_packages_best_effort:
   - vino
   - yelp
 
-baseline_install_packages_best_effort:
+baseline_optional_packages:
   - artha
   - audacity
   - autokey-gtk

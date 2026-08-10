@@ -6,9 +6,9 @@
   vars:
     target_user: root
     target_home: /root
-    baseline_base_packages: []
+    baseline_required_packages: []
     baseline_remove_packages_best_effort: []
-    baseline_install_packages_best_effort: []
+    baseline_optional_packages: []
     baseline_configure_flathub: false
     keepassxc_packages: []
     r_system_packages: []
