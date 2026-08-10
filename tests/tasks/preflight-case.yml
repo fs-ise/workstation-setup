@@ -1,0 +1,31 @@
+---
+- name: Reset the preflight result
+  ansible.builtin.set_fact:
+    preflight_passed: false
+
+- name: Run the preflight assertion with synthetic facts
+  block:
+    - name: Apply the centralized preflight role
+      ansible.builtin.include_role:
+        name: preflight
+      vars:
+        ansible_facts:
+          distribution: "{{ platform_case.distribution }}"
+          distribution_major_version: "{{ platform_case.version }}"
+          architecture: "{{ platform_case.architecture }}"
+
+    - name: Record a successful preflight
+      ansible.builtin.set_fact:
+        preflight_passed: true
+  rescue:
+    - name: Record a rejected platform
+      ansible.builtin.set_fact:
+        preflight_passed: false
+
+- name: Verify the expected preflight decision
+  ansible.builtin.assert:
+    that:
+      - preflight_passed == platform_case.supported
+    fail_msg: >-
+      Preflight result for {{ platform_case.name }} was
+      {{ preflight_passed }}, expected {{ platform_case.supported }}.

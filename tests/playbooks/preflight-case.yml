@@ -1,31 +1,35 @@
 ---
-- name: Reset the preflight result
-  ansible.builtin.set_fact:
-    preflight_passed: false
+- name: Exercise supported-platform preflight decisions
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  vars:
+    platform_cases:
+      - name: Fedora 44 x86_64
+        distribution: Fedora
+        version: "44"
+        architecture: x86_64
+        supported: true
+      - name: Another Fedora major version
+        distribution: Fedora
+        version: "43"
+        architecture: x86_64
+        supported: false
+      - name: Non-Fedora distribution
+        distribution: Ubuntu
+        version: "44"
+        architecture: x86_64
+        supported: false
+      - name: Non-x86_64 architecture
+        distribution: Fedora
+        version: "44"
+        architecture: aarch64
+        supported: false
 
-- name: Run the preflight assertion with synthetic facts
-  block:
-    - name: Apply the centralized preflight role
-      ansible.builtin.include_role:
-        name: preflight
-      vars:
-        ansible_facts:
-          distribution: "{{ platform_case.distribution }}"
-          distribution_major_version: "{{ platform_case.version }}"
-          architecture: "{{ platform_case.architecture }}"
-
-    - name: Record a successful preflight
-      ansible.builtin.set_fact:
-        preflight_passed: true
-  rescue:
-    - name: Record a rejected platform
-      ansible.builtin.set_fact:
-        preflight_passed: false
-
-- name: Verify the expected preflight decision
-  ansible.builtin.assert:
-    that:
-      - preflight_passed == platform_case.supported
-    fail_msg: >-
-      Preflight result for {{ platform_case.name }} was
-      {{ preflight_passed }}, expected {{ platform_case.supported }}.
+  tasks:
+    - name: Check each platform case
+      ansible.builtin.include_tasks: ../tasks/preflight-case.yml
+      loop: "{{ platform_cases }}"
+      loop_control:
+        loop_var: platform_case
+        label: "{{ platform_case.name }}"

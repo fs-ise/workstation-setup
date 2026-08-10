@@ -33,8 +33,8 @@
   community.general.dconf:
     key: /org/gnome/settings-daemon/plugins/media-keys/custom-keybindings
     value: >-
-      {{ ((nemo_custom_shortcuts_read.stdout | default(''))
-          | regex_findall("(?<=')[^']+/(?=')")
+      {{ (((nemo_custom_shortcuts_read.stdout | default(''))
+           | regex_findall("(?<=')[^']+/(?=')"))
           + [nemo_shortcut_path]) | unique | list | to_json }}
   when: nemo_configure_shortcut | bool
 

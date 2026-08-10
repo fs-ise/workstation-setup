@@ -155,8 +155,8 @@
   community.general.dconf:
     key: /org/gnome/settings-daemon/plugins/media-keys/custom-keybindings
     value: >-
-      {{ ((desktop_gnome_custom_shortcuts_read.stdout | default(''))
-          | regex_findall("(?<=')[^']+/(?=')")
+      {{ (((desktop_gnome_custom_shortcuts_read.stdout | default(''))
+           | regex_findall("(?<=')[^']+/(?=')"))
           + [desktop_gnome_ptyxis_shortcut_path]) | unique | list | to_json }}
 
 - name: Configure the Ptyxis shortcut
