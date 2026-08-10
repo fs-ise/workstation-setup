@@ -3,7 +3,7 @@
   community.docker.docker_image_pull:
     name: "{{ development_container_image }}"
     platform: amd64
-  loop: "{{ development_container_images }}"
+  loop: "{{ development_containers_images }}"
   loop_control:
     loop_var: development_container_image
     label: "{{ development_container_image }}"

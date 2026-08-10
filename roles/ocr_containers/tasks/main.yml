@@ -3,7 +3,7 @@
   community.docker.docker_image_pull:
     name: "{{ ocr_container_image }}"
     platform: amd64
-  loop: "{{ ocr_container_images }}"
+  loop: "{{ ocr_containers_images }}"
   loop_control:
     loop_var: ocr_container_image
     label: "{{ ocr_container_image }}"

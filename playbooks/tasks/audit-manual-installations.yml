@@ -20,7 +20,10 @@
         path: {{ item.path }}
         target: {{ item.target | default('not a symlink', true) }}{% if item.broken_symlink %} (broken symlink){% endif %}
         RPM owner: none
-        recommendation: {{ manual_install_audit_recommendations.get(item.name, 'Prefer an official RPM/package when one is available; otherwise allowlist this intentional manual installation.') }}
+        recommendation: {{ manual_install_audit_recommendations.get(
+          item.name,
+          'Prefer an official RPM/package when one is available; otherwise allowlist this intentional manual installation.'
+          ) }}
   loop: "{{ manual_install_audit_unmanaged }}"
   loop_control:
     label: "{{ item.name }}"
