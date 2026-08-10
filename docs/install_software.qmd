@@ -9,7 +9,7 @@ Installing software through Ansible makes the setup repeatable, reviewable, and 
 ansible-playbook -i inventory -K playbooks/lab-stack.yml
 ```
 The command applies the desired state for the first time.
-[Update software](update_software.html) reapplies and audits that same state during routine maintenance.
+[Update software](update_software.html) updates Fedora and Flatpak software, then reapplies and audits that same state during routine maintenance.
 Both workflows rely on Ansible and documented package policy rather than manual, undocumented changes.
 
 Ansible playbooks are designed to be **idempotent**: 

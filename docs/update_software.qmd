@@ -2,8 +2,8 @@
 title: "Update software"
 ---
 
-Use this page to keep an existing workstation aligned with this repository.
-Updating is not a separate setup method: it is the recurring re-application and audit of the same Ansible desired state used during [Install software](install_software.html).
+Use this page to update installed software and keep an existing workstation aligned with this repository.
+Fedora and Flatpak update software from their configured repositories, Ansible reapplies the desired state used during [Install software](install_software.html), and the package audit detects unmanaged software or drift.
 
 ## Routine update workflow
 
@@ -12,16 +12,27 @@ Run these commands from the `workstation-setup` repository:
 ```sh
 git pull
 
-# Re-run the managed lab-stack setup
+# Update Fedora packages
+sudo dnf upgrade --refresh
+
+# Update Flatpak applications
+flatpak update
+
+# Reapply the managed workstation configuration
 ansible-playbook -i inventory -K playbooks/lab-stack.yml
 
 # Audit DNF packages and manual filesystem installations
 ansible-playbook -i inventory -K playbooks/audit-unmanaged-packages.yml
 ```
 
-The first command updates this repository.
-The second command re-applies the managed workstation configuration.
-The third command runs two related, separate audits: DNF package drift and high-signal manual filesystem installations.
+The commands intentionally run in this order:
+
+1. Update the setup repository so the latest desired configuration is available.
+2. Update Fedora packages and Flatpak applications from their configured repositories. These commands omit `-y` so you can review consequential changes before installation.
+3. Reapply the Ansible desired state after the software updates.
+4. Audit the resulting system for DNF package drift and high-signal manual filesystem installations.
+
+`ansible-playbook` is not a substitute for `dnf upgrade` or `flatpak update`. Most roles ensure that selected packages are present and configured; they do not generally upgrade every installed package.
 
 ::: {.callout-note title="What is an unmanaged package?"}
 
@@ -113,3 +124,4 @@ Prefer a suitable official RPM or package-managed installation over a tarball/ma
 - [Troubleshooting](troubleshooting.html)
 - [Ansible playbook guide](https://docs.ansible.com/ansible/latest/playbook_guide/playbooks_intro.html)
 - [DNF command reference](https://dnf.readthedocs.io/en/latest/command_ref.html)
+- [Flatpak command reference](https://docs.flatpak.org/en/latest/flatpak-command-reference.html)
