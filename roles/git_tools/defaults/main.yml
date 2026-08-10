@@ -13,3 +13,6 @@ git_tools_global_config:
     value: vim
   - name: init.defaultBranch
     value: main
+
+# DNF packages owned by this role; consumed by the package audit.
+git_tools_managed_dnf_packages: "{{ git_tools_packages }}"

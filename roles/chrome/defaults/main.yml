@@ -25,3 +25,7 @@ chrome_extensions:
     id: dbepggeogbaibhgnhhndojpepiihcmeb
   - name: "Zotero Connector"
     id: ekhagklcjbdpajgpjgmbionohlpdbjgc
+
+# DNF packages owned by this role; consumed by the package audit.
+chrome_managed_dnf_packages:
+  - google-chrome-stable

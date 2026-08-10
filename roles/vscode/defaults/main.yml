@@ -50,3 +50,8 @@ vscode_keybindings:
     command: "workbench.action.previousEditor"
   - key: "ctrl+pagedown"
     command: "workbench.action.nextEditor"
+
+# DNF packages owned by this role; consumed by the package audit.
+vscode_clipboard_packages:
+  - xclip
+vscode_managed_dnf_packages: "{{ [vscode_rpm_package] + vscode_clipboard_packages }}"

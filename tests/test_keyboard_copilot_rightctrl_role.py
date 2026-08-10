@@ -27,7 +27,11 @@ class KeyboardCopilotRightCtrlRoleTests(unittest.TestCase):
 
     def test_build_dependencies_are_declared(self):
         for package in ("cargo", "evtest", "libevdev", "libevdev-devel"):
-            self.assertIn(f"          - {package}\n", self.tasks)
+            self.assertIn(f"  - {package}\n", self.defaults)
+        self.assertIn(
+            'name: "{{ keyboard_copilot_rightctrl_managed_dnf_packages }}"',
+            self.tasks,
+        )
 
     def test_build_condition_tracks_source_and_binary(self):
         self.assertIn("keyboard_copilot_rightctrl_evsieve_checkout.changed or", self.tasks)

@@ -1,0 +1,72 @@
+---
+- name: Discover role default files
+  ansible.builtin.find:
+    paths: "{{ package_audit_roles_path }}"
+    recurse: true
+    file_type: file
+    patterns: main.yml
+  register: package_audit_role_defaults_scan
+
+- name: Select direct role default files
+  ansible.builtin.set_fact:
+    package_audit_role_default_files: >-
+      {{
+        package_audit_role_defaults_scan.files
+        | map(attribute='path')
+        | select('match', '.*/roles/[^/]+/defaults/main[.]yml$')
+        | sort
+      }}
+
+- name: Require role default discovery to succeed
+  ansible.builtin.assert:
+    that:
+      - package_audit_role_default_files | length > 0
+    fail_msg: >-
+      The package audit found no role defaults under {{ package_audit_roles_path }}.
+      It refuses to continue without managed package declarations.
+
+- name: Load role defaults that declare managed DNF packages
+  ansible.builtin.include_vars:
+    file: "{{ item }}"
+  loop: "{{ package_audit_role_default_files }}"
+  loop_control:
+    label: "{{ item | dirname | dirname | basename }}"
+
+- name: Find managed DNF package declarations
+  ansible.builtin.set_fact:
+    package_audit_managed_package_variables: >-
+      {{ query('ansible.builtin.varnames', '^[a-z0-9_]+_managed_dnf_packages$') }}
+    package_audit_managed_packages: []
+
+- name: Collect managed DNF packages from role declarations
+  ansible.builtin.set_fact:
+    package_audit_managed_packages: >-
+      {{
+        package_audit_managed_packages
+        + (query('ansible.builtin.vars', item) | flatten)
+      }}
+  loop: "{{ package_audit_managed_package_variables }}"
+  loop_control:
+    label: "{{ item }}"
+
+- name: Normalize managed DNF packages
+  ansible.builtin.set_fact:
+    package_audit_managed_packages: >-
+      {{
+        package_audit_managed_packages
+        | flatten
+        | map('string')
+        | map('trim')
+        | reject('equalto', '')
+        | unique
+        | sort
+      }}
+
+- name: Require managed DNF package derivation to succeed
+  ansible.builtin.assert:
+    that:
+      - package_audit_managed_packages | length > 0
+      - "'git' in package_audit_managed_packages"
+    fail_msg: >-
+      The package audit could not load valid managed DNF package declarations
+      from role defaults and refuses to perform an inaccurate comparison.

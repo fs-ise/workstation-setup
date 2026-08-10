@@ -15,3 +15,8 @@ thunderbird_mcp_extension:
   id: "{{ thunderbird_mcp_extension_id }}"
   installation_mode: normal_installed
   install_url: "{{ thunderbird_mcp_xpi_url }}"
+
+# DNF packages owned by this role; consumed by the package audit.
+thunderbird_mcp_managed_dnf_packages:
+  - git
+  - nodejs

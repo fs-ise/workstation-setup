@@ -98,3 +98,6 @@ default_applications_desktop_search_paths:
   - "{{ target_home }}/.local/share/applications"
   - /var/lib/flatpak/exports/share/applications
   - "{{ target_home }}/.local/share/flatpak/exports/share/applications"
+
+# DNF packages owned by this role; consumed by the package audit.
+default_applications_managed_dnf_packages: "{{ default_applications_packages }}"

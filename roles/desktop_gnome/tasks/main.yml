@@ -34,10 +34,7 @@
 
 - name: Install GNOME Shell extension dependencies
   ansible.builtin.dnf:
-    name:
-      - git
-      - dconf
-      - python3-psutil
+    name: "{{ desktop_gnome_managed_dnf_packages }}"
     state: present
 
 - name: Ensure local GNOME Shell extensions directory exists

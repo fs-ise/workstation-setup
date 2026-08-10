@@ -33,3 +33,7 @@ thunderbird_base_extensions:
 # them automatically, but users can still disable them.
 thunderbird_extensions_enabled: true
 thunderbird_extensions: "{{ thunderbird_base_extensions }}"
+
+# DNF packages owned by this role; consumed by the package audit.
+thunderbird_managed_dnf_packages:
+  - thunderbird

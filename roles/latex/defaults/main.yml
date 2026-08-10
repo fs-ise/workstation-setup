@@ -8,3 +8,7 @@ latex_texlive_packages:
 
 latex_additional_packages:
   - texstudio
+
+# DNF packages owned by this role; consumed by the package audit.
+latex_managed_dnf_packages: >-
+  {{ latex_texlive_packages + latex_additional_packages + ['texlive-scheme-full'] }}

@@ -15,7 +15,7 @@
 
 - name: Install Google Chrome
   ansible.builtin.dnf:
-    name: google-chrome-stable
+    name: "{{ chrome_managed_dnf_packages }}"
     state: present
     update_cache: true
 

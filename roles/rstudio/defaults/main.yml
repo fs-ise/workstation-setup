@@ -16,3 +16,7 @@ rstudio_rpm_signing_key_fingerprint: >-
 rstudio_rpm_checksum: ""
 rstudio_rpm_download_directory: /var/cache/workstation-setup
 rstudio_install_desktop: true
+
+# DNF packages owned by this role; consumed by the package audit.
+rstudio_managed_dnf_packages:
+  - rstudio

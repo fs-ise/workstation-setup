@@ -1,9 +1,7 @@
 ---
 - name: Install Thunderbird MCP bridge prerequisites
   ansible.builtin.dnf:
-    name:
-      - git
-      - nodejs
+    name: "{{ thunderbird_mcp_managed_dnf_packages }}"
     state: present
   when: thunderbird_mcp_enabled | bool
 

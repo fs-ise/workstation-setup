@@ -1,0 +1,34 @@
+---
+- name: Verify role-derived managed DNF packages
+  hosts: local
+  gather_facts: false
+  vars:
+    package_audit_roles_path: "{{ playbook_dir }}/../../roles"
+  tasks:
+    - name: Run the production managed-package derivation
+      ansible.builtin.include_tasks: ../../playbooks/tasks/derive-managed-dnf-packages.yml
+
+    - name: Verify representative role packages were discovered
+      ansible.builtin.assert:
+        that:
+          - package_audit_role_default_files | length > 0
+          - "'git' in package_audit_managed_packages"
+          - "'quarto' in package_audit_managed_packages"
+          - "'docker-ce' in package_audit_managed_packages"
+          - "'R' in package_audit_managed_packages"
+          - "'rstudio' in package_audit_managed_packages"
+          - "package_audit_managed_packages == (package_audit_managed_packages | unique | sort)"
+
+    - name: Compute a representative unmanaged-package result
+      ansible.builtin.set_fact:
+        package_audit_test_unmanaged: >-
+          {{
+            ['git', 'quarto', 'docker-ce', 'R', 'rstudio', 'manual-lab-package']
+            | difference(package_audit_managed_packages)
+            | sort
+          }}
+
+    - name: Verify only the genuinely unmanaged package remains
+      ansible.builtin.assert:
+        that:
+          - package_audit_test_unmanaged == ['manual-lab-package']

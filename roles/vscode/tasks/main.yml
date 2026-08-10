@@ -47,7 +47,7 @@
 
 - name: Install Linux clipboard integration for Markdown Paste
   ansible.builtin.dnf:
-    name: xclip
+    name: "{{ vscode_clipboard_packages }}"
     state: present
 
 - name: Ensure VS Code user settings directories exist

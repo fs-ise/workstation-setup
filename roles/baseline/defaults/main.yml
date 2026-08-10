@@ -93,3 +93,6 @@ baseline_optional_packages:
 # These switches preserve workstation behavior while allowing the role's safe
 # configuration tasks to be exercised in a disposable CI container.
 baseline_configure_flathub: true
+
+# DNF packages owned by this role; consumed by the package audit.
+baseline_managed_dnf_packages: "{{ baseline_required_packages + baseline_optional_packages }}"

@@ -5,3 +5,6 @@ borg_vorta_packages:
 borg_vorta_install_vorta: true
 borg_vorta_vorta_flatpak_id: com.borgbase.Vorta
 borg_vorta_configure_flathub: true
+
+# DNF packages owned by this role; consumed by the package audit.
+borg_vorta_managed_dnf_packages: "{{ borg_vorta_packages }}"

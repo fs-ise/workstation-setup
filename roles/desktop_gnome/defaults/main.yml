@@ -66,3 +66,9 @@ desktop_gnome_shell_extensions:
   - name: autohide-battery
     uuid: autohide-battery@sitnik.ru
     repo: https://github.com/ai/autohide-battery.git
+
+# DNF packages owned by this role; consumed by the package audit.
+desktop_gnome_managed_dnf_packages:
+  - git
+  - dconf
+  - python3-psutil

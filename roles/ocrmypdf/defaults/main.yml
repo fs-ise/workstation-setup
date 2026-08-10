@@ -15,3 +15,6 @@ ocrmypdf_nautilus_action_install: true
 ocrmypdf_nautilus_action_name: "OCR PDF (ocrmypdf)"
 ocrmypdf_nemo_action_install: true
 ocrmypdf_nemo_action_name: "OCR PDF (ocrmypdf)"
+
+# DNF packages owned by this role; consumed by the package audit.
+ocrmypdf_managed_dnf_packages: "{{ ocrmypdf_packages_required + ocrmypdf_packages_optional }}"

@@ -39,3 +39,6 @@ r_packages:
   - renv
   - testthat
   - languageserver
+
+# DNF packages owned by this role; consumed by the package audit.
+r_managed_dnf_packages: "{{ r_system_packages }}"

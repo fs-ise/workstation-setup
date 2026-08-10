@@ -18,3 +18,6 @@ nemo_shortcut_path: /org/gnome/settings-daemon/plugins/media-keys/custom-keybind
 nemo_shortcut_name: files-nemo
 nemo_shortcut_command: nemo
 nemo_shortcut_binding: <Super>e
+
+# DNF packages owned by this role; consumed by the package audit.
+nemo_managed_dnf_packages: "{{ nemo_packages }}"

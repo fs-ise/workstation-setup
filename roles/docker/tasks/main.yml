@@ -12,10 +12,7 @@
 
 - name: Install Python deps for Ansible (requests + packaging + docker)
   ansible.builtin.dnf:
-    name:
-      - python3-requests
-      - python3-packaging
-      - python3-docker
+    name: "{{ docker_python_packages }}"
     state: present
 
 - name: Install Docker Engine packages

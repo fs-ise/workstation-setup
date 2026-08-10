@@ -1,7 +1,7 @@
 ---
 - name: Try to install Thunderbird via dnf
   ansible.builtin.dnf:
-    name: thunderbird
+    name: "{{ thunderbird_managed_dnf_packages }}"
     state: present
   register: thunderbird_dnf
   failed_when: false

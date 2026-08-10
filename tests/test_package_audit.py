@@ -1,0 +1,65 @@
+"""Integration checks for role-derived DNF package auditing."""
+
+import shutil
+import subprocess
+import unittest
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]
+
+
+class PackageAuditTests(unittest.TestCase):
+    def test_comprehensive_manifest_was_removed(self):
+        settings = (ROOT / "group_vars/all/package_audit.yml").read_text(
+            encoding="utf-8"
+        )
+        self.assertNotIn("\npackage_audit_managed_packages:", settings)
+        self.assertIn("\npackage_audit_allowlist:", settings)
+        self.assertIn("\npackage_audit_allowlist_patterns:", settings)
+
+    def test_every_dnf_installing_role_declares_owned_packages(self):
+        missing = []
+        for task_file in sorted((ROOT / "roles").glob("*/tasks/*.yml")):
+            text = task_file.read_text(encoding="utf-8")
+            if "ansible.builtin.dnf:" not in text or "state: present" not in text:
+                continue
+            role = task_file.relative_to(ROOT / "roles").parts[0]
+            defaults_file = ROOT / "roles" / role / "defaults/main.yml"
+            defaults = (
+                defaults_file.read_text(encoding="utf-8")
+                if defaults_file.exists()
+                else ""
+            )
+            if f"\n{role}_managed_dnf_packages:" not in defaults:
+                missing.append(role)
+        self.assertEqual([], sorted(set(missing)))
+
+    @unittest.skipUnless(
+        shutil.which("ansible-playbook"), "ansible-playbook unavailable"
+    )
+    def test_ansible_discovers_and_derives_role_packages(self):
+        result = subprocess.run(
+            [
+                "ansible-playbook",
+                "-i",
+                "tests/inventory/hosts.yml",
+                "tests/playbooks/package-audit-derivation.yml",
+            ],
+            cwd=ROOT,
+            check=False,
+            capture_output=True,
+            text=True,
+        )
+        self.assertEqual(0, result.returncode, result.stdout + result.stderr)
+
+    def test_genuinely_unmanaged_package_remains_a_finding(self):
+        detected = ["git", "manual-lab-package", " git ", "git"]
+        managed = ["git", "python3", "git"]
+        allowlist = ["local-exception"]
+        normalized_detected = sorted({item.strip() for item in detected})
+        unmanaged = sorted(set(normalized_detected) - set(managed) - set(allowlist))
+        self.assertEqual(["manual-lab-package"], unmanaged)
+
+
+if __name__ == "__main__":
+    unittest.main()

@@ -3,3 +3,6 @@ dropbox_install: true
 dropbox_packages:
   - dropbox
   - nautilus-dropbox
+
+# DNF packages owned by this role; consumed by the package audit.
+dropbox_managed_dnf_packages: "{{ dropbox_packages }}"

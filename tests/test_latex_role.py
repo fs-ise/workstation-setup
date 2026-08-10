@@ -11,7 +11,6 @@ TASKS_PATH = ROOT / "roles/latex/tasks/main.yml"
 BASELINE_DEFAULTS_PATH = ROOT / "roles/baseline/defaults/main.yml"
 BASELINE_TASKS_PATH = ROOT / "roles/baseline/tasks/main.yml"
 PLAYBOOK_PATH = ROOT / "playbooks/lab-stack.yml"
-AUDIT_PATH = ROOT / "group_vars/all/package_audit.yml"
 YAML_PARSER = YAML(typ="safe")
 
 LATEX_PACKAGES = {
@@ -30,7 +29,6 @@ class LatexRoleTests(unittest.TestCase):
         cls.tasks = YAML_PARSER.load(TASKS_PATH)
         cls.baseline_defaults = YAML_PARSER.load(BASELINE_DEFAULTS_PATH)
         cls.playbook = YAML_PARSER.load(PLAYBOOK_PATH)
-        cls.audit = YAML_PARSER.load(AUDIT_PATH)
 
     def test_role_files_exist(self):
         self.assertTrue(DEFAULTS_PATH.is_file())
@@ -47,7 +45,7 @@ class LatexRoleTests(unittest.TestCase):
     def test_obsolete_packages_are_not_declared(self):
         obsolete_package = "un" + "tex"
         self.assertNotIn(obsolete_package, self.defaults["latex_additional_packages"])
-        self.assertNotIn(obsolete_package, self.audit["package_audit_managed_packages"])
+        self.assertNotIn(obsolete_package, self.defaults["latex_managed_dnf_packages"])
 
     def test_install_conditions_are_mutually_exclusive_and_empty_safe(self):
         tasks = {task["name"]: task for task in self.tasks}
@@ -78,13 +76,11 @@ class LatexRoleTests(unittest.TestCase):
         self.assertLess(role_names.index("latex"), role_names.index("quarto"))
         self.assertEqual(latex["tags"], ["latex"])
 
-    def test_package_audit_assigns_packages_to_latex(self):
-        managed = self.audit["package_audit_managed_packages"]
-        self.assertTrue(LATEX_PACKAGES.issubset(managed))
-        audit_text = AUDIT_PATH.read_text(encoding="utf-8")
-        latex_section = audit_text.split("# roles/latex", 1)[1].split("# roles/keepassxc", 1)[0]
-        for package in LATEX_PACKAGES:
-            self.assertIn(f"  - {package}\n", latex_section)
+    def test_package_audit_uses_latex_role_declaration(self):
+        managed = self.defaults["latex_managed_dnf_packages"]
+        self.assertIn("latex_texlive_packages", managed)
+        self.assertIn("latex_additional_packages", managed)
+        self.assertIn("texlive-scheme-full", managed)
 
 
 if __name__ == "__main__":

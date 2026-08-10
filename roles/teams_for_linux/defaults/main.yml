@@ -3,3 +3,7 @@ teams_for_linux_key_url: https://repo.teamsforlinux.de/teams-for-linux.asc
 teams_for_linux_repo_url: https://repo.teamsforlinux.de/rpm/teams-for-linux.repo
 teams_for_linux_repo_file: /etc/yum.repos.d/teams-for-linux.repo
 teams_for_linux_package: teams-for-linux
+
+# DNF packages owned by this role; consumed by the package audit.
+teams_for_linux_managed_dnf_packages:
+  - "{{ teams_for_linux_package }}"

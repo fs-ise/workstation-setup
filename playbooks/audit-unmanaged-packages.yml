@@ -5,6 +5,10 @@
   vars:
     package_audit_dnf_query_cmd: "dnf repoquery --userinstalled --queryformat '%{name}\n'"
     package_audit_fallback_cmd: "dnf5 repoquery --userinstalled --queryformat '%{name}\n'"
+    package_audit_roles_path: "{{ playbook_dir }}/../roles"
+  pre_tasks:
+    - name: Derive the managed DNF package set from role defaults
+      ansible.builtin.include_tasks: tasks/derive-managed-dnf-packages.yml
   tasks:
     - name: Collect manually installed packages (preferred)
       become: true
@@ -36,7 +40,7 @@
             | unique
             | sort
           }}
-        package_audit_managed_flat: "{{ package_audit_managed_packages | flatten | map('string') | unique | sort }}"
+        package_audit_managed_flat: "{{ package_audit_managed_packages }}"
         package_audit_allowlist_flat: "{{ package_audit_allowlist | flatten | map('string') | unique | sort }}"
         package_audit_allowlist_patterns_flat: "{{ package_audit_allowlist_patterns | flatten | map('string') | unique | sort }}"
 

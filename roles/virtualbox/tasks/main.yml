@@ -23,13 +23,7 @@
 
 - name: Install VirtualBox (Fedora/RPMFusion) + kernel module tooling
   ansible.builtin.dnf:
-    name:
-      - VirtualBox
-      - VirtualBox-server
-      - akmod-VirtualBox
-      - virtualbox-guest-additions
-      - kernel-devel
-      - kernel-headers
+    name: "{{ virtualbox_managed_dnf_packages }}"
     state: present
     update_cache: true
 

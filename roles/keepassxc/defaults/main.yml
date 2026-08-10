@@ -1,3 +1,6 @@
 ---
 keepassxc_packages:
   - keepassxc
+
+# DNF packages owned by this role; consumed by the package audit.
+keepassxc_managed_dnf_packages: "{{ keepassxc_packages }}"

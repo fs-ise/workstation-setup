@@ -30,6 +30,17 @@ ansible-playbook \
   playbooks/lab-stack.yml
 
 ansible-playbook \
+  --syntax-check \
+  -i tests/inventory/hosts.yml \
+  playbooks/audit-unmanaged-packages.yml
+
+python -m unittest tests.test_package_audit
+
+ansible-playbook \
+  -i tests/inventory/hosts.yml \
+  tests/playbooks/package-audit-derivation.yml
+
+ansible-playbook \
   --list-tasks \
   -i tests/inventory/hosts.yml \
   playbooks/lab-stack.yml

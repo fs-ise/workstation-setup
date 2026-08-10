@@ -31,6 +31,15 @@ The audit reports two kinds of unmanaged software:
 - An **unmanaged filesystem installation** is a file, symlink, or `/opt` installation that is not owned by an RPM and is not in the separate manual-install allowlists. This commonly includes software unpacked from tarballs.
 :::
 
+The DNF managed set has no separate package manifest. The audit discovers
+`roles/*/defaults/main.yml`, loads those role defaults, and combines every
+`<role>_managed_dnf_packages` declaration, then
+trims, deduplicates, and sorts package names before comparing them. When a role
+adds a DNF package, declare it in that role's package variables and expose it
+through `<role>_managed_dnf_packages`; use the same variable from the install
+task where practical. The audit therefore follows the installation source of
+truth instead of copying package names into `group_vars`.
+
 ## Audit unmanaged packages
 
 Local package changes should not remain invisible. The audit helps identify software that was installed manually or introduced outside the Ansible-managed package lists.

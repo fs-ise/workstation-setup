@@ -3,3 +3,7 @@ quarto_version: "1.10.18"
 quarto_rpm: "quarto-{{ quarto_version }}-linux-x86_64.rpm"
 quarto_url: "https://github.com/quarto-dev/quarto-cli/releases/download/v{{ quarto_version }}/{{ quarto_rpm }}"
 quarto_rpm_path: "/var/tmp/{{ quarto_rpm }}"
+
+# DNF packages owned by this role; consumed by the package audit.
+quarto_managed_dnf_packages:
+  - quarto

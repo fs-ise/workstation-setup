@@ -30,3 +30,10 @@ keyboard_copilot_rightctrl_evsieve_cargo_home: >-
   /var/cache/evsieve-cargo
 keyboard_copilot_rightctrl_evsieve_install_path: >-
   /usr/local/bin/evsieve
+
+# DNF packages owned by this role; consumed by the package audit.
+keyboard_copilot_rightctrl_managed_dnf_packages:
+  - cargo
+  - evtest
+  - libevdev
+  - libevdev-devel

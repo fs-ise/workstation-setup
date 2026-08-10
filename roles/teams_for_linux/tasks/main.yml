@@ -18,5 +18,5 @@
 
 - name: Install Teams for Linux
   ansible.builtin.dnf:
-    name: "{{ teams_for_linux_package }}"
+    name: "{{ teams_for_linux_managed_dnf_packages }}"
     state: present

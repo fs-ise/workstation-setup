@@ -5,3 +5,11 @@ docker_packages:
   - containerd.io
   - docker-buildx-plugin
   - docker-compose-plugin
+
+docker_python_packages:
+  - python3-requests
+  - python3-packaging
+  - python3-docker
+
+# DNF packages owned by this role; consumed by the package audit.
+docker_managed_dnf_packages: "{{ docker_packages + docker_python_packages }}"

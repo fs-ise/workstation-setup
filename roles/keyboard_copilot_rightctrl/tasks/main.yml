@@ -10,11 +10,7 @@
   block:
     - name: Install evsieve build and test dependencies
       ansible.builtin.dnf:
-        name:
-          - cargo
-          - evtest
-          - libevdev
-          - libevdev-devel
+        name: "{{ keyboard_copilot_rightctrl_managed_dnf_packages }}"
         state: present
 
     - name: Check the physical keyboard input device
