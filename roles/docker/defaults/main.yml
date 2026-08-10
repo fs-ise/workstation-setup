@@ -1,4 +1,12 @@
 ---
+# Docker's Fedora repository signing key. The fingerprint is pinned so
+# ansible.builtin.rpm_key rejects an unexpected key returned by the URL.
+docker_rpm_signing_key_url: https://download.docker.com/linux/fedora/gpg
+docker_rpm_signing_key_fingerprint: >-
+  060A61C51B558A7F742B77AAC52FEB6B621E9F35
+docker_repository_baseurl: >-
+  https://download.docker.com/linux/fedora/$releasever/$basearch/stable
+
 docker_packages:
   - docker-ce
   - docker-ce-cli

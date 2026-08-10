@@ -8,6 +8,12 @@ Install Quarto for rendering reproducible documents, reports, and documentation 
 ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags quarto
 ```
 
+The role pins the SHA256 digest published for the corresponding GitHub release
+asset and verifies it before installation. When upgrading Quarto, maintainers
+must update `quarto_version` and `quarto_rpm_checksum` together. The upstream RPM
+does not provide a signature that Fedora/DNF can validate with a suitable RPM key,
+so the pinned release-asset digest is the RPM's integrity control.
+
 ::: {.callout-check}
 **✅ Check**
 

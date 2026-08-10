@@ -1,5 +1,11 @@
 ---
+# Pinned release metadata. GitHub publishes this SHA256 digest for the matching
+# release asset; update both values together whenever Quarto is upgraded.
 quarto_version: "1.10.18"
+quarto_rpm_checksum: "sha256:2fe223a4e24d7a85df4ddd64ae124335ed6aa532819ceab322731df6106d337f"
+# Maintainers can retrieve a future digest with:
+# gh api repos/quarto-dev/quarto-cli/releases/tags/v<VERSION> \
+#   --jq '.assets[] | select(.name=="quarto-<VERSION>-linux-x86_64.rpm") | .digest'
 quarto_rpm: "quarto-{{ quarto_version }}-linux-x86_64.rpm"
 quarto_url: "https://github.com/quarto-dev/quarto-cli/releases/download/v{{ quarto_version }}/{{ quarto_rpm }}"
 quarto_rpm_path: "/var/tmp/{{ quarto_rpm }}"

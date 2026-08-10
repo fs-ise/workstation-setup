@@ -1,4 +1,13 @@
 ---
+- name: Require a pinned SHA256 checksum for the Quarto RPM
+  ansible.builtin.assert:
+    that:
+      - quarto_rpm_checksum is string
+      - quarto_rpm_checksum is match('^sha256:[0-9a-fA-F]{64}$')
+    fail_msg: >-
+      Set quarto_rpm_checksum to the independently verified SHA256 digest for
+      {{ quarto_rpm }} in the form sha256:<digest>; refusing an unchecked RPM.
+
 - name: Inspect the legacy Quarto installation symlink
   ansible.builtin.stat:
     path: /opt/quarto
@@ -27,10 +36,13 @@
   ansible.builtin.get_url:
     url: "{{ quarto_url }}"
     dest: "{{ quarto_rpm_path }}"
+    checksum: "{{ quarto_rpm_checksum }}"
     mode: "0644"
 
 - name: Install the Quarto RPM
   ansible.builtin.dnf:
     name: "{{ quarto_rpm_path }}"
     state: present
+    # Fedora/DNF cannot validate this upstream RPM with a suitable signing key.
+    # The verified, pinned SHA256 release-asset digest is the integrity control.
     disable_gpg_check: true

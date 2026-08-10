@@ -6,6 +6,30 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 class DockerWorkloadRoleTests(unittest.TestCase):
+    def test_docker_repository_enforces_signature_verification(self):
+        defaults = (ROOT / "roles/docker/defaults/main.yml").read_text(encoding="utf-8")
+        tasks = (ROOT / "roles/docker/tasks/main.yml").read_text(encoding="utf-8")
+        self.assertIn("ansible.builtin.rpm_key:", tasks)
+        self.assertIn("ansible.builtin.yum_repository:", tasks)
+        self.assertIn("gpgcheck: true", tasks)
+        self.assertIn("disable_gpg_check: false", tasks)
+        self.assertNotIn("disable_gpg_check: true", tasks)
+        self.assertIn("docker_rpm_signing_key_fingerprint:", defaults)
+        self.assertIn("download.docker.com/linux/fedora", defaults)
+
+    def test_all_docker_engine_packages_use_the_verified_install_task(self):
+        defaults = (ROOT / "roles/docker/defaults/main.yml").read_text(encoding="utf-8")
+        tasks = (ROOT / "roles/docker/tasks/main.yml").read_text(encoding="utf-8")
+        for package in (
+            "docker-ce",
+            "docker-ce-cli",
+            "containerd.io",
+            "docker-buildx-plugin",
+            "docker-compose-plugin",
+        ):
+            self.assertIn(f"  - {package}", defaults)
+        self.assertIn('name: "{{ docker_packages }}"', tasks)
+
     def test_docker_role_contains_only_engine_configuration(self):
         docker_files = "\n".join(
             path.read_text(encoding="utf-8")

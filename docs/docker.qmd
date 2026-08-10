@@ -8,6 +8,9 @@ Install and configure the Docker engine so containerized tools can run on the wo
 ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags docker
 ```
 
+The role pins and imports Docker's official RPM signing-key fingerprint and
+enables GPG checking for every package installed from Docker's Fedora repository.
+
 ::: {.callout-manual}
 **🔧 Manual setup and configuration**
 

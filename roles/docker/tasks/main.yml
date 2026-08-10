@@ -5,10 +5,25 @@
     state: absent
   failed_when: false
 
-- name: Add Docker CE repo
-  ansible.builtin.command: dnf config-manager addrepo --from-repofile https://download.docker.com/linux/fedora/docker-ce.repo
-  args:
-    creates: /etc/yum.repos.d/docker-ce.repo
+- name: Import the Docker RPM signing key
+  ansible.builtin.rpm_key:
+    state: present
+    key: "{{ docker_rpm_signing_key_url }}"
+    fingerprint:
+      - "{{ docker_rpm_signing_key_fingerprint }}"
+    validate_certs: true
+
+- name: Configure the official Docker CE repository
+  ansible.builtin.yum_repository:
+    name: docker-ce-stable
+    file: docker-ce
+    description: Docker CE Stable - $basearch
+    baseurl: "{{ docker_repository_baseurl }}"
+    enabled: true
+    gpgcheck: true
+    repo_gpgcheck: false
+    gpgkey: "{{ docker_rpm_signing_key_url }}"
+    sslverify: true
 
 - name: Install Python deps for Ansible (requests + packaging + docker)
   ansible.builtin.dnf:
@@ -20,7 +35,7 @@
     name: "{{ docker_packages }}"
     state: present
     update_cache: true
-    disable_gpg_check: true
+    disable_gpg_check: false
 
 - name: Enable and start Docker service
   ansible.builtin.systemd:
