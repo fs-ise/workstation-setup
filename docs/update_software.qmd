@@ -7,10 +7,17 @@ Fedora and Flatpak update software from their configured repositories, Ansible r
 
 ## Routine update workflow
 
-Run these commands from the `workstation-setup` repository:
+Run the default update workflow from the `workstation-setup` repository:
 
 ```sh
-git pull
+make update
+```
+
+This target stops immediately if a step fails. It runs the following underlying
+commands in order; use them individually for troubleshooting:
+
+```sh
+git pull --ff-only
 
 # Update Fedora packages
 sudo dnf upgrade --refresh
@@ -19,15 +26,18 @@ sudo dnf upgrade --refresh
 flatpak update
 
 # Reapply the managed workstation configuration
-ansible-playbook -i inventory -K playbooks/lab-stack.yml
+make lab-stack
+# Underlying command: ansible-playbook -i inventory -K playbooks/lab-stack.yml
 
 # Audit DNF packages and manual filesystem installations
-ansible-playbook -i inventory -K playbooks/audit-unmanaged-packages.yml
+make audit-packages
+# Underlying command: ansible-playbook -i inventory -K playbooks/audit-unmanaged-packages.yml
 ```
 
 The commands intentionally run in this order:
 
-1. Update the setup repository so the latest desired configuration is available.
+1. Update the setup repository with a fast-forward-only pull so divergent local
+   history is not merged automatically.
 2. Update Fedora packages and Flatpak applications from their configured repositories. These commands omit `-y` so you can review consequential changes before installation.
 3. Reapply the Ansible desired state after the software updates.
 4. Audit the resulting system for DNF package drift and high-signal manual filesystem installations.
