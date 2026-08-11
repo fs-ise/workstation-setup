@@ -45,14 +45,11 @@ baseline_remove_packages_best_effort:
   - yelp
 
 baseline_optional_packages:
-  - artha
   - audacity
   - autokey-gtk
   - catdoc
   - clamav
   - clamav-update
-  - dict-gcide
-  - dict-wn
   - dictd
   - diffpdf
   - flatpak
@@ -70,7 +67,6 @@ baseline_optional_packages:
   - openssh-server
   - pdfarranger
   - okular
-  - perl-librdf
   - pinentry
   - poppler-utils
   - pwgen

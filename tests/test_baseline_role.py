@@ -26,6 +26,18 @@ class BaselineRoleTests(unittest.TestCase):
         for package in ("ca-certificates", "git", "python3"):
             self.assertIn(f"  - {package}\n", required)
 
+    def test_unavailable_fedora_44_packages_are_not_optional(self):
+        optional = self.defaults.split("baseline_optional_packages:\n", 1)[1]
+        optional = optional.split("\nbaseline_configure_flathub:", 1)[0]
+        for package in ("artha", "dict-gcide", "dict-wn", "perl-librdf"):
+            self.assertNotIn(f"  - {package}\n", optional)
+
+    def test_managed_packages_are_derived_from_package_lists(self):
+        self.assertIn(
+            'baseline_managed_dnf_packages: "{{ baseline_required_packages + baseline_optional_packages }}"',
+            self.defaults,
+        )
+
     def test_required_install_does_not_suppress_failures(self):
         required = self.task_block("Install required baseline packages")
         self.assertIn('loop: "{{ baseline_required_packages }}"', required)
