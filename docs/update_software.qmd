@@ -103,9 +103,9 @@ To keep the audit actionable, this repository supports two filtering mechanisms:
 - `package_audit_allowlist` for exact package names
 - `package_audit_allowlist_patterns` for regex-based package families
 
-Use exact [allowlist](https://github.com/fs-ise/workstation-setup/blob/main/group_vars/all/package_audit.yml) entries whenever possible. Use regex patterns only when exact names are too noisy, for example for expected Fedora or system package families.
+Use exact [allowlist](https://github.com/fs-ise/workstation-setup/blob/main/group_vars/all/package_audit.yml) entries whenever possible. Keep intentional workstation exceptions in the dedicated exact-name section. Regex patterns are reserved for tightly bounded Fedora-generated package families, such as the known kernel subpackages.
 
-Keep patterns narrow. Broad patterns can hide real workstation drift.
+Every pattern must enumerate the allowed suffixes and match the complete package name. Do not use open-ended prefixes such as `^lib`, `^perl`, or `^gnome-`: they can hide unrelated software that a user installed manually.
 
 ## Audit manual filesystem installations
 

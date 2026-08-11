@@ -8,8 +8,10 @@ manual_install_audit_fail_on_unmanaged: false
 manual_install_audit_recommendations:
   quarto: "Install the official Quarto RPM through the quarto role."
 
-# This allowlist is intentionally local/workstation-specific and may vary by team image.
+# Prefer exact package names. Generic Fedora/base-system exceptions are listed first;
+# intentional workstation additions are kept in their own section below.
 package_audit_allowlist:
+  # Generic Fedora/base-system packages reported as user-installed.
   - NetworkManager
   - NetworkManager-wifi
   - PackageKit-command-not-found
@@ -27,6 +29,8 @@ package_audit_allowlist:
   - langpacks-de
   - langpacks-en
   - langtable
+  - libgcc
+  - libstdc++
   - libvirt-daemon-config-network
   - lsof
   - ptyxis
@@ -38,8 +42,7 @@ package_audit_allowlist:
   - wl-clipboard
   - zsh
 
-
-  # expected Fedora default/workstation packages
+  # Expected Fedora default/workstation packages.
   - acl
   - at
   - attr
@@ -143,6 +146,8 @@ package_audit_allowlist:
 
 package_audit_fail_on_unmanaged: true
 
+# Patterns are reserved for Fedora-generated or tightly bounded package families.
+# Do not add open-ended prefixes: an unrelated manually installed package must remain visible.
 package_audit_allowlist_patterns:
   - '^abrt'
   - '^sos$'
@@ -163,12 +168,12 @@ package_audit_allowlist_patterns:
   - '^xapp-'
   - '^anaconda-'
   - '^authselect$'
-  - '^bash'
+  - '^bash(?:-completion)?$'
   - '^coreutils$'
   - '^crontabs$'
   - '^cryptsetup$'
   - '^default-'
-  - '^dnf5'
+  - '^dnf5(?:-plugins)?$'
   - '^dracut'
   - '^e2fsprogs$'
   - '^efibootmgr$'
@@ -176,15 +181,15 @@ package_audit_allowlist_patterns:
   - '^filesystem$'
   - '^firewalld$'
   - '^fwupd$'
-  - '^glib'
+  - '^glib2(?:-devel|-doc|-static)?$'
   - '^grubby$'
   - '^hostname$'
   - '^iproute$'
   - '^iptables-'
   - '^iputils$'
-  - '^kbd'
+  - '^kbd(?:-legacy|-misc)?$'
   - '^kexec-tools$'
-  - '^less'
+  - '^less$'
   - '^logrotate$'
   - '^lvm2$'
   - '^man-'
@@ -201,17 +206,17 @@ package_audit_allowlist_patterns:
   - '^psmisc$'
   - '^realmd$'
   - '^rootfiles$'
-  - '^rpm'
+  - '^rpm(?:-build-libs|-libs|-plugin-audit|-plugin-selinux|-plugin-systemd-inhibit|-sign-libs)?$'
   - '^rsyslog$'
   - '^selinux-policy'
   - '^setup$'
   - '^shadow-utils$'
   - '^shim-'
   - '^sudo$'
-  - '^systemd'
+  - '^systemd(?:-boot-unsigned|-container|-devel|-libs|-networkd|-oomd-defaults|-pam|-resolved|-standalone-repart|-udev)?$'
   - '^udisks2'
   - '^uresourced$'
-  - '^usb'
+  - '^usb(?:guard|utils)$'
   - '^util-linux$'
   - '^vim-minimal$'
   - '^wpa_supplicant$'
@@ -222,11 +227,11 @@ package_audit_allowlist_patterns:
   - '^desktop-backgrounds-'
   - '^f[0-9]+-backgrounds-'
   - '^firefox$'
-  - '^gnome-'
-  - '^glycin-'
+  - '^gnome-(?:backgrounds|browser-connector|calculator|characters|clocks|color-manager|connections|contacts|control-center|disk-utility|font-viewer|initial-setup|keyring|logs|maps|remote-desktop|session|settings-daemon|shell|software|system-monitor|text-editor|tour|user-docs)$'
+  - '^glycin-(?:gtk4-loader|libs)$'
   - '^gst-'
   - '^gstreamer1-'
-  - '^gutenprint'
+  - '^gutenprint(?:-cups|-libs)?$'
   - '^gvfs-'
   - '^gweather-'
   - '^localsearch$'
@@ -237,7 +242,7 @@ package_audit_allowlist_patterns:
   - '^nautilus$'
   - '^open-vm-tools-desktop$'
   - '^openh264$'
-  - '^papers'
+  - '^papers(?:-libs)?$'
   - '^paps$'
   - '^pinentry-gnome3$'
   - '^qadwaitadecorations-'
@@ -245,28 +250,28 @@ package_audit_allowlist_patterns:
   - '^showtime$'
   - '^snapshot$'
   - '^sushi$'
-  - '^system-config-printer'
+  - '^system-config-printer(?:-libs|-udev)?$'
   - '^totem-video-thumbnailer$'
   - '^vte-profile$'
   - '.*-fonts$'
-  - '^hunspell'
-  - '^cups'
+  - '^hunspell(?:-filesystem|-lib)?$'
+  - '^cups(?:-client|-filesystem|-filters|-filters-driverless|-filters-libs|-ipptool|-libs|-lpd|-printerapp)?$'
   - '^sane-'
   - '^hfsplus-tools$'
   - '^ntfs'
   - '^exfatprogs$'
   - '^dosfstools$'
   - '^btrfs-progs$'
-  - '^boost'
+  - '^boost-(?:atomic|chrono|container|context|contract|coroutine|date-time|fiber|filesystem|graph|iostreams|json|locale|log|math|nowide|numpy3|program-options|python3|random|regex|serialization|stacktrace|system|test|thread|timer|type-erasure|url|wave)$'
   - '^elfutils-'
   - '^emacs-filesystem$'
   - '^fcgi$'
   - '^ffcall$'
   - '^java-[0-9]+-openjdk-crypto-adapter$'
   - '^kf[0-9]+-'
-  - '^lib'
+  - '^lib(?:gcc|stdc\+\+)$'
   - '^openapv-libs$'
-  - '^perl'
+  - '^perl(?:-interpreter|-libs|-macros)?$'
   - '^python-setuptools-wheel$'
   - '^python3-(bugzilla|cfgv|coverage|distlib|filelock|html2text|ibus|identify|nodeenv|virtualenv)$'
   - '^python3\.[0-9]+'
@@ -274,12 +279,12 @@ package_audit_allowlist_patterns:
   - '^R-srpm-macros$'
   - '^cmake-srpm-macros$'
   - '^cifs-utils$'
-  - '^dns'
+  - '^dnsmasq$'
   - '^ethtool$'
   - '^hyperv-daemons$'
   - '^iscsi-initiator-utils$'
-  - '^nfs'
-  - '^nfsv'
+  - '^nfs-utils$'
+  - '^nfsv4-client-utils$'
   - '^nss-mdns$'
   - '^qemu-guest-agent$'
   - '^rdma-core-common$'
@@ -287,16 +292,16 @@ package_audit_allowlist_patterns:
   - '^spice-'
   - '^sssd-'
   - '^teamd$'
-  - '^kernel'
+  - '^kernel(?:-core|-devel|-headers|-modules|-modules-core|-modules-extra)?$'
   - '^kmod-'
   - '^akmod-'
   - '.*-firmware$'
   - '^linux-firmware$'
-  - '^fedora-'
-  - '^NetworkManager'
-  - '^PackageKit'
+  - '^fedora-(?:logos|release(?:-common|-identity-workstation|-workstation)?|repos(?:-archive|-modular|-rawhide)?)$'
+  - '^NetworkManager(?:-adsl|-bluetooth|-config-connectivity-fedora|-libnm|-ovs|-ppp|-team|-wifi|-wwan)?$'
+  - '^PackageKit(?:-command-not-found|-glib|-gtk3-module|-gstreamer-plugin)?$'
   - '^texlive-'
-  - '^libreoffice-'
-  - '^glibc'
+  - '^libreoffice-(?:calc|core|data|draw|emailmerge|graphicfilter|gtk3|help-en|impress|langpack-de|langpack-en|math|ogltrans|opensymbol-fonts|pdfimport|pyuno|ure|ure-common|writer|xsltfilter)$'
+  - '^glibc(?:-all-langpacks|-common|-devel|-gconv-extra|-headers|-langpack-(?:de|en)|-locale-source|-static|-utils)?$'
   - '^grub2-'
   - '^xorg-'

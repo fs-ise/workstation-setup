@@ -1,5 +1,6 @@
 """Integration checks for role-derived DNF package auditing."""
 
+import re
 import shutil
 import subprocess
 import unittest
@@ -9,6 +10,26 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 class PackageAuditTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        text = (ROOT / "group_vars/all/package_audit.yml").read_text(encoding="utf-8")
+
+        def values_under(key):
+            section = text.split(f"\n{key}:\n", 1)[1].split("\n\n", 1)[0]
+            return [
+                line.removeprefix("  - ").strip("'")
+                for line in section.splitlines()
+                if line.startswith("  - ")
+            ]
+
+        cls.allowlist = values_under("package_audit_allowlist")
+        cls.patterns = values_under("package_audit_allowlist_patterns")
+
+    def is_allowed(self, package):
+        return package in self.allowlist or any(
+            re.match(pattern, package) for pattern in self.patterns
+        )
+
     def test_comprehensive_manifest_was_removed(self):
         settings = (ROOT / "group_vars/all/package_audit.yml").read_text(
             encoding="utf-8"
@@ -59,6 +80,34 @@ class PackageAuditTests(unittest.TestCase):
         normalized_detected = sorted({item.strip() for item in detected})
         unmanaged = sorted(set(normalized_detected) - set(managed) - set(allowlist))
         self.assertEqual(["manual-lab-package"], unmanaged)
+
+    def test_expected_fedora_system_packages_remain_allowed(self):
+        expected = [
+            "fedora-release-workstation",
+            "gnome-control-center",
+            "kernel-modules-extra",
+            "libgcc",
+            "perl-interpreter",
+        ]
+        self.assertEqual(
+            [], [package for package in expected if not self.is_allowed(package)]
+        )
+
+    def test_broad_prefixes_do_not_hide_manual_packages(self):
+        manually_installed = [
+            "fedora-third-party-tool",
+            "gnome-lab-utility",
+            "kernel-debugger-pro",
+            "librewolf",
+            "perl-my-lab-script",
+        ]
+        self.assertEqual(
+            [], [package for package in manually_installed if self.is_allowed(package)]
+        )
+
+    def test_known_overbroad_patterns_are_not_configured(self):
+        broad_patterns = {"^lib", "^perl", "^gnome-", "^fedora-", "^kernel"}
+        self.assertTrue(broad_patterns.isdisjoint(self.patterns))
 
 
 if __name__ == "__main__":
