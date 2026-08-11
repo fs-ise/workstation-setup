@@ -38,11 +38,11 @@
       vars:
         package_audit_query_has_reasons: true
         package_audit_query_lines:
-          - "ansible-managed\tUser"
-          - "fedora-workstation\tGroup"
-          - "dependency-package\tWeak Dependency"
-          - "third-party\tExternal User"
-          - "uncertain-package\tFuture Reason"
+          - "ansible-managed{{ '\t' }}User"
+          - "fedora-workstation{{ '\t' }}Group"
+          - "dependency-package{{ '\t' }}Weak Dependency"
+          - "third-party{{ '\t' }}External User"
+          - "uncertain-package{{ '\t' }}Future Reason"
 
     - name: Verify reason-aware package classification
       ansible.builtin.assert:
