@@ -7,7 +7,7 @@ on:
       - main
     paths:
       - "docs/**"
-      - ".github/workflows/publish-docs.yml"
+      - ".github/workflows/gh-pages.yml"
 
 permissions:
   contents: read
