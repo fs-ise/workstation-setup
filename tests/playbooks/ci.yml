@@ -114,6 +114,7 @@
       vars:
         nemo_packages: []
         nemo_configure_preferences: false
+        nemo_configure_extensions: false
         nemo_configure_shortcut: false
     - role: dropbox
       vars:
