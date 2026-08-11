@@ -13,12 +13,11 @@
   loop: "{{ baseline_remove_packages_best_effort }}"
   failed_when: false
 
-- name: Install optional baseline packages (best effort)
+- name: Install optional baseline packages
   ansible.builtin.dnf:
     name: "{{ item }}"
     state: present
   loop: "{{ baseline_optional_packages }}"
-  failed_when: false
 
 - name: Ensure Flathub remote exists
   community.general.flatpak_remote:

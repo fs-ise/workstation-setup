@@ -8,10 +8,12 @@ Install core workstation packages and tools that other lab setup steps rely on.
 ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags baseline
 ```
 
-The role treats bootstrap dependencies such as CA certificates, Git, Python, and
-archive/download tools as required. The playbook stops if any required package
-cannot be installed. Desktop applications and convenience tools are optional;
-an unavailable optional package does not prevent the role from trying the rest.
+The role installs bootstrap dependencies such as CA certificates, Git, Python,
+and archive/download tools, plus the declared desktop applications and
+convenience tools. Every declared package is expected to be available on the
+supported Fedora version, and the playbook stops if any package cannot be
+installed. The `optional` package group describes non-bootstrap workstation
+tools; it does not make installation failures optional.
 
 Baseline retains Git as a bootstrap dependency, but no longer installs Git LFS,
 Gitk, BorgBackup, Nemo, Dropbox, Vorta, or Thunderbird MCP. Use their focused

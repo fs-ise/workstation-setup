@@ -32,10 +32,11 @@ class BaselineRoleTests(unittest.TestCase):
         self.assertNotIn("failed_when", required)
         self.assertNotIn("ignore_errors", required)
 
-    def test_optional_install_is_best_effort_per_package(self):
-        optional = self.task_block("Install optional baseline packages (best effort)")
+    def test_optional_install_does_not_suppress_failures(self):
+        optional = self.task_block("Install optional baseline packages")
         self.assertIn('loop: "{{ baseline_optional_packages }}"', optional)
-        self.assertIn("failed_when: false", optional)
+        self.assertNotIn("failed_when", optional)
+        self.assertNotIn("ignore_errors", optional)
 
     def test_ci_uses_current_package_variables(self):
         self.assertIn("    baseline_required_packages: []\n", self.ci_playbook)
