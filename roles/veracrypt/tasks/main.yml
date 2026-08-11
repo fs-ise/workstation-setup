@@ -112,6 +112,10 @@
             url: "{{ veracrypt_package_url }}"
             dest: "{{ veracrypt_tempdir.path }}/{{ veracrypt_rpm_filename }}"
             mode: "0600"
+          register: veracrypt_download
+          retries: 3
+          delay: 5
+          until: veracrypt_download is succeeded
 
         - name: Download the detached VeraCrypt RPM signature
           ansible.builtin.get_url:
