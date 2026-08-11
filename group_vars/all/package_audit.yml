@@ -102,7 +102,6 @@ package_audit_allowlist:
   - md4c
   - mpage
   - mypaint2-brushes
-  - nemo-terminal
   - net-tools
   - netpbm
   - netpbm-progs

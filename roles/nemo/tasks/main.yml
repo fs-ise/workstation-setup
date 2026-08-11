@@ -1,4 +1,5 @@
 ---
+
 - name: Install Nemo
   ansible.builtin.dnf:
     name: "{{ nemo_packages }}"
@@ -13,6 +14,37 @@
     value: "{{ item.value }}"
   loop: "{{ nemo_preview_preferences }}"
   when: nemo_configure_preferences | bool
+
+- name: Read disabled Nemo extensions
+  become: true
+  become_user: "{{ target_user }}"
+  ansible.builtin.command:
+    argv:
+      - gsettings
+      - get
+      - "{{ nemo_plugins_schema }}"
+      - "{{ nemo_disabled_extensions_key }}"
+  register: nemo_disabled_extensions_read
+  changed_when: false
+  when: nemo_configure_extensions | bool
+
+- name: Ensure required Nemo extensions are enabled
+  become: true
+  become_user: "{{ target_user }}"
+  community.general.dconf:
+    key: "/{{ nemo_plugins_schema | replace('.', '/') }}/{{ nemo_disabled_extensions_key }}"
+    value: >-
+      @as {{ ((nemo_disabled_extensions_read.stdout | default(''))
+              | regex_findall("(?<=')[^']+(?=')")
+              | difference(nemo_required_enabled_extensions))
+              | to_json }}
+  when:
+    - nemo_configure_extensions | bool
+    - >-
+      ((nemo_disabled_extensions_read.stdout | default(''))
+       | regex_findall("(?<=')[^']+(?=')")
+       | intersect(nemo_required_enabled_extensions)
+       | length) > 0
 
 - name: Read GNOME custom keyboard shortcuts for Nemo
   become: true

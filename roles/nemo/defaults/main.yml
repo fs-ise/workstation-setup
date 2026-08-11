@@ -3,6 +3,7 @@ nemo_packages:
   - nemo
   - nemo-fileroller
   - nemo-preview
+  - nemo-terminal
 
 nemo_configure_preferences: true
 nemo_preview_preferences:
@@ -12,6 +13,12 @@ nemo_preview_preferences:
     value: false
   - key: /org/nemo/preferences/thumbnail-limit
     value: "uint64 104857600"
+
+nemo_configure_extensions: true
+nemo_plugins_schema: org.nemo.plugins
+nemo_disabled_extensions_key: disabled-extensions
+nemo_required_enabled_extensions:
+  - NemoTerminalProvider+NemoPython
 
 nemo_configure_shortcut: true
 nemo_shortcut_path: /org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1/
