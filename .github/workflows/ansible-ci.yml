@@ -15,78 +15,10 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  yaml-lint:
-    name: YAML lint
+  static-checks:
+    name: Static checks
     runs-on: ubuntu-latest
-    timeout-minutes: 10
-    steps:
-      - name: Check out repository
-        uses: actions/checkout@v4
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
-          cache: "pip"
-          cache-dependency-path: |
-            requirements.txt
-            .ci-pip-cache-version
-      - name: Install CI dependencies
-        run: |
-          python --version
-          python -m pip --version
-          python -m pip install --upgrade "pip==26.1.2"
-          python -m pip --version
-          python -m pip debug --verbose
-          python -m pip install \
-            --only-binary=ruamel.yaml.clib \
-            -r requirements.txt
-          python -m pip show pip
-          python -m pip show ansible-lint
-          python -m pip show ruamel.yaml
-          python -m pip show ruamel.yaml.clib
-          python -m pip check
-      - name: Lint YAML
-        run: yamllint .
-
-  ansible-lint:
-    name: Ansible lint
-    runs-on: ubuntu-latest
-    timeout-minutes: 15
-    steps:
-      - name: Check out repository
-        uses: actions/checkout@v4
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
-          cache: "pip"
-          cache-dependency-path: |
-            requirements.txt
-            .ci-pip-cache-version
-      - name: Install CI dependencies
-        run: |
-          python --version
-          python -m pip --version
-          python -m pip install --upgrade "pip==26.1.2"
-          python -m pip --version
-          python -m pip debug --verbose
-          python -m pip install \
-            --only-binary=ruamel.yaml.clib \
-            -r requirements.txt
-          python -m pip show pip
-          python -m pip show ansible-lint
-          python -m pip show ruamel.yaml
-          python -m pip show ruamel.yaml.clib
-          python -m pip check
-      - name: Install Galaxy dependencies
-        run: ansible-galaxy collection install -r requirements.yml
-      - name: Lint Ansible
-        run: ansible-lint
-
-  syntax-validation:
-    name: Syntax and import validation
-    runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 30
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
@@ -120,6 +52,10 @@ jobs:
           key: galaxy-${{ runner.os }}-${{ hashFiles('requirements.yml') }}
       - name: Install Galaxy dependencies
         run: ansible-galaxy collection install -r requirements.yml
+      - name: Lint YAML
+        run: yamllint .
+      - name: Lint Ansible
+        run: ansible-lint
       - name: Validate the main playbook and role imports
         run: |
           python -m unittest tests/test_latex_role.py
