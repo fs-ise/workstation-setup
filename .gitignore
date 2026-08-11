@@ -1,3 +1,2 @@
 host_vars/localhost.yml
-inventory
 tests/output/

@@ -20,7 +20,7 @@ Reusable Ansible configuration units. Roles keep related installation and config
 
 ### `inventory`
 
-Local Ansible inventory file created during setup. It tells Ansible to configure `localhost` with a local connection. This file is intentionally simple for single-workstation use.
+Tracked local Ansible inventory file. It tells Ansible to configure `localhost` with a local connection. This file is intentionally generic for single-workstation use; keep local overrides in `host_vars/localhost.yml`.
 
 ### `host_vars/`
 
@@ -40,7 +40,7 @@ If present, this directory contains GitHub-specific project automation such as w
 
 ## How the pieces fit together
 
-1. Follow the New machine pages in `docs/` to install Fedora, install prerequisites, create `inventory`, and run the lab stack.
+1. Follow the New machine pages in `docs/` to install Fedora, install prerequisites, verify the committed `inventory`, and run the lab stack.
 2. Run `make lab-stack`, which calls the main Ansible playbook.
 3. The playbook applies focused roles from `roles/`.
 4. Use Configuration pages for role-specific manual steps and checks.

@@ -59,18 +59,9 @@ cd workstation-setup
 ansible-galaxy collection install -r requirements.yml
 ```
 
-## 4. Create the inventory file
+## 4. Verify the inventory
 
-Create the local Ansible inventory used by the documented commands:
-
-```sh
-cat <<'EOF' > inventory
-[local]
-localhost ansible_connection=local ansible_python_interpreter=/usr/bin/python3
-EOF
-```
-
-The `inventory` file tells Ansible to configure the current machine. If a future setup needs host-specific variables, create `host_vars/localhost.yml` separately and do not put secrets in it.
+The repository includes the local Ansible `inventory` used by the documented commands. It tells Ansible to configure the current machine. If a workstation needs host-specific variables, create `host_vars/localhost.yml` separately and do not put secrets in it.
 
 ::: {.callout-check}
 **✅ Check**
