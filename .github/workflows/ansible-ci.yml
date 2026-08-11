@@ -125,6 +125,7 @@ jobs:
           python -m unittest tests/test_latex_role.py
           python -m unittest tests/test_r_role.py tests/test_rstudio_role.py
           python -m unittest tests/test_preflight_role.py
+          python -m unittest tests.test_package_audit
           python -m unittest \
             tests/test_git_tools_role.py \
             tests/test_dropbox_role.py \
@@ -136,6 +137,15 @@ jobs:
             --syntax-check \
             -i tests/inventory/hosts.yml \
             playbooks/lab-stack.yml
+
+          ansible-playbook \
+            --syntax-check \
+            -i tests/inventory/hosts.yml \
+            playbooks/audit-unmanaged-packages.yml
+
+          ansible-playbook \
+            -i tests/inventory/hosts.yml \
+            tests/playbooks/package-audit-derivation.yml
 
           ansible-playbook \
             --list-tasks \

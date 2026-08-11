@@ -27,11 +27,15 @@ baseline_remove_packages_best_effort:
   - gnome-maps
   - gnome-mines
   - gnome-sudoku
+  # Ptyxis replaced GNOME Terminal in the managed desktop configuration.
+  - gnome-terminal
   - gnome-todo
   - gnome-tour
   - gnome-weather
   - ibus-m17n
   - ibus-typing-booster
+  # The workstation uses libxslt at runtime; development headers are not required.
+  - libxslt-devel
   - malcontent
   - malcontent-control
   - mediawriter

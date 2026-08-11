@@ -109,6 +109,9 @@ class PackageAuditTests(unittest.TestCase):
         broad_patterns = {"^lib", "^perl", "^gnome-", "^fedora-", "^kernel"}
         self.assertTrue(broad_patterns.isdisjoint(self.patterns))
 
+    def test_obsolete_baseline_packages_are_not_allowlisted(self):
+        self.assertTrue({"gnome-terminal", "libxslt-devel"}.isdisjoint(self.allowlist))
+
 
 if __name__ == "__main__":
     unittest.main()

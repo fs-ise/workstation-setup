@@ -32,3 +32,39 @@
       ansible.builtin.assert:
         that:
           - package_audit_test_unmanaged == ['manual-lab-package']
+
+    - name: Classify representative DNF5 install reasons
+      ansible.builtin.include_tasks: ../../playbooks/tasks/classify-dnf-package-reasons.yml
+      vars:
+        package_audit_query_has_reasons: true
+        package_audit_query_lines:
+          - "ansible-managed\tUser"
+          - "fedora-workstation\tGroup"
+          - "dependency-package\tWeak Dependency"
+          - "third-party\tExternal User"
+          - "uncertain-package\tFuture Reason"
+
+    - name: Verify reason-aware package classification
+      ansible.builtin.assert:
+        that:
+          - package_audit_detected_user == ['ansible-managed']
+          - package_audit_detected_group == ['fedora-workstation']
+          - package_audit_detected_dependency == ['dependency-package']
+          - package_audit_detected_external_uncertain == ['third-party', 'uncertain-package']
+          - package_audit_external_uncertain_records == ['third-party\tExternal User', 'uncertain-package\tFuture Reason']
+
+    - name: Classify legacy fallback output as user-requested
+      ansible.builtin.include_tasks: ../../playbooks/tasks/classify-dnf-package-reasons.yml
+      vars:
+        package_audit_query_has_reasons: false
+        package_audit_query_lines:
+          - legacy-user-package
+
+    - name: Verify fallback behavior is preserved
+      ansible.builtin.assert:
+        that:
+          - package_audit_detected_user == ['legacy-user-package']
+          - package_audit_detected_group == []
+          - package_audit_detected_dependency == []
+          - package_audit_detected_external_uncertain == []
+          - package_audit_external_uncertain_records == []

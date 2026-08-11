@@ -32,6 +32,26 @@ class BaselineRoleTests(unittest.TestCase):
         for package in ("artha", "dict-gcide", "dict-wn", "perl-librdf"):
             self.assertNotIn(f"  - {package}\n", optional)
 
+    def test_obsolete_user_reason_packages_are_removed(self):
+        removed = self.defaults.split(
+            "baseline_remove_packages_best_effort:\n", 1
+        )[1]
+        removed = removed.split("\nbaseline_optional_packages:", 1)[0]
+        required = self.defaults.split("baseline_required_packages:\n", 1)[1]
+        required = required.split("\nbaseline_remove_packages_best_effort:", 1)[0]
+        optional = self.defaults.split("baseline_optional_packages:\n", 1)[1]
+        optional = optional.split("\nbaseline_configure_flathub:", 1)[0]
+        for package in ("gnome-terminal", "libxslt-devel"):
+            self.assertIn(f"  - {package}\n", removed)
+            self.assertNotIn(f"  - {package}\n", required)
+            self.assertNotIn(f"  - {package}\n", optional)
+
+        self.assertIn("  - libxslt\n", optional)
+
+        removal_task = self.task_block("Remove unwanted packages (best effort)")
+        self.assertIn('loop: "{{ baseline_remove_packages_best_effort }}"', removal_task)
+        self.assertIn("state: absent", removal_task)
+
     def test_managed_packages_are_derived_from_package_lists(self):
         self.assertIn(
             'baseline_managed_dnf_packages: "{{ baseline_required_packages + baseline_optional_packages }}"',

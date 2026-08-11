@@ -11,7 +11,7 @@ manual_install_audit_recommendations:
 # Prefer exact package names. Generic Fedora/base-system exceptions are listed first;
 # intentional workstation additions are kept in their own section below.
 package_audit_allowlist:
-  # Generic Fedora/base-system packages reported as user-installed.
+  # Exact exceptions reported with the User install reason.
   - NetworkManager
   - NetworkManager-wifi
   - PackageKit-command-not-found

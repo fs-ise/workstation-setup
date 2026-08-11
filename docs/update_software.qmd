@@ -48,7 +48,7 @@ The commands intentionally run in this order:
 
 The audit reports two kinds of unmanaged software:
 
-- A **DNF user-installed but Ansible-unmanaged package** is tracked by RPM/DNF, but is not declared in this repository's managed package lists or package allowlists.
+- A **DNF User-reason but Ansible-unmanaged package** is tracked by RPM/DNF with the install reason `User`, but is not declared in this repository's managed package lists or package allowlists. Packages with `Group` or dependency-related reasons are excluded. `External User` and other external or uncertain reasons are reported separately for review but do not fail the audit. If DNF5 reason reporting is unavailable, the audit preserves compatibility by treating the older command's `--userinstalled` results as user-requested.
 - An **unmanaged filesystem installation** is a file, symlink, or `/opt` installation that is not owned by an RPM and is not in the separate manual-install allowlists. This commonly includes software unpacked from tarballs.
 :::
 

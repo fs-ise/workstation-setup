@@ -1,0 +1,56 @@
+---
+- name: Normalize DNF package query output
+  ansible.builtin.set_fact:
+    package_audit_query_lines_normalized: >-
+      {{ package_audit_query_lines | map('trim') | reject('equalto', '') | unique | sort }}
+
+- name: Classify packages by DNF install reason
+  ansible.builtin.set_fact:
+    package_audit_detected_user: >-
+      {{
+        (
+          package_audit_query_lines_normalized
+          | select('match', '(?i)^[A-Za-z0-9._+:-]+\tuser$')
+          | map('regex_replace', '\t.*$', '')
+          | list
+        ) if package_audit_query_has_reasons else (
+          package_audit_query_lines_normalized
+          | select('match', '^[A-Za-z0-9._+:-]+$')
+          | list
+        )
+      }}
+    package_audit_detected_group: >-
+      {{
+        package_audit_query_lines_normalized
+        | select('match', '(?i)^[A-Za-z0-9._+:-]+\tgroup$')
+        | map('regex_replace', '\t.*$', '')
+        | list
+        if package_audit_query_has_reasons else []
+      }}
+    package_audit_detected_dependency: >-
+      {{
+        package_audit_query_lines_normalized
+        | select('match', '(?i)^[A-Za-z0-9._+:-]+\t[^\t]*dependency[^\t]*$')
+        | map('regex_replace', '\t.*$', '')
+        | list
+        if package_audit_query_has_reasons else []
+      }}
+    package_audit_external_uncertain_records: >-
+      {{
+        package_audit_query_lines_normalized
+        | reject('match', '(?i)^[A-Za-z0-9._+:-]+\t(?:user|group)$')
+        | reject('match', '(?i)^[A-Za-z0-9._+:-]+\t[^\t]*dependency[^\t]*$')
+        | select('match', '^[A-Za-z0-9._+:-]+\t.+$')
+        | list
+        if package_audit_query_has_reasons else []
+      }}
+
+- name: Build external and uncertain warning package set
+  ansible.builtin.set_fact:
+    package_audit_detected_external_uncertain: >-
+      {{
+        package_audit_external_uncertain_records
+        | map('regex_replace', '\t.*$', '')
+        | unique
+        | sort
+      }}
