@@ -56,39 +56,80 @@ class NemoRoleTests(unittest.TestCase):
             self.assertIn(fragment, DEFAULTS + TASKS)
         self.assertIn("open-ptyxis.nemo_action", DEFAULTS)
         self.assertIn("actions-tree.json", DEFAULTS)
-        self.assertIn("nemo_action_shortcut: F4", DEFAULTS)
+        self.assertIn("nemo_action_shortcut: F8", DEFAULTS)
         self.assertIn("merge_nemo_action_layout.py", TASKS)
 
     def test_merge_preserves_unrelated_action_metadata_and_order(self):
         layout = {
             "toplevel": [
                 {
-                    "id": "custom.nemo_action",
+                    "uuid": "custom.nemo_action",
                     "type": "action",
                     "user-label": "My label",
                     "user-icon": "starred",
-                    "accelerator": "F8",
+                    "accelerator": "F7",
                 },
-                {"label": "Research", "type": "submenu", "children": []},
+                {
+                    "label": "Research",
+                    "type": "submenu",
+                    "children": [
+                        {
+                            "uuid": "nested.nemo_action",
+                            "type": "action",
+                            "user-label": "Nested",
+                            "accelerator": "F6",
+                        }
+                    ],
+                },
             ],
             "layout-version": 1,
         }
         original_first = layout["toplevel"][0].copy()
-        merged = ACTION_LAYOUT.merge_layout(layout, "open-ptyxis.nemo_action", "F4")
+        merged = ACTION_LAYOUT.merge_layout(layout, "open-ptyxis.nemo_action", "F8")
         self.assertEqual(original_first, merged["toplevel"][0])
         self.assertEqual("Research", merged["toplevel"][1]["label"])
+        self.assertEqual("Nested", merged["toplevel"][1]["children"][0]["user-label"])
         self.assertEqual(1, merged["layout-version"])
-        self.assertEqual(
-            {"id": "open-ptyxis.nemo_action", "type": "action", "accelerator": "F4"},
-            merged["toplevel"][2],
-        )
+        managed = merged["toplevel"][2]
+        self.assertEqual("open-ptyxis.nemo_action", managed["uuid"])
+        self.assertEqual("action", managed["type"])
+        self.assertEqual("F8", managed["accelerator"])
+        self.assertIsNone(managed["user-label"])
+        self.assertIsNone(managed["user-icon"])
+        self.assertNotIn("id", managed)
 
-    def test_merge_removes_duplicates_and_conflicting_f4_deterministically(self):
+    def test_merge_migrates_legacy_id_and_preserves_managed_metadata(self):
         layout = {
             "toplevel": [
-                {"id": "conflict.nemo_action", "type": "action", "accelerator": "F4"},
                 {
                     "id": "open-ptyxis.nemo_action",
+                    "type": "action",
+                    "user-label": "Keep this label",
+                    "user-icon": "utilities-terminal-symbolic",
+                    "accelerator": "F9",
+                },
+            ]
+        }
+        managed = ACTION_LAYOUT.merge_layout(
+            layout, "open-ptyxis.nemo_action", "F8"
+        )["toplevel"][0]
+        self.assertEqual("open-ptyxis.nemo_action", managed["uuid"])
+        self.assertNotIn("id", managed)
+        self.assertEqual("F8", managed["accelerator"])
+        self.assertEqual("Keep this label", managed["user-label"])
+        self.assertEqual("utilities-terminal-symbolic", managed["user-icon"])
+
+    def test_merge_removes_duplicates_and_conflicting_f8_deterministically(self):
+        layout = {
+            "toplevel": [
+                {
+                    "uuid": "conflict.nemo_action",
+                    "type": "action",
+                    "user-label": "Keep conflict metadata",
+                    "accelerator": "F8",
+                },
+                {
+                    "uuid": "open-ptyxis.nemo_action",
                     "type": "action",
                     "user-label": "Keep this label",
                     "accelerator": "F9",
@@ -96,31 +137,36 @@ class NemoRoleTests(unittest.TestCase):
                 {"id": "open-ptyxis.nemo_action", "type": "action"},
             ]
         }
-        merged = ACTION_LAYOUT.merge_layout(layout, "open-ptyxis.nemo_action", "F4")
+        merged = ACTION_LAYOUT.merge_layout(layout, "open-ptyxis.nemo_action", "F8")
         self.assertNotIn("accelerator", merged["toplevel"][0])
+        self.assertEqual("Keep conflict metadata", merged["toplevel"][0]["user-label"])
         managed = [
-            item for item in merged["toplevel"] if item["id"] == "open-ptyxis.nemo_action"
+            item
+            for item in merged["toplevel"]
+            if item.get("uuid") == "open-ptyxis.nemo_action"
         ]
         self.assertEqual(1, len(managed))
-        self.assertEqual("F4", managed[0]["accelerator"])
+        self.assertEqual("F8", managed[0]["accelerator"])
         self.assertEqual("Keep this label", managed[0]["user-label"])
+        self.assertNotIn("id", managed[0])
 
     def test_update_file_creates_layout_and_is_idempotent(self):
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / ".config/nemo/actions-tree.json"
             self.assertTrue(
-                ACTION_LAYOUT.update_file(path, "open-ptyxis.nemo_action", "F4")
+                ACTION_LAYOUT.update_file(path, "open-ptyxis.nemo_action", "F8")
             )
             first_contents = path.read_text(encoding="utf-8")
             first_mtime = os.stat(path).st_mtime_ns
             self.assertFalse(
-                ACTION_LAYOUT.update_file(path, "open-ptyxis.nemo_action", "F4")
+                ACTION_LAYOUT.update_file(path, "open-ptyxis.nemo_action", "F8")
             )
             self.assertEqual(first_contents, path.read_text(encoding="utf-8"))
             self.assertEqual(first_mtime, os.stat(path).st_mtime_ns)
             self.assertEqual(
-                "F4", json.loads(first_contents)["toplevel"][0]["accelerator"]
+                "F8", json.loads(first_contents)["toplevel"][0]["accelerator"]
             )
+            self.assertNotIn("id", json.loads(first_contents)["toplevel"][0])
 
     def test_existing_nemo_integrations_and_shortcut_remain(self):
         self.assertIn("<Super>e", DEFAULTS)

@@ -62,7 +62,7 @@
     mode: "0755"
   when: nemo_configure_ptyxis_action | bool
 
-- name: Bind the Ptyxis Nemo action to F4
+- name: Bind the Ptyxis Nemo action to {{ nemo_action_shortcut }}
   become: true
   become_user: "{{ target_user }}"
   ansible.builtin.command:

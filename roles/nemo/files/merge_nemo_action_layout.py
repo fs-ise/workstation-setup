@@ -12,13 +12,24 @@ def merge_layout(layout, action_id, accelerator):
     """Return a layout with one managed action and no shortcut conflict."""
     managed = None
 
+    def is_managed(item):
+        """Recognize both Nemo's schema and this repository's legacy schema."""
+        return isinstance(item, dict) and (
+            item.get("uuid") == action_id or item.get("id") == action_id
+        )
+
     def merge_list(items):
         nonlocal managed
         result = []
         for item in items:
-            if isinstance(item, dict) and item.get("id") == action_id:
+            if is_managed(item):
                 if managed is None:
                     managed = item
+                    managed["uuid"] = action_id
+                    managed.pop("id", None)
+                    managed["type"] = "action"
+                    managed.setdefault("user-label", None)
+                    managed.setdefault("user-icon", None)
                     result.append(item)
                 continue
             merge_node(item)
@@ -37,7 +48,12 @@ def merge_layout(layout, action_id, accelerator):
 
     merge_node(layout)
     if managed is None:
-        managed = {"id": action_id, "type": "action"}
+        managed = {
+            "uuid": action_id,
+            "type": "action",
+            "user-label": None,
+            "user-icon": None,
+        }
         if isinstance(layout, list):
             layout.append(managed)
         elif isinstance(layout, dict):
