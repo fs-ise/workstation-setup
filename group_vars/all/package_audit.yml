@@ -33,7 +33,6 @@ package_audit_allowlist:
   - libstdc++
   - libvirt-daemon-config-network
   - lsof
-  - ptyxis
   - rsync
   - toolbox
   - util-linux-user
