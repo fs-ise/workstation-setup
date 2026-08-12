@@ -8,7 +8,7 @@ Install VeraCrypt to create and open cross-platform encrypted volumes on Linux, 
 ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags veracrypt
 ```
 
-The role supports tested Fedora workstation releases 42, 43, and 44 on x86_64. It installs VeraCrypt 1.26.24 from the pinned upstream `Fedora-40` graphical RPM; `Fedora-40` identifies upstream's RPM build target and is independent of the workstation's Fedora version. Before installation, the role validates the downloaded signing key against the pinned fingerprint and verifies the RPM's detached signature in an isolated keyring. It upgrades older installations but does not automatically downgrade a newer installed version.
+The role supports tested Fedora workstation releases 42, 43, and 44 on x86_64. It installs VeraCrypt 1.26.24 from the pinned upstream `Fedora-40` graphical RPM; `Fedora-40` identifies upstream's RPM build target and is independent of the workstation's Fedora version. Before installation, the role validates the downloaded signing key against the pinned fingerprint and verifies the RPM's detached signature in an isolated keyring. Downloads use retries and an extended timeout because Launchpad Librarian can occasionally respond slowly or fail transiently. The role upgrades older installations but does not automatically downgrade a newer installed version.
 
 ::: {.callout-manual}
 **🔧 Manual setup and configuration**

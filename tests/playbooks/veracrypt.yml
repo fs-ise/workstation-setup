@@ -33,6 +33,9 @@
             'https://launchpad.net/veracrypt/trunk/1.26.24/+download/'
             ~ 'veracrypt-1.26.24-Fedora-40-x86_64.rpm'
           - veracrypt_signature_url == veracrypt_package_url ~ '.sig'
+          - veracrypt_download_timeout == 60
+          - veracrypt_download_retries == 5
+          - veracrypt_download_delay == 5
           - >-
             veracrypt_signing_key_fingerprint ==
             '5069A233D55A0EEB174A5FC3821ACD02680D16DE'
@@ -46,6 +49,31 @@
             '--keyring' in veracrypt_tasks
           - >-
             'ansible.builtin.rpm_key' in veracrypt_tasks
+          - veracrypt_tasks | regex_findall('timeout:.*veracrypt_download_timeout') | length == 3
+          - veracrypt_tasks | regex_findall('retries:.*veracrypt_download_retries') | length == 3
+          - veracrypt_tasks | regex_findall('delay:.*veracrypt_download_delay') | length == 3
+          - >-
+            'register: veracrypt_signing_key_download' in veracrypt_tasks
+          - >-
+            'register: veracrypt_download' in veracrypt_tasks
+          - >-
+            'register: veracrypt_signature_download' in veracrypt_tasks
+          - >-
+            'until: veracrypt_signing_key_download is succeeded' in veracrypt_tasks
+          - >-
+            'until: veracrypt_download is succeeded' in veracrypt_tasks
+          - >-
+            'until: veracrypt_signature_download is succeeded' in veracrypt_tasks
+          - >-
+            veracrypt_tasks.index('Download the pinned graphical VeraCrypt RPM')
+            < veracrypt_tasks.index('Verify the VeraCrypt RPM with the isolated keyring')
+          - >-
+            veracrypt_tasks.index('Download the detached VeraCrypt RPM signature')
+            < veracrypt_tasks.index('Verify the VeraCrypt RPM with the isolated keyring')
+          - "'launchpadlibrarian.net' not in veracrypt_tasks"
+          - "'validate_certs: false' not in veracrypt_tasks"
+          - >-
+            'failed_when: false' not in veracrypt_tasks
 
     - name: Accept Fedora 44 for VeraCrypt
       ansible.builtin.include_tasks: ../../roles/veracrypt/tasks/platform.yml

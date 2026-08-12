@@ -57,6 +57,11 @@
             url: "{{ veracrypt_signing_key_url }}"
             dest: "{{ veracrypt_tempdir.path }}/signing-key.asc"
             mode: "0600"
+            timeout: "{{ veracrypt_download_timeout }}"
+          register: veracrypt_signing_key_download
+          retries: "{{ veracrypt_download_retries }}"
+          delay: "{{ veracrypt_download_delay }}"
+          until: veracrypt_signing_key_download is succeeded
 
         - name: Inspect the VeraCrypt signing-key fingerprint
           ansible.builtin.command:
@@ -112,9 +117,10 @@
             url: "{{ veracrypt_package_url }}"
             dest: "{{ veracrypt_tempdir.path }}/{{ veracrypt_rpm_filename }}"
             mode: "0600"
+            timeout: "{{ veracrypt_download_timeout }}"
           register: veracrypt_download
-          retries: 3
-          delay: 5
+          retries: "{{ veracrypt_download_retries }}"
+          delay: "{{ veracrypt_download_delay }}"
           until: veracrypt_download is succeeded
 
         - name: Download the detached VeraCrypt RPM signature
@@ -122,6 +128,11 @@
             url: "{{ veracrypt_signature_url }}"
             dest: "{{ veracrypt_tempdir.path }}/{{ veracrypt_rpm_filename }}.sig"
             mode: "0600"
+            timeout: "{{ veracrypt_download_timeout }}"
+          register: veracrypt_signature_download
+          retries: "{{ veracrypt_download_retries }}"
+          delay: "{{ veracrypt_download_delay }}"
+          until: veracrypt_signature_download is succeeded
 
         - name: Verify the VeraCrypt RPM with the isolated keyring
           ansible.builtin.command:

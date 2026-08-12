@@ -20,6 +20,9 @@ veracrypt_signing_key_fingerprint: >-
 veracrypt_package_url: >-
   https://launchpad.net/veracrypt/trunk/{{ veracrypt_version }}/+download/{{ veracrypt_rpm_filename }}
 veracrypt_signature_url: "{{ veracrypt_package_url }}.sig"
+veracrypt_download_timeout: 60
+veracrypt_download_retries: 5
+veracrypt_download_delay: 5
 
 # DNF packages owned by this role; consumed by the package audit.
 veracrypt_managed_dnf_packages: "{{ veracrypt_verification_packages + ['veracrypt'] }}"
