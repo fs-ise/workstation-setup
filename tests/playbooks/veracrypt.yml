@@ -21,15 +21,17 @@
     - name: Check pinned VeraCrypt security defaults
       ansible.builtin.assert:
         that:
-          - veracrypt_version == "1.26.29"
-          - veracrypt_supported_fedora_versions == ["42", "43", "44"]
+          - veracrypt_version == "1.26.24"
+          - veracrypt_rpm_fedora_version == "40"
+          - veracrypt_tested_fedora_versions == ["42", "43", "44"]
           - >-
             veracrypt_rpm_filename ==
-            'veracrypt-1.26.29-Fedora-44-x86_64.rpm'
+            'veracrypt-1.26.24-Fedora-40-x86_64.rpm'
+          - "'Fedora-44' not in veracrypt_rpm_filename"
           - >-
             veracrypt_package_url ==
-            'https://launchpad.net/veracrypt/trunk/1.26.29/+download/'
-            ~ 'veracrypt-1.26.29-Fedora-44-x86_64.rpm'
+            'https://launchpad.net/veracrypt/trunk/1.26.24/+download/'
+            ~ 'veracrypt-1.26.24-Fedora-40-x86_64.rpm'
           - veracrypt_signature_url == veracrypt_package_url ~ '.sig'
           - >-
             veracrypt_signing_key_fingerprint ==
