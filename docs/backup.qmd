@@ -2,28 +2,9 @@
 title: "Backup and sync"
 ---
 
-Install BorgBackup and the optional Vorta GUI. The `borg_vorta` role installs tools only; it does not create repositories, store credentials, choose destinations, or schedule backups.
+Use this page for the recurring routines that keep workstation data synchronized and recoverable. It describes the intended roles of GitHub, Nextcloud, and HDD backups.
 
-```sh
-ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags borg_vorta
-```
-
-::: {.callout-manual}
-**🔧 Manual setup and configuration**
-
-Create or reconnect backup repositories and configure credentials, destinations, retention, and schedules in Vorta or Borg.
-:::
-
-::: {.callout-check}
-**✅ Check**
-
-```sh
-borg --version
-flatpak info com.borgbase.Vorta
-```
-:::
-
-This page describes the intended roles of GitHub, Nextcloud, and HDD backups.
+Backup-tool installation is documented separately from this recurring workflow. See [Borg/Vorta configuration](borg_vorta.html) to apply the dedicated `borg_vorta` Ansible role, verify the installation, create or reconnect the repository, and choose its sources, retention policy, and schedule before using the HDD backup routine below.
 
 ::: {.callout-note collapse="true" title="Alternative: rclone"}
 Keep the native Dropbox/Nextcloud clients as the recommended approach for workstations.
@@ -111,5 +92,6 @@ Recommended maintenance:
 
 - [GitHub SSH documentation](https://docs.github.com/en/authentication/connecting-to-github-with-ssh)
 - [Nextcloud desktop client documentation](https://docs.nextcloud.com/desktop/latest/)
+- [Borg/Vorta configuration](borg_vorta.html)
 - [Borg documentation](https://borgbackup.readthedocs.io/)
 - [Vorta documentation](https://vorta.borgbase.com/)

@@ -1,0 +1,30 @@
+---
+title: "Borg/Vorta"
+---
+
+Install BorgBackup and the optional Vorta GUI for encrypted, versioned workstation backups. The `borg_vorta` role installs the tools only; it does not create repositories, store credentials, choose destinations, or schedule backups.
+
+```sh
+ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags borg_vorta
+```
+
+::: {.callout-manual}
+**🔧 Manual setup and configuration**
+
+Create or reconnect backup repositories and configure credentials, destinations, retention, and schedules in Vorta or Borg. Then follow the recurring backup and restore checks in [Backup and sync](backup.html).
+:::
+
+::: {.callout-check}
+**✅ Check**
+
+```sh
+borg --version
+flatpak info com.borgbase.Vorta
+```
+:::
+
+## Best practices and useful links
+
+- [Backup and sync](backup.html)
+- [Borg documentation](https://borgbackup.readthedocs.io/)
+- [Vorta documentation](https://vorta.borgbase.com/)

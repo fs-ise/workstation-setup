@@ -26,12 +26,13 @@ website:
       - section: Day-to-day operations
         contents:
           - update_software.qmd
+          - backup.qmd
 
       - section: Configuration
         contents:
           - baseline.qmd
           - git.qmd
-          - backup.qmd
+          - borg_vorta.qmd
           - nemo.qmd
           - dropbox.qmd
           - veracrypt.qmd

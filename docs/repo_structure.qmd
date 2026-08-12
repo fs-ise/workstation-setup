@@ -44,7 +44,7 @@ If present, this directory contains GitHub-specific project automation such as w
 2. Run `make lab-stack`, which calls the main Ansible playbook.
 3. The playbook applies focused roles from `roles/`.
 4. Use Configuration pages for role-specific manual steps and checks.
-5. Use Day-to-day operations pages for updates, package audit, backup, and restore routines.
+5. Use Day-to-day operations pages for recurring [software updates](update_software.html) and [backup and sync](backup.html) routines.
 
 ## Best practices and useful links
 
