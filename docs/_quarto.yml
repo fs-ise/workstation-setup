@@ -32,8 +32,8 @@ website:
           - baseline.qmd
           - git.qmd
           - backup.qmd
-          - dropbox.qmd
           - nemo.qmd
+          - dropbox.qmd
           - veracrypt.qmd
           - docker.qmd
           - thunderbird.qmd
