@@ -59,6 +59,14 @@ class NemoRoleTests(unittest.TestCase):
         self.assertIn("nemo_action_shortcut: F8", DEFAULTS)
         self.assertIn("merge_nemo_action_layout.py", TASKS)
 
+    def test_ptyxis_action_uses_nemo_shell_escaped_path(self):
+        self.assertIn(
+            "nemo_action_command: 'ptyxis --new-window "
+            "--working-directory=%P --execute bash'",
+            DEFAULTS,
+        )
+        self.assertNotIn('--working-directory="%P"', DEFAULTS)
+
     def test_merge_preserves_unrelated_action_metadata_and_order(self):
         layout = {
             "toplevel": [
