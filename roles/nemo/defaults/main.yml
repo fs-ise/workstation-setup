@@ -24,7 +24,8 @@ nemo_action_name: open-ptyxis.nemo_action
 nemo_action_directory: "{{ target_home }}/.local/share/nemo/actions"
 nemo_action_path: "{{ nemo_action_directory }}/{{ nemo_action_name }}"
 nemo_action_shortcut: F8
-nemo_action_command: 'ptyxis --new-window --working-directory=%P --execute bash'
+nemo_ptyxis_helper_path: "{{ target_home }}/.local/libexec/open-ptyxis-here.py"
+nemo_action_command: "{{ nemo_ptyxis_helper_path }} %P"
 nemo_actions_layout_directory: "{{ target_home }}/.config/nemo"
 nemo_actions_layout_path: "{{ nemo_actions_layout_directory }}/actions-tree.json"
 nemo_layout_helper_directory: "{{ target_home }}/.local/libexec"

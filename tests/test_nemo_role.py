@@ -6,17 +6,23 @@ import os
 import tempfile
 import unittest
 from pathlib import Path
+from unittest import mock
 
 
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULTS = (ROOT / "roles/nemo/defaults/main.yml").read_text(encoding="utf-8")
 TASKS = (ROOT / "roles/nemo/tasks/main.yml").read_text(encoding="utf-8")
 ACTION_HELPER_PATH = ROOT / "roles/nemo/files/merge_nemo_action_layout.py"
+PTYXIS_HELPER_PATH = ROOT / "roles/nemo/files/open-ptyxis-here.py"
 AUDIT = (ROOT / "group_vars/all/package_audit.yml").read_text(encoding="utf-8")
 
 SPEC = importlib.util.spec_from_file_location("nemo_action_layout", ACTION_HELPER_PATH)
 ACTION_LAYOUT = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(ACTION_LAYOUT)
+
+PTYXIS_SPEC = importlib.util.spec_from_file_location("open_ptyxis_here", PTYXIS_HELPER_PATH)
+PTYXIS_HELPER = importlib.util.module_from_spec(PTYXIS_SPEC)
+PTYXIS_SPEC.loader.exec_module(PTYXIS_HELPER)
 
 
 class NemoRoleTests(unittest.TestCase):
@@ -47,11 +53,10 @@ class NemoRoleTests(unittest.TestCase):
     def test_ptyxis_action_and_layout_binding_are_installed(self):
         for fragment in (
             "%P",
-            "ptyxis",
-            "--new-window",
-            "--working-directory",
-            "--execute",
-            "bash",
+            "nemo_ptyxis_helper_path",
+            "open-ptyxis-here.py",
+            'mode: "0755"',
+            "Quote=double",
         ):
             self.assertIn(fragment, DEFAULTS + TASKS)
         self.assertIn("open-ptyxis.nemo_action", DEFAULTS)
@@ -59,13 +64,32 @@ class NemoRoleTests(unittest.TestCase):
         self.assertIn("nemo_action_shortcut: F8", DEFAULTS)
         self.assertIn("merge_nemo_action_layout.py", TASKS)
 
-    def test_ptyxis_action_uses_nemo_shell_escaped_path(self):
+    def test_ptyxis_action_uses_helper_and_nemo_native_quoting(self):
         self.assertIn(
-            "nemo_action_command: 'ptyxis --new-window "
-            "--working-directory=%P --execute bash'",
+            'nemo_action_command: "{{ nemo_ptyxis_helper_path }} %P"',
             DEFAULTS,
         )
-        self.assertNotIn('--working-directory="%P"', DEFAULTS)
+        self.assertIn("Quote=double", TASKS)
+        self.assertNotIn("--working-directory", DEFAULTS + TASKS)
+
+    def test_ptyxis_helper_launches_with_special_path_as_cwd(self):
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            directory = Path(temporary_directory) / '#wait olm-signalling/test dir "\'$&'
+            directory.mkdir(parents=True)
+
+            with mock.patch.object(PTYXIS_HELPER.sys, "argv", ["helper", str(directory)]):
+                with mock.patch.object(PTYXIS_HELPER.subprocess, "Popen") as popen:
+                    self.assertEqual(0, PTYXIS_HELPER.main())
+
+            popen.assert_called_once_with(
+                ["ptyxis", "--new-window", "--", "bash"],
+                cwd=directory.resolve(),
+                start_new_session=True,
+            )
+            argv = popen.call_args.args[0]
+            self.assertIsInstance(argv, list)
+            self.assertNotIn(str(directory), argv)
+            self.assertNotIn("shell", popen.call_args.kwargs)
 
     def test_merge_preserves_unrelated_action_metadata_and_order(self):
         layout = {

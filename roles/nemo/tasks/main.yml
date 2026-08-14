@@ -51,6 +51,16 @@
       UriScheme=file
       Terminal=false
       Icon-Name=org.gnome.Ptyxis
+      Quote=double
+  when: nemo_configure_ptyxis_action | bool
+
+- name: Install the Ptyxis working-directory helper
+  become: true
+  become_user: "{{ target_user }}"
+  ansible.builtin.copy:
+    src: open-ptyxis-here.py
+    dest: "{{ nemo_ptyxis_helper_path }}"
+    mode: "0755"
   when: nemo_configure_ptyxis_action | bool
 
 - name: Install the Nemo action layout merge helper
