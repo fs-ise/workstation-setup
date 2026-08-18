@@ -8,7 +8,7 @@ Install R, package compilation dependencies, and a practical user-level package 
 ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags r
 ```
 
-The `r` role installs R without installing RStudio Desktop. It creates `~/R/library`, records that location as `R_LIBS_USER` in the Ansible-managed block of `~/.Renviron`, and installs the configured CRAN packages there.
+The `r` role installs R without installing RStudio Desktop. It also installs the Fedora system and build libraries needed to compile common spatial R packages such as `sf`, `terra`, `s2`, `units`, and `leaflet`. The role creates `~/R/library`, records that location as `R_LIBS_USER` in the Ansible-managed block of `~/.Renviron`, and installs the configured CRAN packages there.
 
 ## Use project environments
 

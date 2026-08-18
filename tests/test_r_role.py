@@ -18,6 +18,22 @@ class RRoleTests(unittest.TestCase):
         for package in ("R", "R-devel", "gcc", "gcc-c++", "gcc-gfortran", "libuv-devel"):
             self.assertIn(f"  - {package}", DEFAULTS)
 
+    def test_spatial_package_build_dependencies_are_managed(self):
+        spatial_build_dependencies = (
+            "gdal-devel",
+            "proj-devel",
+            "geos-devel",
+            "sqlite-devel",
+            "udunits2-devel",
+            "abseil-cpp-devel",
+            "cmake",
+            "netcdf-devel",
+            "tbb-devel",
+        )
+        for package in spatial_build_dependencies:
+            self.assertIn(f"  - {package}", DEFAULTS)
+        self.assertIn('r_managed_dnf_packages: "{{ r_system_packages }}"', DEFAULTS)
+
     def test_retry_defaults_are_valid(self):
         self.assertGreater(self.default_integer("r_cran_download_timeout"), 0)
         self.assertGreaterEqual(self.default_integer("r_cran_install_attempts"), 1)

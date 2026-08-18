@@ -6,6 +6,15 @@ r_system_packages:
   - gcc-c++
   - gcc-gfortran
   - make
+  - gdal-devel
+  - proj-devel
+  - geos-devel
+  - sqlite-devel
+  - udunits2-devel
+  - abseil-cpp-devel
+  - cmake
+  - netcdf-devel
+  - tbb-devel
   - libcurl-devel
   - openssl-devel
   - libxml2-devel
