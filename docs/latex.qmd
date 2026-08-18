@@ -2,33 +2,30 @@
 title: "LaTeX"
 ---
 
-Install TeX Live for LaTeX document production and the TeXstudio editor.
+Install Quarto-managed TinyTeX for Quarto PDF rendering and, optionally, the
+TeXstudio editor.
 
 ```sh
 ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags latex
 ```
 
-By default, the role installs `texlive-scheme-full` and TeXstudio.
-The full scheme is large, but provides a comprehensive TeX Live environment without
-requiring individual TeX Live packages to be selected.
+TinyTeX is the default because this workstation primarily uses LaTeX for Quarto PDF
+generation. Quarto manages the TinyTeX installation and installs additional TeX
+packages as documents need them. The role also asks Quarto to add TinyTeX to the
+user's `PATH`.
 
-## Use the selected-package installation
+## Install the full Fedora TeX Live scheme
 
-To avoid the large full scheme, set the following variable in your Ansible inventory or group variables:
-
-```yaml
-latex_install_texlive_scheme_full: false
-```
-
-The role then installs the packages in `latex_texlive_packages` instead of `texlive-scheme-full`.
-The default selected set provides German language support, additional LaTeX packages, and XeTeX:
+To opt into the complete Fedora distribution, set this variable in your inventory
+or group variables:
 
 ```yaml
-latex_texlive_packages:
-  - texlive-lang-german
-  - texlive-latex-extra
-  - texlive-xetex
+latex_install_texlive_scheme_full: true
 ```
+
+This installs `texlive-scheme-full` instead of TinyTeX. The full scheme is
+intentionally not the default because of its substantial download and installed
+size. The two TeX distributions are never installed together by this role.
 
 Use `latex_additional_packages` to configure utilities installed with either TeX Live
 option. Its default installs the TeXstudio graphical editor:
@@ -42,6 +39,7 @@ latex_additional_packages:
 **✅ Check**
 
 ```sh
+quarto check
 pdflatex --version
 xelatex --version
 texstudio --version
@@ -51,5 +49,6 @@ texstudio --version
 ## Best practices and useful links
 
 - [TeX Live documentation](https://www.tug.org/texlive/doc.html)
+- [Quarto TinyTeX documentation](https://quarto.org/docs/output-formats/pdf-engine.html#tinytex)
 - [TeXstudio documentation](https://texstudio-org.github.io/)
 - [LaTeX project documentation](https://www.latex-project.org/help/documentation/)

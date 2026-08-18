@@ -52,6 +52,12 @@
         state: directory
         mode: "0755"
 
+    - name: Seed the TinyTeX installation directory for container-safe role checks
+      ansible.builtin.file:
+        path: /root/.TinyTeX/bin
+        state: directory
+        mode: "0755"
+
     - name: Seed a legacy Quarto association for migration coverage
       ansible.builtin.copy:
         dest: /root/.config/mimeapps.list
@@ -126,7 +132,6 @@
     - role: latex
       vars:
         latex_install_texlive_scheme_full: false
-        latex_texlive_packages: []
         latex_additional_packages: []
     - role: r
     - role: keepassxc

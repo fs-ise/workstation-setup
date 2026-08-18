@@ -1,14 +1,9 @@
 ---
-latex_install_texlive_scheme_full: true
-
-latex_texlive_packages:
-  - texlive-lang-german
-  - texlive-latex-extra
-  - texlive-xetex
+latex_install_texlive_scheme_full: false
 
 latex_additional_packages:
   - texstudio
 
 # DNF packages owned by this role; consumed by the package audit.
 latex_managed_dnf_packages: >-
-  {{ latex_texlive_packages + latex_additional_packages + ['texlive-scheme-full'] }}
+  {{ latex_additional_packages + ['texlive-scheme-full'] }}

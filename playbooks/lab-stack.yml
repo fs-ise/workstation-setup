@@ -57,11 +57,12 @@
     - role: languagetool
       tags: [languagetool]
 
+    - role: quarto
+      # The latex tag includes Quarto because the default LaTeX mode uses its CLI.
+      tags: [quarto, latex]
+
     - role: latex
       tags: [latex]
-
-    - role: quarto
-      tags: [quarto]
 
     - role: r
       tags: [r, rstudio]

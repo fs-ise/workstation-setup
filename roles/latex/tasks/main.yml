@@ -11,10 +11,26 @@
     state: present
   when: latex_install_texlive_scheme_full | bool
 
-- name: Install the selected TeX Live packages
-  ansible.builtin.dnf:
-    name: "{{ latex_texlive_packages }}"
-    state: present
+- name: Check whether Quarto-managed TinyTeX is installed
+  ansible.builtin.stat:
+    path: "{{ target_home }}/.TinyTeX/bin"
+  register: latex_tinytex_bin
+  become: true
+  become_user: "{{ target_user }}"
+  when: not (latex_install_texlive_scheme_full | bool)
+
+- name: Install TinyTeX through Quarto
+  ansible.builtin.command:
+    argv:
+      - quarto
+      - install
+      - tinytex
+      - --no-prompt
+      - --update-path
+  environment:
+    HOME: "{{ target_home }}"
+  become: true
+  become_user: "{{ target_user }}"
   when:
     - not (latex_install_texlive_scheme_full | bool)
-    - latex_texlive_packages | length > 0
+    - not (latex_tinytex_bin.stat.isdir | default(false))
