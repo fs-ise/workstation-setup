@@ -16,10 +16,8 @@ default_applications_associations:
     mime_types:
       - "{{ default_applications_quarto_mime_type }}"
       - text/markdown
-      - text/plain
       - text/x-python
       - application/yaml
-      - application/json
       - application/toml
       - application/x-shellscript
       - text/x-bibtex
@@ -28,10 +26,6 @@ default_applications_associations:
     desktop_ids: [texstudio.desktop]
     required: true
     mime_types: [text/x-tex]
-  - name: Okular
-    desktop_ids: [org.kde.okular.desktop]
-    required: true
-    mime_types: [application/pdf]
   - name: LibreOffice Writer
     desktop_ids: [libreoffice-writer.desktop]
     required: false
@@ -55,23 +49,6 @@ default_applications_associations:
       - application/vnd.oasis.opendocument.presentation
       - application/vnd.ms-powerpoint
       - application/vnd.openxmlformats-officedocument.presentationml.presentation
-  - name: Google Chrome
-    desktop_ids: [google-chrome.desktop]
-    required: true
-    mime_types:
-      - text/html
-      - application/xhtml+xml
-      - x-scheme-handler/http
-      - x-scheme-handler/https
-  - name: Thunderbird
-    desktop_ids:
-      - net.thunderbird.Thunderbird.desktop
-      - org.mozilla.Thunderbird.desktop
-      - thunderbird.desktop
-    required: true
-    mime_types:
-      - message/rfc822
-      - x-scheme-handler/mailto
   - name: DB Browser for SQLite
     desktop_ids: [sqlitebrowser.desktop]
     required: false

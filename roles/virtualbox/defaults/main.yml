@@ -1,12 +1,4 @@
 ---
-# Configure VirtualBox's per-user Host Key after installation. Set this to false
-# when the Host Key should remain under manual control.
-virtualbox_configure_host_key: true
-
-# VirtualBox key code 65508 is Right Ctrl on the Linux hosts used here. Override
-# this value to select a different VirtualBox Host Key combination.
-virtualbox_host_key_combination: "65508"
-
 # DNF packages owned by this role; consumed by the package audit.
 virtualbox_managed_dnf_packages:
   - VirtualBox

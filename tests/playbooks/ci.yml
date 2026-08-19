@@ -19,20 +19,10 @@
         required: true
         mime_types:
           - text/x-quarto-markdown
-          - text/plain
       - name: Missing optional viewer
         desktop_ids: [ci-missing-viewer.desktop]
         required: false
         mime_types: [application/pdf]
-      - name: Thunderbird
-        desktop_ids:
-          - net.thunderbird.Thunderbird.desktop
-          - org.mozilla.Thunderbird.desktop
-          - thunderbird.desktop
-        required: true
-        mime_types:
-          - message/rfc822
-          - x-scheme-handler/mailto
   pre_tasks:
     - name: Ensure the CI desktop entry directory exists
       ansible.builtin.file:
@@ -91,22 +81,8 @@
           Type=Application
           Name=CI text editor
           Exec=/usr/bin/true %f
-          MimeType=text/x-quarto-markdown;text/plain;
+          MimeType=text/x-quarto-markdown;
 
-    - name: Create fake Thunderbird desktop-entry candidates
-      ansible.builtin.copy:
-        dest: "/root/.local/share/applications/{{ item }}"
-        mode: "0644"
-        content: |
-          [Desktop Entry]
-          Type=Application
-          Name=CI Thunderbird candidate
-          Exec=/usr/bin/true %u
-          MimeType=message/rfc822;x-scheme-handler/mailto;
-      loop:
-        - net.thunderbird.Thunderbird.desktop
-        - org.mozilla.Thunderbird.desktop
-        - thunderbird.desktop
   roles:
     - role: baseline
     - role: git_tools
@@ -119,9 +95,6 @@
     - role: nemo
       vars:
         nemo_packages: []
-        nemo_configure_preferences: false
-        nemo_configure_ptyxis_action: false
-        nemo_configure_shortcut: false
     - role: dropbox
       vars:
         dropbox_install: false
@@ -159,9 +132,6 @@
       ansible.builtin.assert:
         that:
           - "'text/x-quarto-markdown=ci-text-editor.desktop;' in (ci_mimeapps.content | b64decode)"
-          - "'text/plain=ci-text-editor.desktop;' in (ci_mimeapps.content | b64decode)"
-          - "'message/rfc822=net.thunderbird.Thunderbird.desktop;' in (ci_mimeapps.content | b64decode)"
-          - "'x-scheme-handler/mailto=net.thunderbird.Thunderbird.desktop;' in (ci_mimeapps.content | b64decode)"
           - "'application/x-quarto' not in (ci_mimeapps.content | b64decode)"
           - "'application/x-unrelated=unrelated.desktop;' in (ci_mimeapps.content | b64decode)"
           - "'ci-missing-viewer.desktop' not in (ci_mimeapps.content | b64decode)"

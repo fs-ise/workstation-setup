@@ -50,33 +50,6 @@
     name: "{{ vscode_clipboard_packages }}"
     state: present
 
-- name: Ensure VS Code user settings directories exist
-  ansible.builtin.file:
-    path: "{{ item }}"
-    state: directory
-    owner: "{{ target_user }}"
-    group: "{{ target_user }}"
-    mode: "0755"
-  loop: "{{ vscode_user_config_dirs }}"
-
-- name: Write global VS Code keybindings.json
-  ansible.builtin.copy:
-    dest: "{{ item }}/keybindings.json"
-    owner: "{{ target_user }}"
-    group: "{{ target_user }}"
-    mode: "0644"
-    content: "{{ vscode_keybindings | to_nice_json(indent=2) }}"
-  loop: "{{ vscode_user_config_dirs }}"
-
-- name: Write global VS Code settings.json
-  ansible.builtin.copy:
-    dest: "{{ item }}/settings.json"
-    owner: "{{ target_user }}"
-    group: "{{ target_user }}"
-    mode: "0644"
-    content: "{{ vscode_settings | to_nice_json(indent=2) }}"
-  loop: "{{ vscode_user_config_dirs }}"
-
 - name: Install VS Code extensions with code CLI (best effort)
   become: false
   ansible.builtin.shell: |

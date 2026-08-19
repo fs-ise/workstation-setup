@@ -89,38 +89,6 @@
       {{ (desktop_gnome_shell_enabled_extensions_current
           + (desktop_gnome_shell_extensions | map(attribute='uuid') | list)) | unique | list | to_json }}
 
-- name: Install dotfiles aliases
-  become: true
-  become_user: "{{ target_user }}"
-  block:
-    - name: Check if .bash_aliases exists
-      ansible.builtin.stat:
-        path: "{{ target_home }}/.bash_aliases"
-      register: desktop_gnome_file_stat
-
-    - name: Deploy .bash_aliases if it does not exit
-      ansible.builtin.copy:
-        src: "{{ role_path }}/files/dotfiles/bash_aliases"
-        dest: "{{ target_home }}/.bash_aliases"
-        mode: "0644"
-      when: not desktop_gnome_file_stat.stat.exists
-
-    - name: Ensure .bashrc sources aliases
-      ansible.builtin.lineinfile:
-        path: "{{ target_home }}/.bashrc"
-        line: '[[ -f ~/.bash_aliases ]] && . ~/.bash_aliases'
-        create: true
-        mode: "0644"
-        state: present
-
-    - name: Ensure .zshrc sources aliases
-      ansible.builtin.lineinfile:
-        path: "{{ target_home }}/.zshrc"
-        line: '[[ -f ~/.bash_aliases ]] && source ~/.bash_aliases'
-        create: true
-        mode: "0644"
-        state: present
-
 - name: Set GNOME time and calendar properties
   become: true
   become_user: "{{ target_user }}"
@@ -128,14 +96,6 @@
     key: "{{ item.key }}"
     value: "{{ item.value }}"
   loop: "{{ desktop_gnome_time_and_calendar_properties }}"
-
-- name: Set GNOME navigation shortcuts
-  become: true
-  become_user: "{{ target_user }}"
-  community.general.dconf:
-    key: "{{ item.key }}"
-    value: "{{ item.value }}"
-  loop: "{{ desktop_gnome_navigation_shortcuts }}"
 
 - name: Read GNOME custom keyboard shortcuts
   become: true
@@ -170,22 +130,6 @@
   loop_control:
     label: "{{ item.0.name }}: {{ item.1 }}"
 
-- name: Disable alert sound (terminal 'dingding' noise)
-  become: true
-  become_user: "{{ target_user }}"
-  community.general.dconf:
-    key: "{{ item.key }}"
-    value: "{{ item.value }}"
-  loop: "{{ desktop_gnome_alert_sound }}"
-
-- name: Enable battery percentage in top bar
-  become: true
-  become_user: "{{ target_user }}"
-  community.general.dconf:
-    key: "{{ item.key }}"
-    value: "{{ item.value }}"
-  loop: "{{ desktop_gnome_battery_percentage }}"
-
 - name: Set mouse and touchpad settings
   become: true
   become_user: "{{ target_user }}"
@@ -193,19 +137,3 @@
     key: "{{ item.key }}"
     value: "{{ item.value }}"
   loop: "{{ desktop_gnome_mouse_touchpad }}"
-
-- name: Disable GNOME hot corner (top-left)
-  become: true
-  become_user: "{{ target_user }}"
-  community.general.dconf:
-    key: "{{ item.key }}"
-    value: "{{ item.value }}"
-  loop: "{{ desktop_gnome_hot_corner }}"
-
-- name: Add both DE and US keyboard layout
-  become: true
-  become_user: "{{ target_user }}"
-  community.general.dconf:
-    key: "{{ item.key }}"
-    value: "{{ item.value | string }}"  # filter enforces string representation
-  loop: "{{ desktop_gnome_german_us_keyboard_layout }}"

@@ -17,7 +17,7 @@ The workstation stack includes:
 - Sync & Backup: Vorta/Borg, Nextcloud, Git + LFS
 - Development: SSH, Docker, Visual Studio Code, Python, R, RStudio
 - Research: LaTeX, Pandoc tooling, Quarto, Obsidian
-- Documents: Okular, OCR, GROBID, Recoll
+- Documents: OCR, GROBID, Recoll
 - Productivity & Media: Thunderbird, Chrome, GIMP, Audacity, OBS Studio
 - Security: KeePassXC, ClamAV, VeraCrypt
 

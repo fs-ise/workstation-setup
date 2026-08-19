@@ -1,8 +1,0 @@
-{% set extension_settings = {} %}
-{% for extension in chrome_extensions %}
-{% set _ = extension_settings.update({extension.id: {
-  'installation_mode': 'normal_installed',
-  'update_url': chrome_extension_update_url
-}}) %}
-{% endfor %}
-{{ {'ExtensionSettings': extension_settings} | ansible.builtin.to_nice_json }}

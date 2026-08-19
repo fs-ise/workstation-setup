@@ -16,6 +16,10 @@ Documentation available at [https://fs-ise.github.io/workstation-setup/](https:/
 > **Fedora Workstation 44 x86_64**. The main playbook checks the operating
 > system, major version, and architecture before it changes the workstation.
 
+## Configuration ownership
+
+This shared repository installs applications, research and development capabilities, generic shell support, and conservative lab-wide defaults. Personal dotfiles, desktop ergonomics, shortcuts, application preferences, managed browser extensions, and machine-specific hardware configuration belong in a personal Ansible overlay.
+
 Automated checks lint and syntax-check the complete Ansible setup and exercise a
 container-safe subset twice for idempotence. See [the Ansible CI test guide](tests/README.md)
 for coverage, limitations, and local reproduction commands.

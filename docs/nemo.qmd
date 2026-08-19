@@ -2,24 +2,18 @@
 title: "Nemo file manager"
 ---
 
-Install Nemo and Ptyxis, configure generic thumbnail preferences, and add the `Super+E` shortcut without replacing existing GNOME shortcuts. `Super+E` opens Nemo. In Nemo, pressing F8 opens a separate Ptyxis window running Bash in the current directory. This external terminal window replaces the old embedded `nemo-terminal` extension; the F8 accelerator applies only inside Nemo.
+Install Nemo and its archive and preview capabilities for shared workstation workflows.
 
 ```sh
 ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags nemo
 ```
 
-OCRmyPDF and GROBID continue to own their application-specific Nemo actions; run their tags separately.
+OCRmyPDF and GROBID continue to own their application-specific Nemo actions; run their tags separately. User preferences, desktop shortcuts, and personal Nemo actions are intentionally left to each user or a personal overlay.
 
 ::: {.callout-manual}
 **🔧 Manual setup and configuration**
 
-If Nemo was already running when its action or layout changed, quit it before reopening it:
-
-```sh
-nemo --quit
-```
-
-Log out and back in if the desktop session does not immediately show the shortcut or application actions.
+- Choose Nemo preferences and keyboard shortcuts in your personal desktop configuration.
 :::
 
 ::: {.callout-check}
@@ -27,9 +21,6 @@ Log out and back in if the desktop session does not immediately show the shortcu
 
 ```sh
 nemo --version
-ptyxis --version
-dconf read /org/gnome/settings-daemon/plugins/media-keys/custom-keybindings
-python -m json.tool ~/.config/nemo/actions-tree.json >/dev/null
 ```
 :::
 

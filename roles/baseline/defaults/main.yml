@@ -70,7 +70,6 @@ baseline_optional_packages:
   - openssh-clients
   - openssh-server
   - pdfarranger
-  - okular
   - pinentry
   - poppler-utils
   - pwgen

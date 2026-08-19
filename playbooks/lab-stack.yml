@@ -29,9 +29,6 @@
     - role: veracrypt
       tags: [veracrypt]
 
-    - role: keyboard_copilot_rightctrl
-      tags: [keyboard, copilot_key]
-
     - role: nemo
       tags: [nemo, file_manager]
 

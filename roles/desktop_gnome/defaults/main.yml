@@ -4,19 +4,6 @@
 # NetworkManager MAC-address privacy settings.
 desktop_gnome_configure_wifionice_permanent_mac: true
 
-desktop_gnome_navigation_shortcuts:
-  - key: "/org/gnome/desktop/wm/keybindings/switch-applications"
-    value: "['<Super>Tab']"
-
-  - key: "/org/gnome/desktop/wm/keybindings/switch-applications-backward"
-    value: "['<Shift><Super>Tab']"
-
-  - key: "/org/gnome/desktop/wm/keybindings/switch-windows"
-    value: "['<Alt>Tab']"
-
-  - key: "/org/gnome/desktop/wm/keybindings/switch-windows-backward"
-    value: "['<Shift><Alt>Tab']"
-
 desktop_gnome_ptyxis_shortcuts:
   - path: /org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/
     name: Ptyxis (Ctrl+Alt+T)
@@ -29,34 +16,12 @@ desktop_gnome_ptyxis_shortcuts:
 
 
 desktop_gnome_time_and_calendar_properties:
-  - key: "/org/gnome/desktop/calendar/show-weekdate"
-    value: true
-
   - key: "/org/gnome/desktop/interface/clock-format"
     value: "'24h'"
 
-desktop_gnome_alert_sound:
-  - key: "/org/gnome/desktop/sound/event-sounds"
-    value: false
-
-desktop_gnome_battery_percentage:
-  - key: "/org/gnome/desktop/interface/show-battery-percentage"
-    value: true
-
 desktop_gnome_mouse_touchpad:
-  - key: "/org/gnome/desktop/peripherals/mouse/accel-profile"
-    value: "'flat'"
-
   - key: "/org/gnome/desktop/peripherals/touchpad/tap-to-click"
     value: true
-
-desktop_gnome_hot_corner:
-  - key: "/org/gnome/desktop/interface/enable-hot-corners"
-    value: false
-
-desktop_gnome_german_us_keyboard_layout:
-  - key: "/org/gnome/desktop/input-sources/sources"
-    value: "[('xkb', 'de'), ('xkb', 'us')]"
 
 desktop_gnome_shell_extensions_dir: "{{ target_home }}/.local/share/gnome-shell/extensions"
 desktop_gnome_shell_extensions:

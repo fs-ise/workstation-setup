@@ -21,7 +21,7 @@ more than one is installed: the role selects the first installed desktop ID in
 the configured candidate list.
 
 The role registers `.qmd` files as `text/x-quarto-markdown` in the user's MIME
-database before selecting their default application. This explicit definition
+database before selecting their default application. The role intentionally does not choose a user's web browser, mail client, PDF viewer, or defaults for plain text and JSON files. This explicit definition
 keeps MIME recognition consistent on minimal Fedora installations.
 
 ::: {.callout-manual}

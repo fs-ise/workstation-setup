@@ -8,8 +8,6 @@ readonly output_dir=tests/output
 rm -rf "${output_dir}"
 mkdir -p "${output_dir}"
 
-ansible-playbook -i "${inventory}" tests/playbooks/keyboard-copilot-activation.yml \
-  | tee "${output_dir}/keyboard-copilot-activation.log"
 
 ansible-playbook -i "${inventory}" "${playbook}" | tee "${output_dir}/first-run.log"
 ansible-playbook -i "${inventory}" "${playbook}" | tee "${output_dir}/second-run.log"

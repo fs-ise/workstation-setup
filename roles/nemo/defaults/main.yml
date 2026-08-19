@@ -1,41 +1,12 @@
 ---
-nemo_action_package: ptyxis
 nemo_packages:
   - nemo
   - nemo-fileroller
   - nemo-preview
-  - "{{ nemo_action_package }}"
 
 # Remove the embedded terminal extension installed by older versions of this role.
 nemo_obsolete_packages:
   - nemo-terminal
-
-nemo_configure_preferences: true
-nemo_preview_preferences:
-  - key: /org/nemo/preferences/show-image-thumbnails
-    value: "'local-only'"
-  - key: /org/nemo/preferences/inherit-show-thumbnails
-    value: false
-  - key: /org/nemo/preferences/thumbnail-limit
-    value: "uint64 104857600"
-
-nemo_configure_ptyxis_action: true
-nemo_action_name: open-ptyxis.nemo_action
-nemo_action_directory: "{{ target_home }}/.local/share/nemo/actions"
-nemo_action_path: "{{ nemo_action_directory }}/{{ nemo_action_name }}"
-nemo_action_shortcut: F8
-nemo_ptyxis_helper_path: "{{ target_home }}/.local/libexec/open-ptyxis-here.py"
-nemo_action_command: "{{ nemo_ptyxis_helper_path }} %P"
-nemo_actions_layout_directory: "{{ target_home }}/.config/nemo"
-nemo_actions_layout_path: "{{ nemo_actions_layout_directory }}/actions-tree.json"
-nemo_layout_helper_directory: "{{ target_home }}/.local/libexec"
-nemo_layout_helper_path: "{{ nemo_layout_helper_directory }}/merge-nemo-action-layout.py"
-
-nemo_configure_shortcut: true
-nemo_shortcut_path: /org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1/
-nemo_shortcut_name: files-nemo
-nemo_shortcut_command: nemo
-nemo_shortcut_binding: <Super>e
 
 # DNF packages owned by this role; consumed by the package audit.
 nemo_managed_dnf_packages: "{{ nemo_packages }}"
