@@ -1,36 +1,6 @@
 ---
-# ICE captive portals may associate access with a device's permanent MAC address.
-# This changes only the existing WIFIonICE profile; it does not alter global
-# NetworkManager MAC-address privacy settings.
-desktop_gnome_configure_wifionice_permanent_mac: true
-
-desktop_gnome_ptyxis_shortcuts:
-  - path: /org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/
-    name: Ptyxis (Ctrl+Alt+T)
-    binding: <Control><Alt>t
-    command: ptyxis --new-window
-  - path: /org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/ptyxis-super-t/
-    name: Ptyxis (Super+T)
-    binding: <Super>t
-    command: ptyxis --new-window
-
-
-desktop_gnome_time_and_calendar_properties:
-  - key: "/org/gnome/desktop/interface/clock-format"
-    value: "'24h'"
-
-desktop_gnome_mouse_touchpad:
-  - key: "/org/gnome/desktop/peripherals/touchpad/tap-to-click"
-    value: true
-
 desktop_gnome_shell_extensions_dir: "{{ target_home }}/.local/share/gnome-shell/extensions"
-desktop_gnome_shell_extensions:
-  - name: maximize-new-windows
-    uuid: maximize-new-windows@VitalyOstanin
-    repo: https://github.com/VitalyOstanin/maximize-new-windows.git
-  - name: autohide-battery
-    uuid: autohide-battery@sitnik.ru
-    repo: https://github.com/ai/autohide-battery.git
+desktop_gnome_shell_extensions: []
 
 # DNF packages owned by this role; consumed by the package audit.
 desktop_gnome_managed_dnf_packages:
