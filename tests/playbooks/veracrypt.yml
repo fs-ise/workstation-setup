@@ -74,6 +74,7 @@
           - "'validate_certs: false' not in veracrypt_tasks"
           - >-
             'failed_when: false' not in veracrypt_tasks
+          - "'is version(veracrypt_version' in veracrypt_tasks"
 
     - name: Accept Fedora 44 for VeraCrypt
       ansible.builtin.include_tasks: ../../roles/veracrypt/tasks/platform.yml
@@ -98,8 +99,12 @@
       vars:
         veracrypt_installed:
           rc: 0
-        veracrypt_version_comparison:
-          rc: 0
+          stdout: "1.26.24"
+        veracrypt_version_satisfied: >-
+          {{
+            veracrypt_installed.rc == 0
+            and veracrypt_installed.stdout is version(veracrypt_version, '>=')
+          }}
 
     - name: Check that an equal version is satisfactory
       ansible.builtin.assert:
@@ -111,8 +116,12 @@
       vars:
         veracrypt_installed:
           rc: 0
-        veracrypt_version_comparison:
-          rc: 0
+          stdout: "1.27.0"
+        veracrypt_version_satisfied: >-
+          {{
+            veracrypt_installed.rc == 0
+            and veracrypt_installed.stdout is version(veracrypt_version, '>=')
+          }}
 
     - name: Check that a newer version is satisfactory
       ansible.builtin.assert:
@@ -124,8 +133,12 @@
       vars:
         veracrypt_installed:
           rc: 0
-        veracrypt_version_comparison:
-          rc: 1
+          stdout: "1.25.9"
+        veracrypt_version_satisfied: >-
+          {{
+            veracrypt_installed.rc == 0
+            and veracrypt_installed.stdout is version(veracrypt_version, '>=')
+          }}
 
     - name: Check that an older version requires an upgrade
       ansible.builtin.assert:
@@ -137,8 +150,12 @@
       vars:
         veracrypt_installed:
           rc: 1
-        veracrypt_version_comparison:
-          rc: 1
+          stdout: ""
+        veracrypt_version_satisfied: >-
+          {{
+            veracrypt_installed.rc == 0
+            and veracrypt_installed.stdout is version(veracrypt_version, '>=')
+          }}
 
     - name: Check that an absent version requires installation
       ansible.builtin.assert:
@@ -150,8 +167,12 @@
       vars:
         veracrypt_installed:
           rc: 0
-        veracrypt_version_comparison:
-          rc: 0
+          stdout: "1.26.24"
+        veracrypt_version_satisfied: >-
+          {{
+            veracrypt_installed.rc == 0
+            and veracrypt_installed.stdout is version(veracrypt_version, '>=')
+          }}
 
     - name: Check that the repeated decision remains unchanged
       ansible.builtin.assert:

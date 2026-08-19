@@ -19,24 +19,13 @@
   changed_when: false
   failed_when: veracrypt_installed.rc not in [0, 1]
 
-- name: Compare installed and pinned VeraCrypt versions # noqa command-instead-of-module
-  ansible.builtin.command:
-    argv:
-      - rpm
-      - --compare-versions
-      - "{{ veracrypt_installed.stdout }}"
-      - ge
-      - "{{ veracrypt_version }}"
-  register: veracrypt_version_comparison
-  changed_when: false
-  failed_when: veracrypt_version_comparison.rc not in [0, 1]
-  when: veracrypt_installed.rc == 0
-
-- name: Record an unsatisfied comparison when VeraCrypt is absent
+- name: Record whether the installed VeraCrypt version is satisfactory
   ansible.builtin.set_fact:
-    veracrypt_version_comparison:
-      rc: 1
-  when: veracrypt_installed.rc != 0
+    veracrypt_version_satisfied: >-
+      {{
+        veracrypt_installed.rc == 0
+        and veracrypt_installed.stdout is version(veracrypt_version, '>=')
+      }}
 
 - name: Select VeraCrypt installation behavior
   ansible.builtin.include_tasks: decision.yml

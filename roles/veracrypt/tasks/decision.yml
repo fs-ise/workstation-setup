@@ -1,6 +1,4 @@
 ---
 - name: Decide whether VeraCrypt needs installation
   ansible.builtin.set_fact:
-    veracrypt_install_required: >-
-      {{ veracrypt_installed.rc != 0 or
-         veracrypt_version_comparison.rc != 0 }}
+    veracrypt_install_required: "{{ not veracrypt_version_satisfied }}"
