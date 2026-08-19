@@ -149,7 +149,7 @@
   changed_when: false
   failed_when: false
 
-- name: Merge the Ptyxis shortcut into GNOME custom keyboard shortcuts
+- name: Merge the Ptyxis shortcuts into GNOME custom keyboard shortcuts
   become: true
   become_user: "{{ target_user }}"
   community.general.dconf:
@@ -157,15 +157,18 @@
     value: >-
       {{ (((desktop_gnome_custom_shortcuts_read.stdout | default(''))
            | regex_findall("(?<=')[^']+/(?=')"))
-          + [desktop_gnome_ptyxis_shortcut_path]) | unique | list | to_json }}
+          + (desktop_gnome_ptyxis_shortcuts | map(attribute='path') | list))
+         | unique | list | to_json }}
 
-- name: Configure the Ptyxis shortcut
+- name: Configure the Ptyxis shortcuts
   become: true
   become_user: "{{ target_user }}"
   community.general.dconf:
-    key: "{{ item.key }}"
-    value: "{{ item.value }}"
-  loop: "{{ desktop_gnome_custom_shortcuts }}"
+    key: "{{ item.0.path }}{{ item.1 }}"
+    value: "{{ item.0[item.1] | string | to_json }}"
+  loop: "{{ desktop_gnome_ptyxis_shortcuts | product(['name', 'command', 'binding']) }}"
+  loop_control:
+    label: "{{ item.0.name }}: {{ item.1 }}"
 
 - name: Disable alert sound (terminal 'dingding' noise)
   become: true

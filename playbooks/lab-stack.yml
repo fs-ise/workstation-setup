@@ -92,7 +92,7 @@
       tags: [dropbox]
 
     - role: desktop_gnome
-      tags: [desktop]
+      tags: [desktop, desktop_gnome]
 
     # Keep this last: associations are valid only after applications export their desktop entries.
     - role: default_applications

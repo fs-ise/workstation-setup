@@ -17,15 +17,15 @@ desktop_gnome_navigation_shortcuts:
   - key: "/org/gnome/desktop/wm/keybindings/switch-windows-backward"
     value: "['<Shift><Alt>Tab']"
 
-desktop_gnome_ptyxis_shortcut_path: /org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/
-desktop_gnome_custom_shortcuts:
-  # Terminal (Ctrl+Alt+T)
-  - key: "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/name"
-    value: "'terminal ptyxis'"
-  - key: "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/command"
-    value: "'ptyxis'"
-  - key: "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/binding"
-    value: "'<Control><Alt>t'"
+desktop_gnome_ptyxis_shortcuts:
+  - path: /org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/
+    name: Ptyxis (Ctrl+Alt+T)
+    binding: <Control><Alt>t
+    command: ptyxis --new-window
+  - path: /org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/ptyxis-super-t/
+    name: Ptyxis (Super+T)
+    binding: <Super>t
+    command: ptyxis --new-window
 
 
 desktop_gnome_time_and_calendar_properties:
