@@ -1,5 +1,5 @@
 ---
-title: "ONLYOFFICE Desktop Editors"
+title: "ONLYOFFICE"
 ---
 
 Install the managed desktop office suite from Flathub. Microsoft Office OOXML
