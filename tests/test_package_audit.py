@@ -81,6 +81,16 @@ class PackageAuditTests(unittest.TestCase):
         unmanaged = sorted(set(normalized_detected) - set(managed) - set(allowlist))
         self.assertEqual(["manual-lab-package"], unmanaged)
 
+    def test_unmanaged_package_failure_formats_packages_as_yaml_lines(self):
+        playbook = (ROOT / "playbooks/audit-unmanaged-packages.yml").read_text(
+            encoding="utf-8"
+        )
+        self.assertIn(
+            "package_audit_unmanaged | to_nice_yaml(indent=2) | trim | indent(2, true)",
+            playbook,
+        )
+        self.assertNotIn("package_audit_unmanaged | join(", playbook)
+
     def test_expected_fedora_system_packages_remain_allowed(self):
         expected = [
             "fedora-release-workstation",

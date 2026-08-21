@@ -98,7 +98,7 @@
       ansible.builtin.fail:
         msg: |-
           Found unmanaged User-reason packages:
-            - {{ package_audit_unmanaged | join('\n  - ') }}
+          {{ package_audit_unmanaged | to_nice_yaml(indent=2) | trim | indent(2, true) }}
 
           Declare expected packages in Ansible-managed package lists or add intentional local/system packages
           to package_audit_allowlist or package_audit_allowlist_patterns.
