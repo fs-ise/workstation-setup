@@ -18,17 +18,20 @@ website:
         text: Home
 
       - section: New machine
+        href: new_machine.qmd
         contents:
           - install_os.qmd
           - install_software.qmd
           - restore.qmd
 
       - section: Day-to-day operations
+        href: operations.qmd
         contents:
           - update_software.qmd
           - backup.qmd
 
       - section: Software
+        href: software.qmd
         contents:
           - baseline.qmd
           - git.qmd
@@ -57,6 +60,7 @@ website:
           - llm.qmd
 
       - section: Reference
+        href: reference.qmd
         contents:
           - repo_structure.qmd
           - principles.qmd

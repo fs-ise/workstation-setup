@@ -1,0 +1,11 @@
+---
+title: "New machine"
+---
+
+Provision a workstation in the following order. The supported starting point is Fedora Workstation 44 x86_64.
+
+1. **[Install OS/Ansible](install_os.qmd).** Install Fedora, apply the first system update, install the bootstrap tools, clone this repository, and verify its local Ansible inventory. Installing the operating system and completing any account or machine-specific choices are manual steps.
+2. **[Install software](install_software.qmd).** Run the main Ansible playbook to apply the repository's managed packages and configuration. Ansible performs most shared setup; the page identifies the account sign-ins, credentials, GUI preferences, and other user-specific configuration that must remain manual.
+3. **[Set up or restore data](restore.qmd).** Reconnect Git repositories and synchronized storage, then restore trusted local data, profiles, and keys only where needed. Restoration sources, credentials, and recovery decisions are intentionally not automated.
+
+Complete each page's checks before continuing to the next step. After provisioning, use the [day-to-day operations](operations.qmd) workflow to keep the workstation current and recoverable.

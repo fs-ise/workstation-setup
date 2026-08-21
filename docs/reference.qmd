@@ -1,0 +1,11 @@
+---
+title: "Reference"
+---
+
+Use this material when changing the automation or diagnosing a workstation that no longer matches the documented setup.
+
+- **[Repository structure](repo_structure.qmd):** Find the Quarto sources, Ansible playbooks and roles, inventories, variables, and Make targets, and see how they work together.
+- **[Principles](principles.qmd):** Check the expectations for reproducibility, security, simplicity, open-source tools, and documentation-as-configuration before modifying the setup.
+- **[Troubleshooting](troubleshooting.qmd):** Start with tested checks for inventory and collection errors, Docker sessions, local services, and unmanaged-package audit findings.
+
+When behavior and documentation differ, inspect the relevant role and playbook first, then update its software page and checks with the automation change.
