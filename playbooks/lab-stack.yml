@@ -82,6 +82,9 @@
     - role: onlyoffice
       tags: [onlyoffice]
 
+    - role: okular
+      tags: [okular]
+
     - role: thunderbird
       tags: [thunderbird, thunderbird_mcp]
 

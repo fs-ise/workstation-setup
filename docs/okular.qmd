@@ -1,0 +1,32 @@
+---
+title: "Okular"
+---
+
+## Install Okular
+
+Okular is the managed document and PDF viewer. It supports PDF viewing,
+annotations, bookmarks and document navigation, PDF forms, and a broader range
+of document formats useful in academic reading and review workflows.
+
+```sh
+ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags okular
+```
+
+The role installs Okular and the default-applications role makes it the preferred
+viewer for PDF files.
+
+::: {.callout-check}
+**✅ Check**
+
+```sh
+okular --version
+xdg-mime query default application/pdf
+```
+
+The MIME query should return `org.kde.okular.desktop`.
+:::
+
+## Best practices and useful links
+
+- [Okular handbook](https://docs.kde.org/stable5/en/okular/okular/)
+- [Okular website](https://okular.kde.org/)

@@ -1,0 +1,6 @@
+---
+- name: Install Okular
+  ansible.builtin.dnf:
+    name: "{{ okular_packages }}"
+    state: present
+  when: okular_packages | length > 0

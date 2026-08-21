@@ -45,6 +45,7 @@ website:
           - languagetool.qmd
           - teams.qmd
           - onlyoffice.qmd
+          - okular.qmd
           - virtualbox.qmd
           - latex.qmd
           - quarto.qmd

@@ -26,6 +26,10 @@ default_applications_associations:
     desktop_ids: [texstudio.desktop]
     required: true
     mime_types: [text/x-tex]
+  - name: Okular
+    desktop_ids: [org.kde.okular.desktop]
+    required: true
+    mime_types: [application/pdf]
   - name: ONLYOFFICE Desktop Editors
     desktop_ids: [org.onlyoffice.desktopeditors.desktop]
     required: true

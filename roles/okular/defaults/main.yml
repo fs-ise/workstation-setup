@@ -1,0 +1,6 @@
+---
+okular_packages:
+  - okular
+
+# DNF packages owned by this role; consumed by the package audit.
+okular_managed_dnf_packages: "{{ okular_packages }}"

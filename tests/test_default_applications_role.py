@@ -12,7 +12,6 @@ class DefaultApplicationsRoleTests(unittest.TestCase):
         for fragment in (
             "text/plain",
             "application/json",
-            "application/pdf",
             "Google Chrome",
             "x-scheme-handler/http",
             "x-scheme-handler/https",
@@ -48,6 +47,10 @@ class DefaultApplicationsRoleTests(unittest.TestCase):
         ):
             self.assertIn(mime_type, DEFAULTS)
         self.assertNotIn("libreoffice-", DEFAULTS.lower())
+
+    def test_okular_owns_pdf_association(self):
+        self.assertIn("desktop_ids: [org.kde.okular.desktop]", DEFAULTS)
+        self.assertIn("mime_types: [application/pdf]", DEFAULTS)
 
     def test_role_still_validates_and_configures_declared_associations(self):
         for task in (

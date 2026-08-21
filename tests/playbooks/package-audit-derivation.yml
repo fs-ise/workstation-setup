@@ -17,13 +17,15 @@
           - "'docker-ce' in package_audit_managed_packages"
           - "'R' in package_audit_managed_packages"
           - "'rstudio' in package_audit_managed_packages"
+          - "'okular' in package_audit_managed_packages"
           - "package_audit_managed_packages == (package_audit_managed_packages | unique | sort)"
 
     - name: Compute a representative unmanaged-package result
       ansible.builtin.set_fact:
         package_audit_test_unmanaged: >-
           {{
-            ['git', 'quarto', 'docker-ce', 'R', 'rstudio', 'manual-lab-package']
+            ['git', 'quarto', 'docker-ce', 'R', 'rstudio', 'okular',
+             'manual-lab-package']
             | difference(package_audit_managed_packages)
             | sort
           }}
