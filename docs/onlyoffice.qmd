@@ -23,9 +23,8 @@ xdg-mime query default application/vnd.openxmlformats-officedocument.wordprocess
 :::
 
 ::: {.callout-note title="Alternatives considered: LibreOffice" collapse=true}
-LibreOffice is not installed alongside ONLYOFFICE. The baseline role removes
-Fedora LibreOffice packages so that the workstation has one managed desktop
-office suite and one consistent set of file associations.
+ONLYOFFICE is preferred because it generally provides **higher fidelity with Microsoft Office’s OOXML formats** (`.docx`, `.xlsx`, `.pptx`), especially for complex formatting and collaborative document exchange.
+LibreOffice is more feature-rich in some areas and strongly supports open formats, but conversions to and from Microsoft Office documents are more likely to introduce layout or formatting differences.
 :::
 
 ## Best practices and useful links
