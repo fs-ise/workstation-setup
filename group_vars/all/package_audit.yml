@@ -299,7 +299,6 @@ package_audit_allowlist_patterns:
   - '^NetworkManager(?:-adsl|-bluetooth|-config-connectivity-fedora|-libnm|-ovs|-ppp|-team|-wifi|-wwan)?$'
   - '^PackageKit(?:-command-not-found|-glib|-gtk3-module|-gstreamer-plugin)?$'
   - '^texlive-'
-  - '^libreoffice-(?:calc|core|data|draw|emailmerge|graphicfilter|gtk3|help-en|impress|langpack-de|langpack-en|math|ogltrans|opensymbol-fonts|pdfimport|pyuno|ure|ure-common|writer|xsltfilter)$'
   - '^glibc(?:-all-langpacks|-common|-devel|-gconv-extra|-headers|-langpack-(?:de|en)|-locale-source|-static|-utils)?$'
   - '^grub2-'
   - '^xorg-'

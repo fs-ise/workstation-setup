@@ -32,6 +32,23 @@ class DefaultApplicationsRoleTests(unittest.TestCase):
         ):
             self.assertIn(fragment, DEFAULTS)
 
+    def test_onlyoffice_owns_office_document_associations(self):
+        self.assertIn("org.onlyoffice.desktopeditors.desktop", DEFAULTS)
+        for mime_type in (
+            "application/msword",
+            "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+            "application/vnd.ms-excel",
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            "application/vnd.ms-powerpoint",
+            "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+            "application/vnd.oasis.opendocument.text",
+            "application/vnd.oasis.opendocument.spreadsheet",
+            "application/vnd.oasis.opendocument.presentation",
+            "application/rtf",
+        ):
+            self.assertIn(mime_type, DEFAULTS)
+        self.assertNotIn("libreoffice-", DEFAULTS.lower())
+
     def test_role_still_validates_and_configures_declared_associations(self):
         for task in (
             "Find installed desktop entries",

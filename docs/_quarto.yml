@@ -44,6 +44,7 @@ website:
           - vscode.qmd
           - languagetool.qmd
           - teams.qmd
+          - onlyoffice.qmd
           - virtualbox.qmd
           - latex.qmd
           - quarto.qmd

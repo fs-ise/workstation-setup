@@ -1,0 +1,6 @@
+---
+- name: Install ONLYOFFICE Desktop Editors from Flathub
+  community.general.flatpak:
+    name: "{{ onlyoffice_flatpak_id }}"
+    state: present
+    remote: flathub

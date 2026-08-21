@@ -26,26 +26,18 @@ default_applications_associations:
     desktop_ids: [texstudio.desktop]
     required: true
     mime_types: [text/x-tex]
-  - name: LibreOffice Writer
-    desktop_ids: [libreoffice-writer.desktop]
-    required: false
+  - name: ONLYOFFICE Desktop Editors
+    desktop_ids: [org.onlyoffice.desktopeditors.desktop]
+    required: true
     mime_types:
       - application/vnd.oasis.opendocument.text
       - application/msword
       - application/vnd.openxmlformats-officedocument.wordprocessingml.document
       - application/rtf
-  - name: LibreOffice Calc
-    desktop_ids: [libreoffice-calc.desktop]
-    required: false
-    mime_types:
       - application/vnd.oasis.opendocument.spreadsheet
       - application/vnd.ms-excel
       - application/vnd.openxmlformats-officedocument.spreadsheetml.sheet
       - text/csv
-  - name: LibreOffice Impress
-    desktop_ids: [libreoffice-impress.desktop]
-    required: false
-    mime_types:
       - application/vnd.oasis.opendocument.presentation
       - application/vnd.ms-powerpoint
       - application/vnd.openxmlformats-officedocument.presentationml.presentation

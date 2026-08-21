@@ -1,0 +1,35 @@
+---
+title: "ONLYOFFICE Desktop Editors"
+---
+
+Install the managed desktop office suite from Flathub. Microsoft Office OOXML
+formats (`.docx`, `.xlsx`, and `.pptx`) are the primary interoperability target.
+
+```sh
+ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags onlyoffice
+```
+
+The `onlyoffice` role installs the `org.onlyoffice.desktopeditors` Flatpak. The
+default-applications role associates it with Word, Excel, PowerPoint,
+OpenDocument, RTF, and CSV files.
+
+::: {.callout-check}
+**✅ Check**
+
+```sh
+flatpak info org.onlyoffice.desktopeditors
+xdg-mime query default application/vnd.openxmlformats-officedocument.wordprocessingml.document
+```
+:::
+
+::: {.callout-note title="Alternatives considered: LibreOffice" collapse=true}
+LibreOffice is not installed alongside ONLYOFFICE. The baseline role removes
+Fedora LibreOffice packages so that the workstation has one managed desktop
+office suite and one consistent set of file associations.
+:::
+
+## Best practices and useful links
+
+- [ONLYOFFICE Desktop Editors documentation](https://helpcenter.onlyoffice.com/desktop.aspx)
+- [ONLYOFFICE on Flathub](https://flathub.org/apps/org.onlyoffice.desktopeditors)
+- [Flatpak command reference](https://docs.flatpak.org/en/latest/flatpak-command-reference.html)

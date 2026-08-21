@@ -79,6 +79,9 @@
     - role: teams_for_linux
       tags: [teams]
 
+    - role: onlyoffice
+      tags: [onlyoffice]
+
     - role: thunderbird
       tags: [thunderbird, thunderbird_mcp]
 

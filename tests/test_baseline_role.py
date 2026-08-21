@@ -41,7 +41,7 @@ class BaselineRoleTests(unittest.TestCase):
         required = required.split("\nbaseline_remove_packages_best_effort:", 1)[0]
         optional = self.defaults.split("baseline_optional_packages:\n", 1)[1]
         optional = optional.split("\nbaseline_configure_flathub:", 1)[0]
-        for package in ("gnome-terminal", "libxslt-devel"):
+        for package in ("gnome-terminal", "libxslt-devel", "libreoffice-*"):
             self.assertIn(f"  - {package}\n", removed)
             self.assertNotIn(f"  - {package}\n", required)
             self.assertNotIn(f"  - {package}\n", optional)
