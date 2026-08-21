@@ -28,7 +28,7 @@ website:
           - update_software.qmd
           - backup.qmd
 
-      - section: Configuration
+      - section: Software
         contents:
           - baseline.qmd
           - git.qmd

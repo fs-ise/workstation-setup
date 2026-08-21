@@ -16,7 +16,7 @@ Executable Ansible entry points. The main workstation setup is `playbooks/lab-st
 
 ### `roles/`
 
-Reusable Ansible configuration units. Roles keep related installation and configuration tasks together so they can be run from the main playbook and documented in the Configuration section.
+Reusable Ansible configuration units. Roles keep related installation and configuration tasks together so they can be run from the main playbook and documented in the Software section.
 
 ### `inventory`
 
@@ -43,7 +43,7 @@ If present, this directory contains GitHub-specific project automation such as w
 1. Follow the New machine pages in `docs/` to install Fedora, install prerequisites, verify the committed `inventory`, and run the lab stack.
 2. Run `make lab-stack`, which calls the main Ansible playbook.
 3. The playbook applies focused roles from `roles/`.
-4. Use Configuration pages for role-specific manual steps and checks.
+4. Use Software pages for role-specific manual steps and checks.
 5. Use Day-to-day operations pages for recurring [software updates](update_software.html) and [backup and sync](backup.html) routines.
 
 ## Best practices and useful links

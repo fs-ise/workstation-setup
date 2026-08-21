@@ -55,7 +55,7 @@ curl -f http://localhost:8081/v2/languages
 curl -f http://localhost:8070/api/isalive
 ```
 
-Use the service-specific Configuration pages for expected ports and startup commands.
+Use the service-specific Software pages for expected ports and startup commands.
 
 ## Package audit reports unmanaged packages
 
