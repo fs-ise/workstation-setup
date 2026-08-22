@@ -1,6 +1,11 @@
+Unless otherwise noted, source code, Ansible roles, scripts, configuration,
+and other software artifacts in this repository are licensed under the MIT
+License below. Documentation under docs/ is dedicated to the public domain
+under CC0 1.0 Universal; see docs/LICENSE.
+
 MIT License
 
-Copyright (c) 2025, Gerit Wagner and Julian Prester
+Copyright (c) 2025-2026, Gerit Wagner
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

@@ -30,5 +30,10 @@ This project reflects major contributions by Carlo Tang.
 
 ## License
 
-This project is distributed under the [MIT License](LICENSE) the documentation is distributed under the [CC-0](https://creativecommons.org/publicdomain/zero/1.0/) license.
-If you contribute to the project, you agree to share your contribution following these licenses.
+Unless otherwise noted, source code, Ansible roles, scripts, configuration,
+and other software artifacts are distributed under the [MIT License](LICENSE).
+Documentation under [`docs/`](docs/) is dedicated to the public domain under
+[CC0 1.0 Universal](docs/LICENSE).
+
+By contributing, you agree that your contributions are provided under the
+license that applies to the files you change.
