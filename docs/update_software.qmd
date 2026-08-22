@@ -29,11 +29,11 @@ sudo dnf upgrade --refresh
 flatpak update
 
 # Reapply the managed workstation configuration
-make lab-stack
+make install
 # Underlying command: ansible-playbook -i inventory -K playbooks/lab-stack.yml
 
 # Audit DNF packages and manual filesystem installations
-make audit-packages
+make audit
 # Underlying command: ansible-playbook -i inventory -K playbooks/audit-unmanaged-packages.yml
 ```
 
@@ -50,8 +50,8 @@ The commands intentionally run in this order:
 
 `ansible-playbook` is not a substitute for `dnf upgrade` or `flatpak update`. Most roles ensure that selected packages are present and configured; they do not generally upgrade every installed package.
 
-`make update` delegates the first five steps to `make update-base`, then runs the
-shared audit. A [personal overlay](personal_overlays.html) calls `update-base`,
+`make update` delegates the update and configuration steps to `make update-base`,
+then runs `make audit`. A [personal overlay](personal_overlays.html) calls `update-base`,
 applies its own roles, and owns the final combined audit. This keeps the shared
 workflow composable without making it depend on any overlay.
 
@@ -105,7 +105,7 @@ flowchart TD
   L --> DS
   R --> C[Local drift removed]
 
-  DS --> U[Re-run lab-stack setup]
+  DS --> U[Run make install again]
   U --> W[Workstation aligned]
 ```
 :::

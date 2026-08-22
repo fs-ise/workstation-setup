@@ -10,7 +10,7 @@ Some repository setup tasks require the DNF plugins package.
 
 ```sh
 sudo dnf -y install dnf-plugins-core
-make lab-stack
+make install
 ```
 
 ## Ansible cannot find the inventory
@@ -33,7 +33,7 @@ make deps
 Then rerun:
 
 ```sh
-make lab-stack
+make install
 ```
 
 ## Docker works only after logging in again
@@ -62,7 +62,7 @@ Use the service-specific Software pages for expected ports and startup commands.
 Run the audit and review each finding:
 
 ```sh
-make audit-packages
+make audit
 ```
 
 Resolve findings by adding deliberate workstation packages to Ansible-managed package lists, exact allowlists, or narrowly targeted regex allowlists. See [Update software](update_software.html) for the decision process.

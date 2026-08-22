@@ -12,6 +12,18 @@
 
 Documentation available at [https://fs-ise.github.io/workstation-setup/](https://fs-ise.github.io/workstation-setup/).
 
+From the repository root, use the same main commands as a personal overlay:
+
+```sh
+make install  # Apply the desired workstation configuration
+make update   # Update software, reapply configuration, and audit
+make audit    # Audit the resulting workstation state
+```
+
+See [Install software](https://fs-ise.github.io/workstation-setup/install_software.html)
+and [Update software](https://fs-ise.github.io/workstation-setup/update_software.html)
+for prerequisites, behavior, and verification guidance.
+
 > **Supported platform:** This repository is currently tested/supported on
 > **Fedora Workstation 44 x86_64**. The main playbook checks the operating
 > system, major version, and architecture before it changes the workstation.

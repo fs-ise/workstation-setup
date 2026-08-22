@@ -18,6 +18,11 @@ make update
 make audit
 ```
 
+- `make install` applies the desired workstation configuration.
+- `make update` updates dependencies and software, reapplies the configuration,
+  and audits the result.
+- `make audit` audits the resulting workstation state.
+
 Run these commands **from the overlay repository**. Its `Makefile` orchestrates both layers: it invokes the appropriate shared workstation targets and then applies or audits the personal configuration. Users therefore do not need to run the shared and personal repositories separately.
 
 Typical responsibilities of an overlay include personal dotfiles and shell configuration, secrets or references to externally stored secrets, personal software, desktop preferences, and machine-specific configuration.

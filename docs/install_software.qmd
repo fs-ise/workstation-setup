@@ -10,9 +10,10 @@ playbook gathers platform facts first and stops with the detected platform if
 the distribution, major version, or architecture is unsupported.
 
 ```sh
-ansible-playbook -i inventory -K playbooks/lab-stack.yml
+make install
 ```
-The command applies the desired state for the first time.
+The command applies the desired workstation configuration. It delegates to the
+`lab-stack` target, which runs `playbooks/lab-stack.yml`.
 [Update software](update_software.html) updates Fedora and Flatpak software, then reapplies and audits that same state during routine maintenance.
 Both workflows rely on Ansible and documented package policy rather than manual, undocumented changes.
 For a workstation with user- or machine-specific automation, apply this shared
