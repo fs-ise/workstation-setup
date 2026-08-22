@@ -36,7 +36,7 @@ Clone the workstation setup repository and enter it:
 ```sh
 git clone git@github.com:fs-ise/workstation-setup.git
 cd workstation-setup
-ansible-galaxy collection install -r requirements.yml
+make deps
 ```
 
 If SSH access to GitHub is not configured yet, use HTTPS for the first clone:
@@ -44,8 +44,12 @@ If SSH access to GitHub is not configured yet, use HTTPS for the first clone:
 ```sh
 git clone https://github.com/fs-ise/workstation-setup.git
 cd workstation-setup
-ansible-galaxy collection install -r requirements.yml
+make deps
 ```
+
+`make deps` installs or updates the exact Ansible Galaxy collection versions in
+`requirements.yml`. These versions are intentionally pinned so tagged releases
+use the same tested dependencies on every workstation.
 
 ## 4. Verify the inventory
 

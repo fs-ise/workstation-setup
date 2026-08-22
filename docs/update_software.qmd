@@ -19,6 +19,9 @@ commands in order; use them individually for troubleshooting:
 ```sh
 git pull --ff-only
 
+# Install or refresh the repository's pinned Ansible Galaxy collections
+make deps
+
 # Update Fedora packages
 sudo dnf upgrade --refresh
 
@@ -38,9 +41,12 @@ The commands intentionally run in this order:
 
 1. Update the setup repository with a fast-forward-only pull so divergent local
    history is not merged automatically.
-2. Update Fedora packages and Flatpak applications from their configured repositories. These commands omit `-y` so you can review consequential changes before installation.
-3. Reapply the Ansible desired state after the software updates.
-4. Audit the resulting system for DNF package drift and high-signal manual filesystem installations.
+2. Install or refresh the Ansible Galaxy dependencies declared in
+   `requirements.yml`. Collection versions are intentionally pinned so tagged
+   releases use the same tested dependencies on every workstation.
+3. Update Fedora packages and Flatpak applications from their configured repositories. These commands omit `-y` so you can review consequential changes before installation.
+4. Reapply the Ansible desired state after the software updates.
+5. Audit the resulting system for DNF package drift and high-signal manual filesystem installations.
 
 `ansible-playbook` is not a substitute for `dnf upgrade` or `flatpak update`. Most roles ensure that selected packages are present and configured; they do not generally upgrade every installed package.
 

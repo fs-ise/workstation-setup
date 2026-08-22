@@ -4,7 +4,7 @@ title: "Day-to-day operations"
 
 Use this section to keep an existing workstation aligned with the repository and its data recoverable.
 
-- **[Update software](update_software.qmd):** From the repository root, run `make update` to pull fast-forward-only changes, update Fedora and Flatpak packages, reapply the Ansible lab stack, and audit unmanaged packages. The page also documents the underlying commands for troubleshooting.
+- **[Update software](update_software.qmd):** From the repository root, run `make update` to pull fast-forward-only changes, refresh pinned Galaxy dependencies, update Fedora and Flatpak packages, reapply the Ansible lab stack, and audit unmanaged packages. The page also documents the underlying commands for troubleshooting.
 - **[Backup and sync](backup.qmd):** Follow the daily Git and Nextcloud checks, run or verify the Vorta/Borg backup each week, and test recovery regularly. Backup destinations, credentials, and schedules require deliberate manual configuration.
 
 Run the update workflow regularly and review its audit findings rather than allowing local package drift to accumulate. Keep backup media disconnected except while backing up, checking, or restoring data.

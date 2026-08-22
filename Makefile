@@ -1,7 +1,11 @@
-.PHONY: update lab-stack audit-packages
+.PHONY: deps update lab-stack audit-packages
+
+deps:
+	ansible-galaxy collection install -r requirements.yml --upgrade
 
 update:
 	git pull --ff-only
+	$(MAKE) deps
 	sudo dnf upgrade --refresh
 	flatpak update
 	$(MAKE) lab-stack

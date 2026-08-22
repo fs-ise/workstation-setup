@@ -27,7 +27,7 @@ ansible-inventory -i inventory --list
 From the repository root, install the collections declared in `requirements.yml`:
 
 ```sh
-ansible-galaxy collection install -r requirements.yml
+make deps
 ```
 
 Then rerun:

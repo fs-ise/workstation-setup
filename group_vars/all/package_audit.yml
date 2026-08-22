@@ -115,7 +115,6 @@ package_audit_allowlist:
   - python3-dnf-plugin-versionlock
   - spandsp
   - tinysparql
-  - unoconv
   - ansible-core
   - compsize
   - iptstate

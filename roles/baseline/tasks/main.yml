@@ -6,12 +6,10 @@
     update_cache: true
   loop: "{{ baseline_required_packages }}"
 
-- name: Remove unwanted packages (best effort)
+- name: Remove unwanted packages
   ansible.builtin.dnf:
-    name: "{{ item }}"
+    name: "{{ baseline_remove_packages }}"
     state: absent
-  loop: "{{ baseline_remove_packages_best_effort }}"
-  failed_when: false
 
 - name: Install optional baseline packages
   ansible.builtin.dnf:

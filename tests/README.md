@@ -3,8 +3,9 @@
 The CI checks the complete Ansible setup statically and runs a deliberately small,
 safe subset in a Fedora 44 x86_64 container, matching the repository's currently
 tested/supported Fedora Workstation 44 x86_64 platform. The execution test runs the `baseline`,
-`borg_vorta`, and `keepassxc` roles with package installation, package removal,
-TeX Live, and Flathub disabled. It
+`borg_vorta`, and `keepassxc` roles with package installation, TeX Live, and
+Flathub disabled. Baseline removal uses a deliberately absent fixture package
+to verify DNF's idempotent `state: absent` behavior. It
 also runs `default_applications` with a reduced fixture and a fake desktop entry,
 without installing GUI software. It asserts the Git and MIME configuration, runs
 the playbook a second time, and requires `changed=0` in the second play recap.
@@ -20,7 +21,7 @@ source .venv/bin/activate
 python -m pip install --upgrade pip
 python -m pip install -r requirements.txt
 
-ansible-galaxy collection install -r requirements.yml
+make deps
 
 yamllint .
 ansible-lint
@@ -60,7 +61,7 @@ docker run --rm \
   --volume "$PWD:/workspace:Z" \
   --workdir /workspace \
   fedora:44 \
-  bash -lc 'dnf install -y ansible-core git python3-libdnf5 && ansible-galaxy collection install -r requirements.yml && tests/run-idempotence.sh'
+  bash -lc 'dnf install -y ansible-core git make python3-libdnf5 && make deps && tests/run-idempotence.sh'
 ```
 
 The container is not privileged. All changes are confined to its disposable

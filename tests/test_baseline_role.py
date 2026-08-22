@@ -22,7 +22,7 @@ class BaselineRoleTests(unittest.TestCase):
 
     def test_core_dependencies_are_required(self):
         required = self.defaults.split("baseline_required_packages:\n", 1)[1]
-        required = required.split("\nbaseline_remove_packages_best_effort:", 1)[0]
+        required = required.split("\nbaseline_remove_packages:", 1)[0]
         for package in ("ca-certificates", "git", "python3"):
             self.assertIn(f"  - {package}\n", required)
 
@@ -34,23 +34,33 @@ class BaselineRoleTests(unittest.TestCase):
 
     def test_obsolete_user_reason_packages_are_removed(self):
         removed = self.defaults.split(
-            "baseline_remove_packages_best_effort:\n", 1
+            "baseline_remove_packages:\n", 1
         )[1]
         removed = removed.split("\nbaseline_optional_packages:", 1)[0]
         required = self.defaults.split("baseline_required_packages:\n", 1)[1]
-        required = required.split("\nbaseline_remove_packages_best_effort:", 1)[0]
+        required = required.split("\nbaseline_remove_packages:", 1)[0]
         optional = self.defaults.split("baseline_optional_packages:\n", 1)[1]
         optional = optional.split("\nbaseline_configure_flathub:", 1)[0]
-        for package in ("gnome-terminal", "libxslt-devel", "libreoffice-*"):
+        for package in (
+            "gnome-terminal",
+            "libxslt-devel",
+            "libreoffice-*",
+            "unoconv",
+        ):
             self.assertIn(f"  - {package}\n", removed)
             self.assertNotIn(f"  - {package}\n", required)
             self.assertNotIn(f"  - {package}\n", optional)
 
         self.assertIn("  - libxslt\n", optional)
+        self.assertIn("  - malcontent-control\n", removed)
+        self.assertNotIn("  - malcontent\n", removed)
 
-        removal_task = self.task_block("Remove unwanted packages (best effort)")
-        self.assertIn('loop: "{{ baseline_remove_packages_best_effort }}"', removal_task)
+        removal_task = self.task_block("Remove unwanted packages")
+        self.assertIn('name: "{{ baseline_remove_packages }}"', removal_task)
         self.assertIn("state: absent", removal_task)
+        self.assertNotIn("loop:", removal_task)
+        self.assertNotIn("failed_when", removal_task)
+        self.assertNotIn("ignore_errors", removal_task)
 
     def test_managed_packages_are_derived_from_package_lists(self):
         self.assertIn(
@@ -73,6 +83,8 @@ class BaselineRoleTests(unittest.TestCase):
     def test_ci_uses_current_package_variables(self):
         self.assertIn("    baseline_required_packages: []\n", self.ci_playbook)
         self.assertIn("    baseline_optional_packages: []\n", self.ci_playbook)
+        self.assertIn("    baseline_remove_packages:\n", self.ci_playbook)
+        self.assertIn("      - workstation-setup-ci-absent-package\n", self.ci_playbook)
         self.assertNotIn("baseline_base_packages", self.ci_playbook)
         self.assertNotIn("baseline_install_packages_best_effort", self.ci_playbook)
 

@@ -51,7 +51,7 @@ jobs:
           path: ~/.ansible/collections
           key: galaxy-${{ runner.os }}-${{ hashFiles('requirements.yml') }}
       - name: Install Galaxy dependencies
-        run: ansible-galaxy collection install -r requirements.yml
+        run: make deps
       - name: Lint YAML
         run: yamllint .
       - name: Lint Ansible
@@ -114,4 +114,4 @@ jobs:
             --volume "$PWD:/workspace" \
             --workdir /workspace \
             fedora:44 \
-            bash -lc 'dnf install -y ansible-core git python3-libdnf5 && ansible-galaxy collection install -r requirements.yml && tests/run-idempotence.sh'
+            bash -lc 'dnf install -y ansible-core git make python3-libdnf5 && make deps && tests/run-idempotence.sh'

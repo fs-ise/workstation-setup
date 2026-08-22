@@ -10,7 +10,7 @@ baseline_required_packages:
   - unzip
   - wget
 
-baseline_remove_packages_best_effort:
+baseline_remove_packages:
   - aisleriot
   - brasero
   - cheese
@@ -37,9 +37,10 @@ baseline_remove_packages_best_effort:
   # The workstation uses libxslt at runtime; development headers are not required.
   - libxslt-devel
   # ONLYOFFICE is the managed desktop office suite. A wildcard keeps Fedora's
-  # changing set of LibreOffice subpackages out without affecting other software.
+  # changing set of LibreOffice subpackages out. Remove unoconv in the same DNF
+  # transaction because it depends on LibreOffice components.
+  - unoconv
   - libreoffice-*
-  - malcontent
   - malcontent-control
   - mediawriter
   - nautilus-share

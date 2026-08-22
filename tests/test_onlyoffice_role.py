@@ -29,6 +29,9 @@ class OnlyOfficeRoleTests(unittest.TestCase):
     def test_libreoffice_is_not_exempted_from_package_audit(self):
         self.assertNotIn("^libreoffice-", self.audit)
 
+    def test_unoconv_is_not_exempted_from_package_audit(self):
+        self.assertNotIn("  - unoconv\n", self.audit)
+
 
 if __name__ == "__main__":
     unittest.main()
