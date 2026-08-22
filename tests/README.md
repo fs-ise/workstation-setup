@@ -23,6 +23,8 @@ python -m pip install -r requirements.txt
 
 make deps
 
+python -m unittest discover -s tests -p 'test_*.py'
+
 yamllint .
 ansible-lint
 
@@ -36,13 +38,9 @@ ansible-playbook \
   -i tests/inventory/hosts.yml \
   playbooks/audit-unmanaged-packages.yml
 
-python -m unittest tests.test_package_audit
-
 ansible-playbook \
   -i tests/inventory/hosts.yml \
   tests/playbooks/package-audit-derivation.yml
-
-python -m unittest tests.test_preflight_role
 
 ansible-playbook \
   -i localhost, \
@@ -53,6 +51,10 @@ ansible-playbook \
   -i tests/inventory/hosts.yml \
   playbooks/lab-stack.yml
 ```
+
+The `unittest discover` command is the canonical way to run the repository's
+full Python test suite, both locally and in CI. It automatically includes every
+`tests/test_*.py` module.
 
 Run the same unprivileged Fedora container used by GitHub Actions:
 
