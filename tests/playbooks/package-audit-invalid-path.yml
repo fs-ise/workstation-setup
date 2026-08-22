@@ -1,0 +1,11 @@
+---
+- name: Reject an invalid extra package audit roles path
+  hosts: local
+  gather_facts: false
+  vars:
+    package_audit_roles_path: "{{ playbook_dir }}/../../roles"
+    package_audit_extra_roles_paths:
+      - "{{ playbook_dir }}/../fixtures/does-not-exist/roles"
+  tasks:
+    - name: Run the production managed-package derivation
+      ansible.builtin.include_tasks: ../../playbooks/tasks/derive-managed-dnf-packages.yml

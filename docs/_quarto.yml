@@ -62,6 +62,7 @@ website:
       - section: Reference
         href: reference.qmd
         contents:
+          - personal_overlays.qmd
           - repo_structure.qmd
           - principles.qmd
           - troubleshooting.qmd

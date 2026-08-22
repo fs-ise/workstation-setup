@@ -59,19 +59,56 @@ class PackageAuditTests(unittest.TestCase):
         shutil.which("ansible-playbook"), "ansible-playbook unavailable"
     )
     def test_ansible_discovers_and_derives_role_packages(self):
+        for playbook in (
+            "tests/playbooks/package-audit-shared-only.yml",
+            "tests/playbooks/package-audit-derivation.yml",
+        ):
+            with self.subTest(playbook=playbook):
+                result = subprocess.run(
+                    [
+                        "ansible-playbook",
+                        "-i",
+                        "tests/inventory/hosts.yml",
+                        playbook,
+                    ],
+                    cwd=ROOT,
+                    check=False,
+                    capture_output=True,
+                    text=True,
+                )
+                self.assertEqual(0, result.returncode, result.stdout + result.stderr)
+
+    @unittest.skipUnless(
+        shutil.which("ansible-playbook"), "ansible-playbook unavailable"
+    )
+    def test_invalid_extra_roles_path_fails_clearly(self):
         result = subprocess.run(
             [
                 "ansible-playbook",
                 "-i",
                 "tests/inventory/hosts.yml",
-                "tests/playbooks/package-audit-derivation.yml",
+                "tests/playbooks/package-audit-invalid-path.yml",
             ],
             cwd=ROOT,
             check=False,
             capture_output=True,
             text=True,
         )
-        self.assertEqual(0, result.returncode, result.stdout + result.stderr)
+        output = result.stdout + result.stderr
+        self.assertNotEqual(0, result.returncode, output)
+        self.assertIn("is missing or is not a directory", output)
+
+    def test_overlay_extension_defaults_are_empty(self):
+        settings = (ROOT / "group_vars/all/package_audit.yml").read_text(
+            encoding="utf-8"
+        )
+        for variable in (
+            "package_audit_extra_roles_paths",
+            "package_audit_extra_managed_dnf_packages",
+            "package_audit_extra_allowlist",
+            "package_audit_extra_allowlist_patterns",
+        ):
+            self.assertIn(f"\n{variable}: []", settings)
 
     def test_genuinely_unmanaged_package_remains_a_finding(self):
         detected = ["git", "manual-lab-package", " git ", "git"]

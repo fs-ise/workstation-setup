@@ -4,6 +4,19 @@
   gather_facts: false
   vars:
     package_audit_roles_path: "{{ playbook_dir }}/../../roles"
+    package_audit_extra_roles_paths:
+      - "{{ playbook_dir }}/../fixtures/package-audit-overlay/roles"
+    package_audit_extra_managed_dnf_packages:
+      - explicit-overlay-package
+      - git
+    package_audit_allowlist:
+      - shared-exception
+    package_audit_allowlist_patterns:
+      - '^shared-family$'
+    package_audit_extra_allowlist:
+      - overlay-exception
+    package_audit_extra_allowlist_patterns:
+      - '^overlay-family-[0-9]+$'
   tasks:
     - name: Run the production managed-package derivation
       ansible.builtin.include_tasks: ../../playbooks/tasks/derive-managed-dnf-packages.yml
@@ -18,6 +31,9 @@
           - "'R' in package_audit_managed_packages"
           - "'rstudio' in package_audit_managed_packages"
           - "'okular' in package_audit_managed_packages"
+          - "'overlay-tool' in package_audit_managed_packages"
+          - "'explicit-overlay-package' in package_audit_managed_packages"
+          - "package_audit_managed_packages | select('equalto', 'git') | list | length == 1"
           - "package_audit_managed_packages == (package_audit_managed_packages | unique | sort)"
 
     - name: Compute a representative unmanaged-package result
@@ -34,6 +50,19 @@
       ansible.builtin.assert:
         that:
           - package_audit_test_unmanaged == ['manual-lab-package']
+
+    - name: Verify overlay allowlist inputs are combined with shared inputs
+      ansible.builtin.set_fact:
+        package_audit_test_exact_allowlist: >-
+          {{ (package_audit_allowlist + package_audit_extra_allowlist) | unique | sort }}
+        package_audit_test_pattern_allowlist: >-
+          {{ (package_audit_allowlist_patterns + package_audit_extra_allowlist_patterns) | unique | sort }}
+
+    - name: Verify overlay exact and pattern exceptions
+      ansible.builtin.assert:
+        that:
+          - "'overlay-exception' in package_audit_test_exact_allowlist"
+          - "package_audit_test_pattern_allowlist | select('equalto', '^overlay-family-[0-9]+$') | list | length == 1"
 
     - name: Classify representative DNF5 install reasons
       ansible.builtin.include_tasks: ../../playbooks/tasks/classify-dnf-package-reasons.yml

@@ -15,6 +15,8 @@ ansible-playbook -i inventory -K playbooks/lab-stack.yml
 The command applies the desired state for the first time.
 [Update software](update_software.html) updates Fedora and Flatpak software, then reapplies and audits that same state during routine maintenance.
 Both workflows rely on Ansible and documented package policy rather than manual, undocumented changes.
+For a workstation with user- or machine-specific automation, apply this shared
+baseline first and then apply a separate [personal overlay](personal_overlays.html).
 
 Ansible playbooks are designed to be **idempotent**: 
 they describe the desired final state of the workstation.

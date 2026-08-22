@@ -18,7 +18,7 @@ Documentation available at [https://fs-ise.github.io/workstation-setup/](https:/
 
 ## Configuration ownership
 
-This shared repository installs applications, research and development capabilities, generic shell support, and conservative lab-wide defaults. Personal dotfiles, desktop ergonomics, shortcuts, application preferences, managed browser extensions, and machine-specific hardware configuration belong in a personal Ansible overlay.
+This shared repository installs applications, research and development capabilities, generic shell support, and conservative lab-wide defaults. Personal dotfiles, desktop ergonomics, shortcuts, application preferences, managed browser extensions, and machine-specific hardware configuration belong in a personal Ansible overlay. See [Personal overlays](https://fs-ise.github.io/workstation-setup/personal_overlays.html) for the ownership, update, audit, and secrets model.
 
 Automated checks lint and syntax-check the complete Ansible setup and exercise a
 container-safe subset twice for idempotence. See [the Ansible CI test guide](tests/README.md)

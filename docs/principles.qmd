@@ -20,6 +20,12 @@ Do not silently overwrite user configuration, disable security features, or hand
 
 Keep roles focused, commands copy-pasteable, and documentation short enough to follow during an actual setup. Avoid speculative sections and long duplicate reference tables.
 
+## Layered ownership
+
+Keep configuration useful to all or most lab workstations in this shared baseline.
+Personal overlays may depend on the shared infrastructure, but the shared repository
+must remain complete and usable without them. The topmost layer owns the final audit.
+
 ## Documentation as configuration
 
 Documentation is part of the setup. When a role, tag, command, or manual step changes, update the corresponding page so that the website remains an accurate workstation manual.
@@ -27,5 +33,6 @@ Documentation is part of the setup. When a role, tag, command, or manual step ch
 ## Best practices and useful links
 
 - [Repository structure](repo_structure.html)
+- [Personal overlays](personal_overlays.html)
 - [Troubleshooting](troubleshooting.html)
 - [Ansible best practices](https://docs.ansible.com/ansible/latest/tips_tricks/ansible_tips_tricks.html)

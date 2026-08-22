@@ -1,0 +1,6 @@
+---
+personal_tool_packages:
+  - overlay-tool
+  - git
+
+personal_tool_managed_dnf_packages: "{{ personal_tool_packages }}"

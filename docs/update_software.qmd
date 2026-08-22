@@ -7,7 +7,7 @@ Fedora and Flatpak update software from their configured repositories, Ansible r
 
 ## Routine update workflow
 
-Run the default update workflow from the `workstation-setup` repository:
+On a shared-only workstation, run the complete update and audit from this repository:
 
 ```sh
 make update
@@ -50,6 +50,11 @@ The commands intentionally run in this order:
 
 `ansible-playbook` is not a substitute for `dnf upgrade` or `flatpak update`. Most roles ensure that selected packages are present and configured; they do not generally upgrade every installed package.
 
+`make update` delegates the first five steps to `make update-base`, then runs the
+shared audit. A [personal overlay](personal_overlays.html) calls `update-base`,
+applies its own roles, and owns the final combined audit. This keeps the shared
+workflow composable without making it depend on any overlay.
+
 ::: {.callout-note title="What is an unmanaged package?"}
 
 The audit reports two kinds of unmanaged software:
@@ -75,7 +80,8 @@ For each audit finding, decide what it means:
 
 - **Unintentional change or unnecessary software:** remove the package.
 - **Software needed on all managed workstations:** add it to the relevant [Ansible role](https://github.com/fs-ise/workstation-setup/tree/main/roles).
-- **Software needed only on this machine:** add a narrow [allowlist entry or allowlist pattern](https://github.com/fs-ise/workstation-setup/blob/main/group_vars/all/package_audit.yml).
+- **Software managed by a personal or other overlay:** declare it in that overlay's role package list and run the combined audit from the overlay.
+- **A genuine local exception:** record a narrow exception in the topmost configuration layer. Do not add personal packages to the shared allowlist.
 
 AI coding tools such as ChatGPT or Codex can help draft the required Ansible changes, but review package names, repository additions, and role placement before committing.
 
@@ -90,10 +96,12 @@ flowchart TD
   F --> Q{Is the package needed?}
 
   Q -->|No / not intentional| R[Remove package]
-  Q -->|Yes, for all managed workstations| M["<a href='https://github.com/fs-ise/workstation-setup/tree/main/roles' target=_blank>Add to Ansible role</a>"]
-  Q -->|Yes, only for this machine| L["Add narrow <a href='https://github.com/fs-ise/workstation-setup/blob/main/group_vars/all/package_audit.yml target=_blank'>allowlist</a> entry"]
+  Q -->|Yes, for the lab baseline| M["<a href='https://github.com/fs-ise/workstation-setup/tree/main/roles' target=_blank>Add to shared role</a>"]
+  Q -->|Yes, managed personally| O[Add to overlay role]
+  Q -->|Yes, genuine local exception| L[Add narrow exception in topmost layer]
 
   M --> DS[Repository desired state updated]
+  O --> DS
   L --> DS
   R --> C[Local drift removed]
 
@@ -109,7 +117,7 @@ To keep the audit actionable, this repository supports two filtering mechanisms:
 - `package_audit_allowlist` for exact package names
 - `package_audit_allowlist_patterns` for regex-based package families
 
-Use exact [allowlist](https://github.com/fs-ise/workstation-setup/blob/main/group_vars/all/package_audit.yml) entries whenever possible. Keep intentional workstation exceptions in the dedicated exact-name section. Regex patterns are reserved for tightly bounded Fedora-generated package families, such as the known kernel subpackages.
+Use exact [allowlist](https://github.com/fs-ise/workstation-setup/blob/main/group_vars/all/package_audit.yml) entries whenever possible. The shared allowlist is reserved for shared Fedora/system exceptions; overlay exceptions belong in the overlay. Regex patterns are reserved for tightly bounded package families, such as known kernel subpackages.
 
 Every pattern must enumerate the allowed suffixes and match the complete package name. Do not use open-ended prefixes such as `^lib`, `^perl`, or `^gnome-`: they can hide unrelated software that a user installed manually.
 
@@ -137,6 +145,7 @@ Prefer a suitable official RPM or package-managed installation over a tarball/ma
 ## Best practices and useful links
 
 - [Install software](install_software.html)
+- [Personal overlays](personal_overlays.html)
 - [Troubleshooting](troubleshooting.html)
 - [Ansible playbook guide](https://docs.ansible.com/ansible/latest/playbook_guide/playbooks_intro.html)
 - [DNF command reference](https://dnf.readthedocs.io/en/latest/command_ref.html)

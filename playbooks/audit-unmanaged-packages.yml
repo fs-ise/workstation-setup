@@ -38,8 +38,12 @@
     - name: Build normalized package lists for audit
       ansible.builtin.set_fact:
         package_audit_managed_flat: "{{ package_audit_managed_packages }}"
-        package_audit_allowlist_flat: "{{ package_audit_allowlist | flatten | map('string') | unique | sort }}"
-        package_audit_allowlist_patterns_flat: "{{ package_audit_allowlist_patterns | flatten | map('string') | unique | sort }}"
+        package_audit_allowlist_flat: >-
+          {{ (package_audit_allowlist + (package_audit_extra_allowlist | default([])))
+             | flatten | map('string') | map('trim') | reject('equalto', '') | unique | sort }}
+        package_audit_allowlist_patterns_flat: >-
+          {{ (package_audit_allowlist_patterns + (package_audit_extra_allowlist_patterns | default([])))
+             | flatten | map('string') | map('trim') | reject('equalto', '') | unique | sort }}
 
     - name: Compute unmanaged candidates after exact matching
       ansible.builtin.set_fact:
@@ -100,8 +104,10 @@
           Found unmanaged User-reason packages:
           {{ package_audit_unmanaged | to_nice_yaml(indent=2) | trim | indent(2, true) }}
 
-          Declare expected packages in Ansible-managed package lists or add intentional local/system packages
-          to package_audit_allowlist or package_audit_allowlist_patterns.
+          These packages are not managed by the shared workstation configuration. If this workstation
+          uses an overlay, first check whether it manages them and run the combined audit from that layer.
+          Add only lab-baseline packages to shared roles. Do not add personal packages to the shared
+          allowlist merely to silence this audit.
       when:
         - package_audit_fail_on_unmanaged | bool
         - package_audit_unmanaged | length > 0

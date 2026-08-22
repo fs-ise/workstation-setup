@@ -4,6 +4,9 @@ title: "Repository structure"
 
 This repository combines a Quarto documentation site with Ansible automation. The documentation explains the workflow; the playbooks and roles perform the repeatable system setup.
 
+It is a self-contained shared lab baseline. A separate [personal overlay](personal_overlays.html)
+may depend on and extend it, but this repository never depends on an overlay.
+
 ## Main directories and files
 
 ### `docs/`
@@ -51,5 +54,6 @@ If present, this directory contains GitHub-specific project automation such as w
 - [Install OS/Ansible](install_os.html)
 - [Install software](install_software.html)
 - [Update software](update_software.html)
+- [Personal overlays](personal_overlays.html)
 - [Ansible playbooks](https://docs.ansible.com/ansible/latest/playbook_guide/playbooks_intro.html)
 - [Quarto websites](https://quarto.org/docs/websites/)

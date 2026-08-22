@@ -1,7 +1,30 @@
 ---
+- name: Build role search paths
+  ansible.builtin.set_fact:
+    package_audit_all_roles_paths: >-
+      {{ ([package_audit_roles_path] + (package_audit_extra_roles_paths | default([]))) | unique }}
+
+- name: Inspect role search paths
+  ansible.builtin.stat:
+    path: "{{ item }}"
+  loop: "{{ package_audit_all_roles_paths }}"
+  register: package_audit_roles_path_stats
+
+- name: Require every role search path to be a directory
+  ansible.builtin.assert:
+    that:
+      - item.stat.exists
+      - item.stat.isdir
+    fail_msg: >-
+      Package audit roles path {{ item.item }} is missing or is not a directory.
+      The audit refuses to continue with incomplete package discovery.
+  loop: "{{ package_audit_roles_path_stats.results }}"
+  loop_control:
+    label: "{{ item.item }}"
+
 - name: Discover role default files
   ansible.builtin.find:
-    paths: "{{ package_audit_roles_path }}"
+    paths: "{{ package_audit_all_roles_paths }}"
     recurse: true
     file_type: file
     patterns: main.yml
@@ -22,7 +45,7 @@
     that:
       - package_audit_role_default_files | length > 0
     fail_msg: >-
-      The package audit found no role defaults under {{ package_audit_roles_path }}.
+      The package audit found no role defaults under {{ package_audit_all_roles_paths | join(', ') }}.
       It refuses to continue without managed package declarations.
 
 - name: Load role defaults that declare managed DNF packages
@@ -36,7 +59,8 @@
   ansible.builtin.set_fact:
     package_audit_managed_package_variables: >-
       {{ query('ansible.builtin.varnames', '^[a-z0-9_]+_managed_dnf_packages$') }}
-    package_audit_managed_packages: []
+    package_audit_managed_packages: >-
+      {{ package_audit_extra_managed_dnf_packages | default([]) }}
 
 - name: Collect managed DNF packages from role declarations
   ansible.builtin.set_fact:

@@ -1,0 +1,17 @@
+---
+- name: Verify default shared-only managed DNF package derivation
+  hosts: local
+  gather_facts: false
+  vars:
+    package_audit_roles_path: "{{ playbook_dir }}/../../roles"
+  tasks:
+    - name: Run the production managed-package derivation without overlay variables
+      ansible.builtin.include_tasks: ../../playbooks/tasks/derive-managed-dnf-packages.yml
+
+    - name: Verify shared packages and empty extension defaults
+      ansible.builtin.assert:
+        that:
+          - "'git' in package_audit_managed_packages"
+          - "'quarto' in package_audit_managed_packages"
+          - "'overlay-tool' not in package_audit_managed_packages"
+          - package_audit_all_roles_paths == [package_audit_roles_path]

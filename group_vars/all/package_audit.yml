@@ -8,8 +8,15 @@ manual_install_audit_fail_on_unmanaged: false
 manual_install_audit_recommendations:
   quarto: "Install the official Quarto RPM through the quarto role."
 
-# Prefer exact package names. Generic Fedora/base-system exceptions are listed first;
-# intentional workstation additions are kept in their own section below.
+# Optional inputs for a top-level configuration layer that reuses this audit.
+# Each roles path must contain role directories with defaults/main.yml files.
+package_audit_extra_roles_paths: []
+package_audit_extra_managed_dnf_packages: []
+package_audit_extra_allowlist: []
+package_audit_extra_allowlist_patterns: []
+
+# Prefer exact package names. This list contains only shared Fedora/system
+# exceptions; personal and machine-specific packages belong in an overlay.
 package_audit_allowlist:
   # Exact exceptions reported with the User install reason.
   - NetworkManager
@@ -124,23 +131,6 @@ package_audit_allowlist:
   - nodejs22-libs
   - nodejs22-npm
   - nodejs22-npm-bin
-  # Intentional local/user additions that have no Ansible role.
-  - 7zip
-  - clamav-freshclam
-  - clisp
-  - dos2unix
-  - nmap-ncat
-  - nodejs22
-  - pandoc-cli
-  - podman
-  - positron
-  - pre-commit
-  - tikzit
-  - tree
-  - uv
-  - whois
-  - zip
-
 package_audit_fail_on_unmanaged: true
 
 # Patterns are reserved for Fedora-generated or tightly bounded package families.

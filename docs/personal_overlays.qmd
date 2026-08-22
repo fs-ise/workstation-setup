@@ -1,0 +1,75 @@
+---
+title: "Personal overlays"
+---
+
+## Purpose
+
+This repository is the **shared lab-wide workstation baseline**. A separate personal
+Ansible repository can apply user- or machine-specific state after that baseline.
+The shared repository works independently and never refers to a particular overlay.
+
+## Structure
+
+The overlay should provide the same main commands as the shared workstation setup:
+
+```sh
+make install
+make update
+make audit
+```
+
+Run these commands **from the overlay repository**. Its `Makefile` orchestrates both layers: it invokes the appropriate shared workstation targets and then applies or audits the personal configuration. Users therefore do not need to run the shared and personal repositories separately.
+
+Typical responsibilities of an overlay include personal dotfiles and shell configuration, secrets or references to externally stored secrets, personal software, desktop preferences, and machine-specific configuration.
+
+The shared repository remains independent and does not need to know about any overlays. Likewise, implementation details of the overlay—its Ansible roles, inventory, audit extensions, and orchestration—remain within the overlay repository.
+
+For a concrete example, see [geritwagner/workstation-setup-gw](https://github.com/geritwagner/workstation-setup-gw), which uses this composition approach: the personal repository keeps its own configuration while coordinating execution of the shared workstation setup.
+
+::: {.callout-warning title="Secrets and credentials"}
+**Never commit secret values to either repository.** This includes API keys,
+passwords, tokens, private SSH/GPG keys, and recovery codes.
+
+An overlay may configure environment-variable names, references to a local secret
+store, encrypted Ansible Vault files, or password-manager integration. Those are
+**secret-management configuration**, not secret values. Keep decryption credentials
+and plaintext values outside Git.
+:::
+
+## What belongs in the shared repository?
+
+Use the shared repository for configuration appropriate to all or most managed lab
+workstations:
+
+- lab-wide applications and common research or development capabilities;
+- generic shell and tooling support;
+- conservative shared desktop defaults;
+- common security and workstation configuration; and
+- configuration team members should receive automatically.
+
+## What belongs in a personal overlay?
+
+Use an overlay for user- or machine-specific state:
+
+- dotfiles; shell aliases, functions, prompts, and personal preferences;
+- Git identity and editor or IDE preferences that should not be imposed lab-wide;
+- GNOME shortcuts, desktop ergonomics, application preferences, and personal browser extensions;
+- software used by one person and machine-specific hardware configuration;
+- personal paths, mounts, backups, and synchronization configuration; and
+- appropriate SSH/GPG configuration and configuration for loading credentials.
+
+
+
+## When to move configuration into the shared repository
+
+Propose configuration for the shared baseline when it is useful to all or most
+managed lab workstations, safe to apply automatically, and maintainable by the team.
+Keep personal preferences, one-user software, hardware details, and local paths in
+the overlay.
+
+## Best practices and useful links
+
+- [Update software](update_software.html)
+- [Repository structure](repo_structure.html)
+- [Ansible variable precedence](https://docs.ansible.com/ansible/latest/playbook_guide/playbooks_variables.html#understanding-variable-precedence)
+- [Ansible Vault](https://docs.ansible.com/ansible/latest/vault_guide/index.html)
