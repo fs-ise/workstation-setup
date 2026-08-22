@@ -1,16 +1,16 @@
 ---
-- name: Try to install Thunderbird via dnf
-  ansible.builtin.dnf:
-    name: "{{ thunderbird_managed_dnf_packages }}"
-    state: present
-  register: thunderbird_dnf
-  failed_when: false
+- name: Prefer the DNF installation of Thunderbird
+  block:
+    - name: Install Thunderbird via dnf
+      ansible.builtin.dnf:
+        name: "{{ thunderbird_managed_dnf_packages }}"
+        state: present
 
-- name: Install Thunderbird via Flatpak fallback
-  community.general.flatpak:
-    name: org.mozilla.Thunderbird
-    state: present
-  when: thunderbird_dnf is failed
+  rescue:
+    - name: Install Thunderbird via Flatpak fallback
+      community.general.flatpak:
+        name: "{{ thunderbird_flatpak_id }}"
+        state: present
 
 - name: Ensure Thunderbird policies directory exists
   ansible.builtin.file:

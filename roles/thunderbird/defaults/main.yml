@@ -37,3 +37,5 @@ thunderbird_extensions: "{{ thunderbird_base_extensions }}"
 # DNF packages owned by this role; consumed by the package audit.
 thunderbird_managed_dnf_packages:
   - thunderbird
+
+thunderbird_flatpak_id: org.mozilla.Thunderbird

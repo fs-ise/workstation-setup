@@ -67,6 +67,7 @@ jobs:
             tests/test_dropbox_role.py \
             tests/test_borg_vorta_role.py \
             tests/test_nemo_role.py \
+            tests/test_thunderbird_role.py \
             tests/test_thunderbird_mcp_role.py
 
           ansible-playbook \
