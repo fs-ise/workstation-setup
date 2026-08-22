@@ -3,7 +3,6 @@
   ansible.builtin.dnf:
     name: podman-docker
     state: absent
-  failed_when: false
 
 - name: Import the Docker RPM signing key
   ansible.builtin.rpm_key:

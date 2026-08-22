@@ -6,6 +6,22 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 class DockerWorkloadRoleTests(unittest.TestCase):
+    @staticmethod
+    def task_block(tasks, name):
+        block = tasks.split(f"- name: {name}\n", 1)[1]
+        return block.split("\n- name:", 1)[0]
+
+    def test_docker_conflict_removal_surfaces_dnf_failures(self):
+        tasks = (ROOT / "roles/docker/tasks/main.yml").read_text(encoding="utf-8")
+        removal = self.task_block(
+            tasks, "Remove podman-docker (conflicts with Docker CE CLI)"
+        )
+        self.assertIn("ansible.builtin.dnf:", removal)
+        self.assertIn("name: podman-docker", removal)
+        self.assertIn("state: absent", removal)
+        self.assertNotIn("failed_when", removal)
+        self.assertNotIn("ignore_errors", removal)
+
     def test_docker_repository_enforces_signature_verification(self):
         defaults = (ROOT / "roles/docker/defaults/main.yml").read_text(encoding="utf-8")
         tasks = (ROOT / "roles/docker/tasks/main.yml").read_text(encoding="utf-8")
