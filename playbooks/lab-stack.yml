@@ -94,6 +94,9 @@
     - role: dropbox
       tags: [dropbox]
 
+    - role: obsidian
+      tags: [obsidian]
+
     - role: desktop_gnome
       tags: [desktop, desktop_gnome]
 

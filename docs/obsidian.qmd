@@ -2,8 +2,26 @@
 title: "Obsidian"
 ---
 
-## Extensions:
+## Obsidian
 
-- https://github.com/brianpetro/obsidian-smart-connections
-- https://www.youtube.com/watch?v=7Rvl9Sl29Jk
-- https://smartconnections.app/
+Install Obsidian from Flathub with the dedicated `obsidian` role.
+
+```sh
+ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags obsidian
+```
+
+::: {.callout-check}
+**✅ Check**
+
+```sh
+flatpak info md.obsidian.Obsidian
+```
+:::
+
+## Best practices and useful links
+
+- [Obsidian Help](https://help.obsidian.md/)
+- [Obsidian on Flathub](https://flathub.org/apps/md.obsidian.Obsidian)
+- [Smart Connections extension](https://github.com/brianpetro/obsidian-smart-connections)
+- [Smart Connections walkthrough](https://www.youtube.com/watch?v=7Rvl9Sl29Jk)
+- [Smart Connections](https://smartconnections.app/)

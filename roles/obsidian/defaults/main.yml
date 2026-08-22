@@ -1,0 +1,7 @@
+---
+obsidian_flatpak_id: md.obsidian.Obsidian
+
+# Flatpak applications owned by this role. This mirrors managed-package
+# declarations used by package-audit tooling without treating a Flatpak as a DNF package.
+obsidian_managed_flatpak_packages:
+  - "{{ obsidian_flatpak_id }}"

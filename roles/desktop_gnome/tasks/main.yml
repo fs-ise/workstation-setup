@@ -1,9 +1,4 @@
 ---
-- name: Install Obsidian via Flatpak
-  community.general.flatpak:
-    name: md.obsidian.Obsidian
-    state: present
-
 - name: Install GNOME Shell extension dependencies
   ansible.builtin.dnf:
     name: "{{ desktop_gnome_managed_dnf_packages }}"

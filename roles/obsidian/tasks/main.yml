@@ -1,0 +1,5 @@
+---
+- name: Install Obsidian via Flatpak
+  community.general.flatpak:
+    name: "{{ obsidian_managed_flatpak_packages }}"
+    state: present
