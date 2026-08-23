@@ -23,7 +23,7 @@ class BaselineRoleTests(unittest.TestCase):
     def test_core_dependencies_are_required(self):
         required = self.defaults.split("baseline_required_packages:\n", 1)[1]
         required = required.split("\nbaseline_remove_packages:", 1)[0]
-        for package in ("ca-certificates", "git", "python3"):
+        for package in ("ca-certificates", "git", "python3", "python3-pip"):
             self.assertIn(f"  - {package}\n", required)
 
     def test_unavailable_fedora_44_packages_are_not_optional(self):
@@ -31,6 +31,15 @@ class BaselineRoleTests(unittest.TestCase):
         optional = optional.split("\nbaseline_configure_flathub:", 1)[0]
         for package in ("artha", "dict-gcide", "dict-wn", "perl-librdf"):
             self.assertNotIn(f"  - {package}\n", optional)
+
+    def test_uv_is_an_optional_managed_package(self):
+        optional = self.defaults.split("baseline_optional_packages:\n", 1)[1]
+        optional = optional.split("\nbaseline_configure_flathub:", 1)[0]
+        self.assertIn("  - uv\n", optional)
+        self.assertIn(
+            'baseline_managed_dnf_packages: "{{ baseline_required_packages + baseline_optional_packages }}"',
+            self.defaults,
+        )
 
     def test_obsolete_user_reason_packages_are_removed(self):
         removed = self.defaults.split(

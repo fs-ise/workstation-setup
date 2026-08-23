@@ -13,7 +13,9 @@ and archive/download tools, plus the declared desktop applications and
 convenience tools. Every declared package is expected to be available on the
 supported Fedora version, and the playbook stops if any package cannot be
 installed. The `optional` package group describes non-bootstrap workstation
-tools; it does not make installation failures optional.
+tools; it does not make installation failures optional. This group includes
+`uv` for Python project, environment, and package management, alongside the
+`python3` and `python3-pip` bootstrap dependencies.
 
 Baseline retains Git as a bootstrap dependency, but no longer installs Git LFS,
 Gitk, BorgBackup, Nemo, Dropbox, Vorta, or Thunderbird MCP. Use their focused
@@ -43,6 +45,7 @@ git config --global user.name
 git config --global user.email
 
 python3 --version
+uv --version
 
 docker version
 docker run --rm hello-world

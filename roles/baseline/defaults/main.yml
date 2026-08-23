@@ -85,6 +85,7 @@ baseline_optional_packages:
   - tldr
   - unifont-fonts
   - unrtf
+  - uv
   - vim
   - wv
   - xclip
