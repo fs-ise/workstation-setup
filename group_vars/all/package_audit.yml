@@ -125,12 +125,6 @@ package_audit_allowlist:
   - ansible-core
   - compsize
   - iptstate
-  - nodejs22-bin
-  - nodejs22-docs
-  - nodejs22-full-i18n
-  - nodejs22-libs
-  - nodejs22-npm
-  - nodejs22-npm-bin
 package_audit_fail_on_unmanaged: true
 
 # Patterns are reserved for Fedora-generated or tightly bounded package families.

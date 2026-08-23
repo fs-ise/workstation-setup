@@ -159,6 +159,17 @@ class PackageAuditTests(unittest.TestCase):
     def test_obsolete_baseline_packages_are_not_allowlisted(self):
         self.assertTrue({"gnome-terminal", "libxslt-devel"}.isdisjoint(self.allowlist))
 
+    def test_nodejs_role_packages_and_dependencies_are_not_allowlisted(self):
+        nodejs_packages = {
+            "nodejs22-bin",
+            "nodejs22-docs",
+            "nodejs22-full-i18n",
+            "nodejs22-libs",
+            "nodejs22-npm",
+            "nodejs22-npm-bin",
+        }
+        self.assertTrue(nodejs_packages.isdisjoint(self.allowlist))
+
 
 if __name__ == "__main__":
     unittest.main()

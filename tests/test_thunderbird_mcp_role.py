@@ -5,6 +5,11 @@ R=Path(__file__).resolve().parents[1]; D=(R/'roles/thunderbird_mcp/defaults/main
 class Tests(unittest.TestCase):
  def test_defaults_and_security(self):
   self.assertIn('"0.7.4"',D); self.assertIn('https://github.com/TKasperczyk/thunderbird-mcp.git',D); self.assertIn('installation_mode: normal_installed',D); self.assertIn('mode: "0600"',T); self.assertIn('mode: "0755"',T); self.assertGreaterEqual(T.count('thunderbird_mcp_enabled | bool'),8); self.assertIn('thunderbird_mcp_write_client_fragment | bool',T)
+ def test_explicit_nodejs_runtime_packages(self):
+  package_section=D.split('thunderbird_mcp_managed_dnf_packages:\n',1)[1]
+  self.assertEqual(['git','nodejs22','nodejs22-bin'],[line.strip()[2:] for line in package_section.splitlines() if line.strip().startswith('- ')])
+  for package in ('nodejs22-docs','nodejs22-full-i18n','nodejs22-libs','nodejs22-npm','nodejs22-npm-bin'):
+   self.assertNotIn(package,D)
  def test_safe_policy_merge(self):
   self.assertIn("if thunderbird_mcp_policies_stat.stat.exists else {'policies': {}}",T); self.assertIn('ExtensionSettings',T); self.assertIn('combine',T); self.assertIn('mode: "0644"',T)
  def test_base_and_tags(self):

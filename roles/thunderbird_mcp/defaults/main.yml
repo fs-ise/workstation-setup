@@ -19,4 +19,5 @@ thunderbird_mcp_extension:
 # DNF packages owned by this role; consumed by the package audit.
 thunderbird_mcp_managed_dnf_packages:
   - git
-  - nodejs
+  - nodejs22
+  - nodejs22-bin

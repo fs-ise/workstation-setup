@@ -3,6 +3,7 @@ title: "Thunderbird MCP"
 ---
 
 Install Thunderbird first, then the pinned Thunderbird MCP bridge and its extension policy entry.
+The bridge uses Fedora's versioned Node.js 22 runtime packages; it does not require npm, Node.js documentation, or the full ICU package.
 
 ```sh
 ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags thunderbird_mcp
@@ -65,6 +66,7 @@ Merge the `mcpServers.thunderbird-mail` entry into the configuration used by you
 
 ```sh
 git -C /opt/thunderbird-mcp describe --tags --exact-match
+node --version
 node /opt/thunderbird-mcp/mcp-bridge.cjs --help
 python -m json.tool /etc/thunderbird/policies/policies.json >/dev/null
 stat -c '%a %U %G %n' ~/.config/workstation-setup/mcp/thunderbird-mail.json
