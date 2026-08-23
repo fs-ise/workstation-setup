@@ -57,7 +57,7 @@ baseline_optional_packages:
   - autokey-gtk
   - catdoc
   - clamav
-  - clamav-update
+  - clamav-freshclam
   - dictd
   - diffpdf
   - flatpak
