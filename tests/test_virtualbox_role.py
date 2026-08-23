@@ -22,7 +22,16 @@ class VirtualBoxRoleTests(unittest.TestCase):
             "Remove Oracle VirtualBox packages if present (avoid conflicts)"
         )
         self.assertIn("ansible.builtin.dnf:", removal)
-        self.assertIn("VirtualBox-7.2", removal)
+        for package in (
+            "VirtualBox-7.2",
+            "VirtualBox-7.1",
+            "VirtualBox-7.0",
+            "VirtualBox-6.1",
+            "VirtualBox-qt",
+        ):
+            with self.subTest(package=package):
+                self.assertIn(f"- {package}", removal)
+        self.assertNotIn("VirtualBox-kmodsrc", removal)
         self.assertIn("state: absent", removal)
         self.assertNotIn("failed_when", removal)
         self.assertNotIn("ignore_errors", removal)

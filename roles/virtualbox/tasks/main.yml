@@ -16,7 +16,6 @@
       - VirtualBox-7.0
       - VirtualBox-6.1
       - VirtualBox-qt
-      - VirtualBox-kmodsrc
     state: absent
 
 - name: Install VirtualBox (Fedora/RPMFusion) + kernel module tooling
