@@ -73,6 +73,7 @@ baseline_optional_packages:
   - obs-studio
   - openssh-clients
   - openssh-server
+  - pandoc-cli
   - pdfarranger
   - pinentry
   - poppler-utils
