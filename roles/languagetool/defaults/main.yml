@@ -2,6 +2,8 @@
 languagetool_port: 8081
 languagetool_data_dir: /opt/languagetool
 languagetool_dict_url: https://raw.githubusercontent.com/fs-ise/handbook/main/data/spelling.txt
-languagetool_image: erikvl87/languagetool:latest
+languagetool_version: "6.6"
+languagetool_image: "erikvl87/languagetool:{{ languagetool_version }}"
+languagetool_custom_image: languagetool-custom
 languagetool_container_name: languagetool
 languagetool_container_port: 8010

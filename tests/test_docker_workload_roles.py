@@ -86,6 +86,34 @@ class DockerWorkloadRoleTests(unittest.TestCase):
         ):
             self.assertNotIn(imperative_command, tasks)
 
+    def test_languagetool_build_is_pinned_and_change_driven(self):
+        defaults = (ROOT / "roles/languagetool/defaults/main.yml").read_text(
+            encoding="utf-8"
+        )
+        tasks = (ROOT / "roles/languagetool/tasks/main.yml").read_text(
+            encoding="utf-8"
+        )
+        build = self.task_block(tasks, "Build custom LanguageTool image")
+        container = self.task_block(tasks, "Run LanguageTool container")
+
+        self.assertIn('languagetool_version: "6.6"', defaults)
+        self.assertIn(
+            'languagetool_image: "erikvl87/languagetool:{{ languagetool_version }}"',
+            defaults,
+        )
+        self.assertNotIn(":latest", defaults)
+        self.assertIn("FROM {{ languagetool_image }}", tasks)
+        self.assertNotIn("FROM erikvl87/languagetool", tasks)
+        self.assertIn("COPY spelling.txt", tasks)
+        self.assertIn("register: languagetool_dictionary", tasks)
+        self.assertIn("register: languagetool_dockerfile", tasks)
+        self.assertIn("languagetool_dictionary.changed", build)
+        self.assertIn("languagetool_dockerfile.changed", build)
+        self.assertNotIn("force_source: true", build)
+        self.assertIn("register: languagetool_image_build", build)
+        self.assertIn('recreate: "{{ languagetool_image_build.changed }}"', container)
+        self.assertNotIn("recreate: true", container)
+
     def test_container_roles_depend_on_docker(self):
         for role in ("grobid", "languagetool", "ocr_containers", "development_containers"):
             metadata = (ROOT / f"roles/{role}/meta/main.yml").read_text(encoding="utf-8")

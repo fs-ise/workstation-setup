@@ -22,31 +22,41 @@
     owner: root
     group: root
     mode: "0644"
+  register: languagetool_dictionary
 
 - name: Create Dockerfile for custom LanguageTool image
   ansible.builtin.copy:
     dest: "{{ languagetool_data_dir }}/build/Dockerfile"
     content: |
-      FROM erikvl87/languagetool
+      FROM {{ languagetool_image }}
       USER root
       COPY spelling.txt /tmp/spelling.txt
       RUN (echo; cat /tmp/spelling.txt) >> /LanguageTool/org/languagetool/resource/en/hunspell/spelling.txt
       USER languagetool
+    owner: root
+    group: root
+    mode: "0644"
+  register: languagetool_dockerfile
 
 - name: Build custom LanguageTool image
   community.docker.docker_image:
-    name: languagetool-custom
+    name: "{{ languagetool_custom_image }}"
     source: build
     build:
       path: "{{ languagetool_data_dir }}/build"
-    force_source: true
+    force_source: >-
+      {{
+        languagetool_dictionary.changed
+        or languagetool_dockerfile.changed
+      }}
+  register: languagetool_image_build
 
 - name: Run LanguageTool container
   community.docker.docker_container:
     name: "{{ languagetool_container_name }}"
-    image: languagetool-custom
+    image: "{{ languagetool_custom_image }}"
     restart_policy: always
     state: started
-    recreate: true
+    recreate: "{{ languagetool_image_build.changed }}"
     published_ports:
       - "127.0.0.1:{{ languagetool_port }}:{{ languagetool_container_port }}"

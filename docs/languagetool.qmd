@@ -3,6 +3,9 @@ title: "Languagetool"
 ---
 
 Run LanguageTool as a local writing-assistance service with lab-specific dictionary support.
+The custom image uses a pinned LanguageTool upstream version and incorporates the shared
+dictionary. Rerunning the role rebuilds the image and recreates the service only when an
+input, such as the upstream version or dictionary, has changed.
 
 ```sh
 ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags languagetool
@@ -62,3 +65,9 @@ ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags languagetool
 
 Note: this downloads and includes the `data/spelling.txt` from the handbook.
 The previous version may be cached and it may take a few minutes until GitHub provisions the new file.
+
+## Best practices and useful links
+
+- [LanguageTool HTTP server documentation](https://dev.languagetool.org/http-server)
+- [LanguageTool container image](https://hub.docker.com/r/erikvl87/languagetool)
+- [Shared dictionary](https://github.com/fs-ise/handbook/blob/main/data/spelling.txt)
