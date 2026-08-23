@@ -1,28 +1,13 @@
 ---
-- name: Pull GROBID Docker image
-  community.docker.docker_image_pull:
-    name: "{{ grobid_image }}"
-    platform: amd64
-
-- name: Check if GROBID container exists
-  ansible.builtin.command: "docker container inspect {{ grobid_container_name }}"
-  register: grobid_container_inspect
-  failed_when: false
-  changed_when: false
-
-- name: Run GROBID container
-  ansible.builtin.command: >-
-    docker run -d
-    --name {{ grobid_container_name }}
-    --restart unless-stopped
-    -p {{ grobid_port }}:8070
-    {{ grobid_image }}
-  when: grobid_container_inspect.rc != 0
-
 - name: Ensure GROBID container is started
-  ansible.builtin.command: "docker start {{ grobid_container_name }}"
-  when: grobid_container_inspect.rc == 0
-  changed_when: false
+  community.docker.docker_container:
+    name: "{{ grobid_container_name }}"
+    image: "{{ grobid_image }}"
+    state: started
+    pull: missing
+    restart_policy: unless-stopped
+    published_ports:
+      - "{{ grobid_port }}:8070"
 
 - name: Ensure pdf-to-tei script directory exists
   ansible.builtin.file:

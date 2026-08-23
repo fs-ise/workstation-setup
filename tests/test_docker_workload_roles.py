@@ -66,6 +66,26 @@ class DockerWorkloadRoleTests(unittest.TestCase):
         self.assertIn('grobid_version: "0.9.0"', defaults)
         self.assertIn('grobid_image: "grobid/grobid:{{ grobid_version }}-full"', defaults)
 
+    def test_grobid_container_lifecycle_is_declarative(self):
+        tasks = (ROOT / "roles/grobid/tasks/main.yml").read_text(encoding="utf-8")
+        container = self.task_block(tasks, "Ensure GROBID container is started")
+
+        self.assertIn("community.docker.docker_container:", container)
+        self.assertIn('name: "{{ grobid_container_name }}"', container)
+        self.assertIn('image: "{{ grobid_image }}"', container)
+        self.assertIn("state: started", container)
+        self.assertIn("pull: missing", container)
+        self.assertIn("restart_policy: unless-stopped", container)
+        self.assertIn('- "{{ grobid_port }}:8070"', container)
+        self.assertNotIn("recreate: true", container)
+
+        for imperative_command in (
+            "docker container inspect",
+            "docker run",
+            "docker start",
+        ):
+            self.assertNotIn(imperative_command, tasks)
+
     def test_container_roles_depend_on_docker(self):
         for role in ("grobid", "languagetool", "ocr_containers", "development_containers"):
             metadata = (ROOT / f"roles/{role}/meta/main.yml").read_text(encoding="utf-8")
