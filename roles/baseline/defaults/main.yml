@@ -36,11 +36,6 @@ baseline_remove_packages:
   - ibus-typing-booster
   # The workstation uses libxslt at runtime; development headers are not required.
   - libxslt-devel
-  # ONLYOFFICE is the managed desktop office suite. A wildcard keeps Fedora's
-  # changing set of LibreOffice subpackages out. Remove unoconv in the same DNF
-  # transaction because it depends on LibreOffice components.
-  - unoconv
-  - libreoffice-*
   - malcontent-control
   - mediawriter
   - nautilus-share

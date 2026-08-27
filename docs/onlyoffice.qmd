@@ -2,16 +2,17 @@
 title: "ONLYOFFICE"
 ---
 
-Install the managed desktop office suite from Flathub. Microsoft Office OOXML
-formats (`.docx`, `.xlsx`, and `.pptx`) are the primary interoperability target.
+Install ONLYOFFICE Desktop Editors from Flathub. Microsoft Office OOXML formats
+(`.docx`, `.xlsx`, and `.pptx`) are the primary interoperability target.
 
 ```sh
 ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags onlyoffice
 ```
 
-The `onlyoffice` role installs the `org.onlyoffice.desktopeditors` Flatpak. The
-default-applications role associates it with Word, Excel, PowerPoint,
-OpenDocument, RTF, and CSV files.
+The `onlyoffice` role installs the `org.onlyoffice.desktopeditors` Flatpak.
+LibreOffice may remain installed alongside ONLYOFFICE; this role does not remove
+it. The default-applications role associates ONLYOFFICE with Word, Excel,
+PowerPoint, OpenDocument, RTF, and CSV files.
 
 ::: {.callout-check}
 **✅ Check**
@@ -22,9 +23,10 @@ xdg-mime query default application/vnd.openxmlformats-officedocument.wordprocess
 ```
 :::
 
-::: {.callout-note title="Alternatives considered: LibreOffice" collapse=true}
+::: {.callout-note title="Using LibreOffice alongside ONLYOFFICE" collapse=true}
 ONLYOFFICE is preferred because it generally provides **higher fidelity with Microsoft Office’s OOXML formats** (`.docx`, `.xlsx`, `.pptx`), especially for complex formatting and collaborative document exchange.
 LibreOffice is more feature-rich in some areas and strongly supports open formats, but conversions to and from Microsoft Office documents are more likely to introduce layout or formatting differences.
+Both applications may coexist when their different strengths are useful.
 :::
 
 ## Best practices and useful links

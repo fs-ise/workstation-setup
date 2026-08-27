@@ -53,8 +53,6 @@ class BaselineRoleTests(unittest.TestCase):
         for package in (
             "gnome-terminal",
             "libxslt-devel",
-            "libreoffice-*",
-            "unoconv",
         ):
             self.assertIn(f"  - {package}\n", removed)
             self.assertNotIn(f"  - {package}\n", required)
@@ -63,6 +61,8 @@ class BaselineRoleTests(unittest.TestCase):
         self.assertIn("  - libxslt\n", optional)
         self.assertIn("  - malcontent-control\n", removed)
         self.assertNotIn("  - malcontent\n", removed)
+        self.assertNotIn("  - libreoffice-*\n", removed)
+        self.assertNotIn("  - unoconv\n", removed)
 
         removal_task = self.task_block("Remove unwanted packages")
         self.assertIn('name: "{{ baseline_remove_packages }}"', removal_task)
