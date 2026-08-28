@@ -13,10 +13,21 @@ On a shared-only workstation, run the complete update and audit from this reposi
 make update
 ```
 
-This target stops immediately if a step fails. It runs the following underlying
-commands in order; use them individually for troubleshooting:
+This target stops immediately if a step fails. Its Git behavior depends on the
+kind of checkout:
+
+- **Branch checkout:** `make update` runs `git pull --ff-only` before updating
+  the workstation. Divergent local history is not merged automatically.
+- **Tagged or other detached checkout:** `make update` skips the Git pull and
+  prints a notice. It preserves the selected configuration snapshot while still
+  refreshing dependencies, updating Fedora and Flatpak software, reapplying the
+  stack, and running the audit. It does not switch branches or select a newer tag.
+
+It then runs the following underlying commands in order; use them individually
+for troubleshooting:
 
 ```sh
+# On a branch only; skipped on a tagged or other detached checkout
 git pull --ff-only
 
 # Install or refresh the repository's pinned Ansible Galaxy collections
@@ -39,8 +50,8 @@ make audit
 
 The commands intentionally run in this order:
 
-1. Update the setup repository with a fast-forward-only pull so divergent local
-   history is not merged automatically.
+1. On a branch, update the setup repository with a fast-forward-only pull. On a
+   tagged or other detached checkout, keep the selected Git snapshot unchanged.
 2. Install or refresh the Ansible Galaxy dependencies declared in
    `requirements.yml`. Collection versions are intentionally pinned so tagged
    releases use the same tested dependencies on every workstation.

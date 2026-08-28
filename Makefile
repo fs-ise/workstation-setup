@@ -11,7 +11,16 @@ update:
 	$(MAKE) audit
 
 update-base:
-	git pull --ff-only
+	@if git symbolic-ref -q HEAD >/dev/null; then \
+		git pull --ff-only; \
+	else \
+		status=$$?; \
+		if [ "$$status" -eq 1 ]; then \
+			echo "Skipping Git update: checkout is detached (for example, at a release tag)."; \
+		else \
+			exit "$$status"; \
+		fi; \
+	fi
 	$(MAKE) deps
 	sudo dnf upgrade --refresh
 	flatpak update

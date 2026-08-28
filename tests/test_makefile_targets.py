@@ -1,4 +1,6 @@
+import os
 import subprocess
+import tempfile
 import unittest
 from pathlib import Path
 
@@ -32,6 +34,77 @@ class MakefileTargetTests(unittest.TestCase):
         self.assertIn("make update-base", output)
         self.assertIn("make install", output)
         self.assertIn("make audit", output)
+
+    def run_update_base_with_git_state(self, symbolic_ref_status: int):
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            temporary_path = Path(temporary_directory)
+            bin_path = temporary_path / "bin"
+            bin_path.mkdir()
+            log_path = temporary_path / "commands.log"
+
+            git_script = f"""#!/bin/sh
+echo "git $*" >> "$COMMAND_LOG"
+if [ "$1 $2 $3" = "symbolic-ref -q HEAD" ]; then
+    exit {symbolic_ref_status}
+fi
+exit 0
+"""
+            command_script = """#!/bin/sh
+echo "$(basename "$0") $*" >> "$COMMAND_LOG"
+exit 0
+"""
+            for command, script in {
+                "git": git_script,
+                "ansible-galaxy": command_script,
+                "ansible-playbook": command_script,
+                "sudo": command_script,
+                "flatpak": command_script,
+            }.items():
+                command_path = bin_path / command
+                command_path.write_text(script)
+                command_path.chmod(0o755)
+
+            environment = os.environ.copy()
+            environment["PATH"] = f"{bin_path}:{environment['PATH']}"
+            environment["COMMAND_LOG"] = str(log_path)
+            result = subprocess.run(
+                ["make", "--no-print-directory", "update-base"],
+                cwd=ROOT,
+                capture_output=True,
+                text=True,
+                env=environment,
+            )
+            commands = log_path.read_text() if log_path.exists() else ""
+            return result, commands
+
+    def test_update_base_pulls_and_continues_on_branch(self):
+        result, commands = self.run_update_base_with_git_state(0)
+
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn("git pull --ff-only", commands)
+        self.assertIn("sudo dnf upgrade --refresh", commands)
+        self.assertIn("flatpak update", commands)
+        self.assertIn("ansible-galaxy collection install", commands)
+        self.assertIn("ansible-playbook -i inventory", commands)
+
+    def test_update_base_skips_pull_and_continues_on_detached_head(self):
+        result, commands = self.run_update_base_with_git_state(1)
+
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertNotIn("git pull", commands)
+        self.assertIn("Skipping Git update: checkout is detached", result.stdout)
+        self.assertIn("sudo dnf upgrade --refresh", commands)
+        self.assertIn("flatpak update", commands)
+        self.assertIn("ansible-galaxy collection install", commands)
+        self.assertIn("ansible-playbook -i inventory", commands)
+
+    def test_update_base_does_not_suppress_other_git_errors(self):
+        result, commands = self.run_update_base_with_git_state(2)
+
+        self.assertNotEqual(result.returncode, 0)
+        self.assertNotIn("git pull", commands)
+        self.assertNotIn("sudo dnf upgrade --refresh", commands)
+        self.assertNotIn("flatpak update", commands)
 
 
 if __name__ == "__main__":
