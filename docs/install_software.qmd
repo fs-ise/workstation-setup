@@ -60,15 +60,19 @@ ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags grobid
 ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags languagetool
 ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags latex
 ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags quarto
+ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags r
 ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags rstudio
 ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags keepassxc
+ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags onlyoffice
 ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags okular
 ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags chrome
 ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags vscode
 ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags teams
 ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags thunderbird
 ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags thunderbird_mcp
+ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags obsidian
 ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags desktop
+ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags default_applications
 ```
 
 You can also combine tags, for example:
