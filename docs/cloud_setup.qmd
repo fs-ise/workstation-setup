@@ -1,0 +1,56 @@
+---
+title: "Server-oriented setup"
+---
+
+Configure an existing server-oriented (non-GUI) Fedora Cloud or server VM with
+reusable development and research tools. This workflow is tested/supported on
+**Fedora 44 x86_64**.
+
+```sh
+ansible-playbook -i inventory-cloud.ini -K playbooks/cloud-stack.yml
+```
+
+The default cloud stack installs the baseline CLI environment, Git and Git LFS,
+Docker, LanguageTool, Quarto, TinyTeX, and R. It excludes graphical applications,
+GNOME configuration, workstation cleanup, backup/sync clients, browsers, editors,
+office applications, and virtualization software. OCRmyPDF and GROBID are
+specialized document-processing workloads and remain available through
+the workstation stack or explicit role tags rather than the default cloud stack.
+
+::: {.callout-manual}
+**🔧 Manual setup and configuration**
+
+Create a separate inventory for the already-provisioned machine:
+
+```ini
+[cloud]
+research-vm ansible_host=203.0.113.10 ansible_user=fedora
+```
+
+For a local Fedora Cloud VM, use the same `[cloud]` group with the VM's address
+and SSH user. Supply SSH connection settings through your inventory or normal
+Ansible configuration; the playbook does not assume a provider, account, or key.
+
+VM and cloud infrastructure provisioning is outside this repository. Terraform
+or OpenTofu may provision infrastructure before Ansible configures Fedora.
+:::
+
+::: {.callout-check}
+**✅ Check**
+
+```sh
+git --version
+docker version
+languagetool --help 2>/dev/null || docker ps --filter name=languagetool
+quarto --version
+R --version
+```
+:::
+
+## Best practices and useful links
+
+- [Ansible inventory guide](https://docs.ansible.com/ansible/latest/inventory_guide/intro_inventory.html)
+- [Fedora Cloud documentation](https://docs.fedoraproject.org/en-US/fedora-cloud/)
+- [OpenTofu documentation](https://opentofu.org/docs/)
+- [Terraform documentation](https://developer.hashicorp.com/terraform/docs)
+- [Repository structure](repo_structure.html)

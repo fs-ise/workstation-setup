@@ -1,0 +1,40 @@
+---
+- name: Server-oriented research stack on Fedora
+  hosts: cloud
+  become: true
+  gather_facts: true
+
+  vars:
+    target_user: "{{ ansible_facts['user_id'] }}"
+    target_home: "{{ ansible_facts['user_dir'] }}"
+
+  roles:
+    - role: preflight
+      tags: [always, preflight]
+
+    - role: baseline
+      tags: [baseline]
+
+    - role: git_tools
+      vars:
+        # gitk requires a graphical session and is deliberately workstation-only.
+        git_tools_packages: [git, git-lfs]
+      tags: [git, git_tools]
+
+    - role: docker
+      tags: [docker]
+
+    - role: languagetool
+      tags: [languagetool]
+
+    - role: quarto
+      tags: [quarto, latex]
+
+    - role: latex
+      vars:
+        # TinyTeX supplies the non-GUI TeX toolchain; Texstudio is a desktop IDE.
+        latex_additional_packages: []
+      tags: [latex]
+
+    - role: r
+      tags: [r]

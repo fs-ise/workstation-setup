@@ -15,7 +15,10 @@ Quarto source files for this website. Use these pages as the high-level workstat
 
 ### `playbooks/`
 
-Executable Ansible entry points. The main workstation setup is `playbooks/lab-stack.yml`; the package drift audit is `playbooks/audit-unmanaged-packages.yml`.
+Executable Ansible entry points. `playbooks/lab-stack.yml` configures Fedora
+Workstation, `playbooks/cloud-stack.yml` configures an existing server-oriented (non-GUI) Fedora
+Cloud/server machine, and `playbooks/audit-unmanaged-packages.yml` audits package
+drift. Cloud infrastructure provisioning remains outside this repository.
 
 ### `roles/`
 

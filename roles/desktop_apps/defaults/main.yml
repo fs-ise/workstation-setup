@@ -1,0 +1,63 @@
+---
+desktop_apps_packages:
+  - audacity
+  - autokey-gtk
+  - flatpak
+  - gimp
+  - gnome-clocks
+  - gnome-commander
+  - hplip
+  - hplip-gui
+  - nextcloud-client
+  - obs-studio
+  - pdfarranger
+  - python3-tkinter
+  - recoll
+  - sqlitebrowser
+  - xclip
+  - xdotool
+  - xournalpp
+  - xsel
+  - ydotool
+
+desktop_apps_remove_packages:
+  - aisleriot
+  - brasero
+  - cheese
+  - deja-dup
+  - evolution
+  - evince
+  - gnome-boxes
+  - gnome-calendar
+  - gnome-characters
+  - gnome-connections
+  - gnome-contacts
+  - gnome-font-viewer
+  - gnome-mahjongg
+  - gnome-maps
+  - gnome-mines
+  - gnome-sudoku
+  # Ptyxis replaced GNOME Terminal in the managed desktop configuration.
+  - gnome-terminal
+  - gnome-todo
+  - gnome-tour
+  - gnome-weather
+  - ibus-m17n
+  - ibus-typing-booster
+  # The workstation uses libxslt at runtime; development headers are not required.
+  - libxslt-devel
+  - malcontent-control
+  - mediawriter
+  - nautilus-share
+  - orca
+  - shotwell
+  - simple-scan
+  - telnet
+  - transmission
+  - vino
+  - yelp
+
+desktop_apps_configure_flathub: true
+
+# DNF packages owned by this role; consumed by the package audit.
+desktop_apps_managed_dnf_packages: "{{ desktop_apps_packages }}"

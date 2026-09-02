@@ -1,10 +1,10 @@
 # Ansible CI tests
 
 The CI checks the complete Ansible setup statically and runs a deliberately small,
-safe subset in a Fedora 44 x86_64 container, matching the repository's currently
-tested/supported Fedora Workstation 44 x86_64 platform. The execution test runs the `baseline`,
+safe subset in a Fedora 44 x86_64 container, matching the repository's supported
+platform. The execution test runs the `baseline`, `desktop_apps`,
 `borg_vorta`, and `keepassxc` roles with package installation, TeX Live, and
-Flathub disabled. Baseline removal uses a deliberately absent fixture package
+Flathub disabled. Desktop cleanup uses a deliberately absent fixture package
 to verify DNF's idempotent `state: absent` behavior. It
 also runs `default_applications` with a reduced fixture and a fake desktop entry,
 without installing GUI software. It asserts the Git and MIME configuration, runs
@@ -32,6 +32,11 @@ ansible-playbook \
   --syntax-check \
   -i tests/inventory/hosts.yml \
   playbooks/lab-stack.yml
+
+ansible-playbook \
+  --syntax-check \
+  -i tests/inventory/hosts.yml \
+  playbooks/cloud-stack.yml
 
 ansible-playbook \
   --syntax-check \

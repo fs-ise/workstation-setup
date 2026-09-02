@@ -46,6 +46,7 @@ Run only one playbook tag when you need to test or reapply a specific area:
 
 ```sh
 ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags baseline
+ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags desktop_apps
 ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags git
 ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags borg_vorta
 ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags dropbox
@@ -60,19 +61,15 @@ ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags grobid
 ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags languagetool
 ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags latex
 ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags quarto
-ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags r
 ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags rstudio
 ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags keepassxc
-ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags onlyoffice
 ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags okular
 ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags chrome
 ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags vscode
 ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags teams
 ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags thunderbird
 ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags thunderbird_mcp
-ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags obsidian
 ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags desktop
-ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags default_applications
 ```
 
 You can also combine tags, for example:

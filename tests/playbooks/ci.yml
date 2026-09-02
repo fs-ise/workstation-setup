@@ -9,10 +9,11 @@
     baseline_required_packages: []
     # Exercise DNF's idempotent state=absent behavior with a package that is
     # deliberately not installed in the disposable Fedora container.
-    baseline_remove_packages:
+    desktop_apps_remove_packages:
       - workstation-setup-ci-absent-package
     baseline_optional_packages: []
-    baseline_configure_flathub: false
+    desktop_apps_packages: []
+    desktop_apps_configure_flathub: false
     keepassxc_packages: []
     r_system_packages: []
     r_install_cran_packages: false
@@ -88,6 +89,7 @@
 
   roles:
     - role: baseline
+    - role: desktop_apps
     - role: git_tools
       vars:
         git_tools_packages: []

@@ -2,13 +2,14 @@
 title: "workstation-setup"
 ---
 
-This repository documents a reproducible workstation setup used by [FS-ISE](https://fs-ise.github.io/handbook/).
-It treats a workstation as something that should be installed consistently, configured efficiently, and kept understandable for a small but growing team.
+This repository documents reproducible Fedora workstation and server-oriented (non-GUI) research
+environments used by [FS-ISE](https://fs-ise.github.io/handbook/).
 
 ::: {.callout-tip title="Supported platform"}
-This setup is tested/supported on **Fedora Workstation 44 x86_64**. The main
-Ansible playbook rejects other distributions, Fedora major versions, and
-architectures before running installation or configuration roles.
+The workstation and cloud stacks are tested/supported on **Fedora 44 x86_64**.
+Their preflight role rejects other distributions, Fedora major versions, and
+architectures before running installation or configuration roles. Use the lab
+stack for Fedora Workstation and the cloud stack for an existing server-oriented (non-GUI) system.
 :::
 
 The workstation stack includes:

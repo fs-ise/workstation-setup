@@ -6,20 +6,8 @@
     update_cache: true
   loop: "{{ baseline_required_packages }}"
 
-- name: Remove unwanted packages
-  ansible.builtin.dnf:
-    name: "{{ baseline_remove_packages }}"
-    state: absent
-
 - name: Install optional baseline packages
   ansible.builtin.dnf:
     name: "{{ item }}"
     state: present
   loop: "{{ baseline_optional_packages }}"
-
-- name: Ensure Flathub remote exists
-  community.general.flatpak_remote:
-    name: flathub
-    state: present
-    flatpakrepo_url: https://flathub.org/repo/flathub.flatpakrepo
-  when: baseline_configure_flathub | bool

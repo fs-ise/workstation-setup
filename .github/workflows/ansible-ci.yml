@@ -68,6 +68,11 @@ jobs:
           ansible-playbook \
             --syntax-check \
             -i tests/inventory/hosts.yml \
+            playbooks/cloud-stack.yml
+
+          ansible-playbook \
+            --syntax-check \
+            -i tests/inventory/hosts.yml \
             playbooks/audit-unmanaged-packages.yml
 
           ansible-playbook \

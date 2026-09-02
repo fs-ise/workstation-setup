@@ -5,6 +5,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 PLAYBOOK = (ROOT / "playbooks/lab-stack.yml").read_text(encoding="utf-8")
+CLOUD_PLAYBOOK = (ROOT / "playbooks/cloud-stack.yml").read_text(encoding="utf-8")
 TASKS = (ROOT / "roles/preflight/tasks/main.yml").read_text(encoding="utf-8")
 
 
@@ -13,6 +14,8 @@ class PreflightRoleTests(unittest.TestCase):
         self.assertLess(PLAYBOOK.index("- role: preflight"), PLAYBOOK.index("- role: baseline"))
         self.assertIn("gather_facts: true", PLAYBOOK)
         self.assertIn("tags: [always, preflight]", PLAYBOOK)
+        self.assertLess(CLOUD_PLAYBOOK.index("- role: preflight"), CLOUD_PLAYBOOK.index("- role: baseline"))
+        self.assertIn("gather_facts: true", CLOUD_PLAYBOOK)
 
     def test_supported_platform_is_exact(self):
         self.assertIn('ansible_facts["distribution"] == "Fedora"', TASKS)
