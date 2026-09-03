@@ -1,6 +1,6 @@
 ---
 # Posit's stable open-source RStudio Desktop build for Fedora x86-64.
-rstudio_version: "2026.07.1+147"
+rstudio_version: "2026.08.2+200"
 rstudio_rpm_version: "{{ rstudio_version | replace('+', '-') }}"
 rstudio_rpm_filename: "rstudio-{{ rstudio_rpm_version }}-x86_64.rpm"
 rstudio_download_url: >-
