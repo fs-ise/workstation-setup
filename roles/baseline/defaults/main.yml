@@ -27,6 +27,7 @@ baseline_optional_packages:
   - pwgen
   - ruby
   - rubygem-bundler
+  - sshpass
   - tldr
   - unifont-fonts
   - unrtf
