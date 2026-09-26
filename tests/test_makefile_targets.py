@@ -19,10 +19,21 @@ class MakefileTargetTests(unittest.TestCase):
         )
         return result.stdout
 
-    def test_install_delegates_to_lab_stack(self):
+    def test_install_bootstraps_dependencies_before_lab_stack(self):
         output = self.dry_run("install")
+        bootstrap = "sudo dnf -y install ansible-core python3 python3-pip dnf-plugins-core"
+        galaxy = "ansible-galaxy collection install -r requirements.yml --upgrade"
+
+        self.assertIn(bootstrap, output)
+        self.assertIn(galaxy, output)
         self.assertIn("make lab-stack", output)
         self.assertIn("playbooks/lab-stack.yml", output)
+        self.assertLess(output.index(bootstrap), output.index(galaxy))
+        self.assertLess(output.index(galaxy), output.index("playbooks/lab-stack.yml"))
+
+    def test_bootstrap_and_deps_remain_standalone_targets(self):
+        self.assertIn("ansible-core", self.dry_run("bootstrap"))
+        self.assertIn("requirements.yml", self.dry_run("deps"))
 
     def test_audit_delegates_to_package_audit(self):
         output = self.dry_run("audit")

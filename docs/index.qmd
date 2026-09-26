@@ -26,7 +26,7 @@ flowchart TB
         direction LR
 
         Setup["<strong>Setup</strong><br/>
-        • <a href='install_os.html'>Install OS & Ansible</a><br/>
+        • <a href='install_os.html'>Install OS</a><br/>
         • <a href='install_software.html'>Install software</a><br/>
         <span style='font-family:monospace;'>make install</span><br/>
         <i>Fully automated setup</i>"]
@@ -39,7 +39,7 @@ flowchart TB
         <i>Keep the workstation reproducible</i>"]
 
         Restore["<strong>Restore</strong><br/>
-        • <a href='install_os.html'>Install OS & Ansible</a><br/>
+        • <a href='install_os.html'>Install OS</a><br/>
         • <a href='install_software.html'>Install software</a><br/>
         • <a href='restore.html#data'>Restore data</a><br/>
         <span style='font-family:monospace;'>make restore</span><br/>

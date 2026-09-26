@@ -1,5 +1,5 @@
 ---
-title: "Install OS/Ansible"
+title: "Install OS"
 ---
 
 Use this checklist for a new workstation before running the full lab software setup.
@@ -16,42 +16,21 @@ preflight check before making changes on any other platform.
 - Install it with the default GNOME desktop unless you have a documented reason to do otherwise.
 - Apply the first system update offered by GNOME Software or `dnf` before installing the lab stack.
 
-## 2. Install Git, Ansible, and Python prerequisites
+## 2. Clone the repository and install the workstation
 
-Open a terminal on the new workstation and install the tools needed to run this repository:
-
-```sh
-sudo dnf -y install git ansible-core python3 python3-pip dnf-plugins-core
-ansible --version
-git --version
-python3 --version
-```
-
-`dnf-plugins-core` provides `dnf config-manager`, which some repository setup tasks need.
-
-## 3. Clone the repository and install Ansible collections
-
-Clone the workstation setup repository and enter it:
-
-```sh
-git clone git@github.com:fs-ise/workstation-setup.git
-cd workstation-setup
-make deps
-```
-
-If SSH access to GitHub is not configured yet, use HTTPS for the first clone:
+Clone the workstation setup repository over HTTPS, enter it, and run the canonical setup command:
 
 ```sh
 git clone https://github.com/fs-ise/workstation-setup.git
 cd workstation-setup
-make deps
+make install
 ```
 
-`make deps` installs or updates the exact Ansible Galaxy collection versions in
-`requirements.yml`. These versions are intentionally pinned so tagged releases
-use the same tested dependencies on every workstation.
+`make install` installs the Ansible and Python bootstrap packages, installs the
+pinned Ansible Galaxy collections, and runs the workstation playbook. You do
+not need to install Ansible separately.
 
-## 4. Verify the inventory
+## 3. Verify the inventory
 
 The repository includes the local Ansible `inventory` used by the documented commands. It tells Ansible to configure the current machine. If a workstation needs host-specific variables, create `host_vars/localhost.yml` separately and do not put secrets in it.
 
@@ -80,5 +59,4 @@ Continue to [install software](install_software.html).
 ## Best practices and useful links
 
 - [Fedora Workstation downloads](https://fedoraproject.org/workstation/download/)
-- [Ansible collection installation](https://docs.ansible.com/ansible/latest/collections_guide/collections_installing.html)
 - [GitHub SSH documentation](https://docs.github.com/en/authentication/connecting-to-github-with-ssh)

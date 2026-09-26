@@ -46,16 +46,16 @@ If present, this directory contains GitHub-specific project automation such as w
 
 ## How the pieces fit together
 
-1. Follow the New machine pages in `docs/` to install Fedora, install prerequisites, verify the committed `inventory`, and run the lab stack.
-2. Run `make install`, which delegates to the `lab-stack` compatibility target
-   and calls the main Ansible playbook.
+1. Follow the New machine pages in `docs/` to install Fedora and clone this repository.
+2. Run `make install`. It installs the bootstrap packages and pinned Galaxy
+   collections before calling the main Ansible playbook through `lab-stack`.
 3. The playbook applies focused roles from `roles/`.
 4. Use Software pages for role-specific manual steps and checks.
 5. Use Day-to-day operations pages for recurring [software updates](update_software.html) and [backup and sync](backup.html) routines.
 
 ## Best practices and useful links
 
-- [Install OS/Ansible](install_os.html)
+- [Install OS](install_os.html)
 - [Install software](install_software.html)
 - [Update software](update_software.html)
 - [Personal overlays](personal_overlays.html)

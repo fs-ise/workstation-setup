@@ -20,7 +20,7 @@ kind of checkout:
   the workstation. Divergent local history is not merged automatically.
 - **Tagged or other detached checkout:** `make update` skips the Git pull and
   prints a notice. It preserves the selected configuration snapshot while still
-  refreshing dependencies, updating Fedora and Flatpak software, reapplying the
+  updating Fedora and Flatpak software, refreshing dependencies, reapplying the
   stack, and running the audit. It does not switch branches or select a newer tag.
 
 It then runs the following underlying commands in order; use them individually
@@ -30,16 +30,13 @@ for troubleshooting:
 # On a branch only; skipped on a tagged or other detached checkout
 git pull --ff-only
 
-# Install or refresh the repository's pinned Ansible Galaxy collections
-make deps
-
 # Update Fedora packages
 sudo dnf upgrade --refresh
 
 # Update Flatpak applications
 flatpak update
 
-# Reapply the managed workstation configuration
+# Bootstrap prerequisites, refresh pinned Galaxy collections, and reapply the configuration
 make install
 # Underlying command: ansible-playbook -i inventory -K playbooks/lab-stack.yml
 
@@ -52,12 +49,11 @@ The commands intentionally run in this order:
 
 1. On a branch, update the setup repository with a fast-forward-only pull. On a
    tagged or other detached checkout, keep the selected Git snapshot unchanged.
-2. Install or refresh the Ansible Galaxy dependencies declared in
-   `requirements.yml`. Collection versions are intentionally pinned so tagged
-   releases use the same tested dependencies on every workstation.
-3. Update Fedora packages and Flatpak applications from their configured repositories. These commands omit `-y` so you can review consequential changes before installation.
-4. Reapply the Ansible desired state after the software updates.
-5. Audit the resulting system for DNF package drift and high-signal manual filesystem installations.
+2. Update Fedora packages and Flatpak applications from their configured repositories. These commands omit `-y` so you can review consequential changes before installation.
+3. Run `make install` to ensure the bootstrap packages are present, refresh the
+   pinned Galaxy collections from `requirements.yml`, and reapply the Ansible
+   desired state.
+4. Audit the resulting system for DNF package drift and high-signal manual filesystem installations.
 
 `ansible-playbook` is not a substitute for `dnf upgrade` or `flatpak update`. Most roles ensure that selected packages are present and configured; they do not generally upgrade every installed package.
 

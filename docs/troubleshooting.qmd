@@ -24,13 +24,8 @@ ansible-inventory -i inventory --list
 
 ## Ansible collection is missing
 
-From the repository root, install the collections declared in `requirements.yml`:
-
-```sh
-make deps
-```
-
-Then rerun:
+From the repository root, rerun the canonical installation command. It refreshes
+the collections declared in `requirements.yml` before running the playbook:
 
 ```sh
 make install
@@ -69,7 +64,7 @@ Resolve findings by adding deliberate workstation packages to Ansible-managed pa
 
 ## Best practices and useful links
 
-- [Install OS/Ansible](install_os.html)
+- [Install OS](install_os.html)
 - [Install software](install_software.html)
 - [Update software](update_software.html)
 - [Docker Linux post-installation steps](https://docs.docker.com/engine/install/linux-postinstall/)

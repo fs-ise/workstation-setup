@@ -1,11 +1,14 @@
-.PHONY: deps install update update-base audit lab-stack audit-packages backup
+.PHONY: bootstrap deps install update update-base audit lab-stack audit-packages backup
 
 VORTA_APP_ID := com.borgbase.Vorta
+
+bootstrap:
+	sudo dnf -y install ansible-core python3 python3-pip dnf-plugins-core
 
 deps:
 	ansible-galaxy collection install -r requirements.yml --upgrade
 
-install:
+install: bootstrap deps
 	$(MAKE) lab-stack
 
 update:
@@ -23,7 +26,6 @@ update-base:
 			exit "$$status"; \
 		fi; \
 	fi
-	$(MAKE) deps
 	sudo dnf upgrade --refresh
 	flatpak update
 	$(MAKE) install
