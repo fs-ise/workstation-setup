@@ -63,6 +63,7 @@ website:
         href: reference.qmd
         contents:
           - repo_structure.qmd
+          - windows_ssh_setup.qmd
           - principles.qmd
           - personal_overlays.qmd
           - cloud_setup.qmd

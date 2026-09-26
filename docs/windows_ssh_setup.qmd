@@ -1,0 +1,208 @@
+---
+title: "Windows: SSH setup"
+---
+
+## Setup: SSH
+
+### On Windows 11
+
+Open **PowerShell as Administrator**.
+
+First check/install OpenSSH Server:
+
+```powershell
+Get-WindowsCapability -Online -Name OpenSSH.Server*
+```
+
+If it shows `State : NotPresent`:
+
+```powershell
+Get-WindowsCapability -Online -Name OpenSSH.Server* |
+    Add-WindowsCapability -Online
+```
+
+Then enable and start the SSH service:
+
+```powershell
+Set-Service -Name sshd -StartupType Automatic
+Start-Service sshd
+```
+
+Check it:
+
+```powershell
+Get-Service sshd
+```
+
+You want:
+
+```text
+Status   Name
+------   ----
+Running  sshd
+```
+
+Windows' built-in OpenSSH Server is the implementation Ansible recommends for SSH-managed Windows hosts.
+
+### Check port 22 locally
+
+Still on Windows:
+
+```powershell
+Test-NetConnection localhost -Port 22
+```
+
+You want:
+
+```text
+TcpTestSucceeded : True
+```
+
+If that is `False`, stop there—the SSH server itself is not working yet.
+
+### Check the firewall
+
+Run:
+
+```powershell
+Get-NetFirewallRule |
+    Where-Object DisplayName -Like "*OpenSSH*"
+```
+
+Normally installing OpenSSH creates the appropriate inbound rule. If you don't see one, create it explicitly:
+
+```powershell
+New-NetFirewallRule `
+    -Name "sshd-Server-In-TCP" `
+    -DisplayName "OpenSSH SSH Server" `
+    -Enabled True `
+    -Direction Inbound `
+    -Protocol TCP `
+    -Action Allow `
+    -LocalPort 22
+```
+
+This matches the setup recommended in the current Ansible Windows SSH documentation.
+
+### Find the Windows IP address
+
+Run:
+
+```powershell
+ipconfig
+```
+
+Look for the IPv4 address of the active Ethernet/Wi-Fi adapter, for example:
+
+```text
+IPv4 Address . . . . . . : 192.168.178.42
+```
+
+Also get your Windows username:
+
+```powershell
+whoami
+```
+
+You might get:
+
+```text
+DESKTOP-ABC\gerit
+```
+
+Usually the SSH username would then be:
+
+```text
+gerit
+```
+
+### Test from Linux
+
+From your Fedora/Linux machine:
+
+```bash
+ssh gerit@192.168.178.42
+```
+
+Replace both values accordingly.
+
+On the first connection you'll probably see:
+
+```text
+The authenticity of host ... can't be established.
+Are you sure you want to continue connecting?
+```
+
+Enter:
+
+```text
+yes
+```
+
+Then enter your **Windows account password**.
+
+If successful, you'll land in something like:
+
+```text
+Microsoft Windows [Version ...]
+...
+C:\Users\gerit>
+```
+
+At this point, **SSH works**.
+
+### Then switch the SSH shell to PowerShell
+
+Ansible recommends PowerShell as the Windows SSH default shell rather than `cmd.exe`.
+
+Back in an **Administrator PowerShell** on Windows:
+
+```powershell
+New-ItemProperty `
+    -Path 'HKLM:\SOFTWARE\OpenSSH' `
+    -Name DefaultShell `
+    -Value 'C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe' `
+    -PropertyType String `
+    -Force
+```
+
+No SSH service restart is necessary; this applies to subsequent connections.
+
+Disconnect your Linux SSH session:
+
+```text
+exit
+```
+
+and reconnect:
+
+```bash
+ssh gerit@192.168.178.42
+```
+
+You should now land at a PowerShell prompt resembling:
+
+```text
+PS C:\Users\gerit>
+```
+
+That is the state we want before configuring Ansible.
+
+**So first run these four checks and tell me where you get to:**
+
+```powershell
+Get-Service sshd
+Test-NetConnection localhost -Port 22
+ipconfig
+whoami
+```
+
+Then from Linux:
+
+```bash
+ssh USERNAME@WINDOWS_IP
+```
+
+## Resources
+
+- [Windows SSH — Ansible Community Documentation](https://docs.ansible.com/projects/ansible/latest/os_guide/windows_ssh.html)
