@@ -34,8 +34,8 @@ flowchart TB
         Daily["<strong>Day-to-day operations</strong><br/>
         • <a href='install_software.html#update-and-reapply-configuration'>Apply Configuration</a><br/>
         • <a href='update_software.html'>Audit Configuration</a><br/>
-        • <a href='backup.html'>Backup</a><br/>
-        <span style='font-family:monospace;'>make update<br/>make audit<br/>make backup</span><br/>
+        • <a href='backup.html'>Backup data</a><br/>
+        <span style='font-family:monospace;'>make configure<br/>make audit<br/>make backup</span><br/>
         <i>Keep the workstation reproducible</i>"]
 
         Restore["<strong>Restore</strong><br/>
@@ -50,7 +50,7 @@ flowchart TB
     end
 
     %% Bottom: Shared data infrastructure
-    DATA[("<strong>Data infrastructure<br/>for sync and backup</strong><br/>
+    DATA[("<strong>Data infrastructure</strong><br/>
     • <a href='backup.html#hdd-backup'>HDD backup</a><br/>
     • <a href='backup.html#github'>GitHub</a><br/>
     • <a href='backup.html#nextcloud'>Nextcloud</a>")]
