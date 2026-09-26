@@ -1,4 +1,6 @@
-.PHONY: deps install update update-base audit lab-stack audit-packages
+.PHONY: deps install update update-base audit lab-stack audit-packages backup
+
+VORTA_APP_ID := com.borgbase.Vorta
 
 deps:
 	ansible-galaxy collection install -r requirements.yml --upgrade
@@ -34,3 +36,23 @@ lab-stack:
 
 audit-packages:
 	ansible-playbook -i inventory -K playbooks/audit-unmanaged-packages.yml
+
+backup:
+	@set -eu; \
+	printf '%s\n' \
+		'[TODO] nextcloud-sync-check: Verify that Nextcloud synchronization is complete.' \
+		'[TODO] git-repo-check: Verify that local repositories have no uncommitted or unpushed changes.'; \
+	if ! command -v flatpak >/dev/null 2>&1; then \
+		echo "Vorta cannot be launched because Flatpak is not installed or is not on PATH." >&2; \
+		exit 1; \
+	fi; \
+	if ! flatpak info "$(VORTA_APP_ID)" >/dev/null 2>&1; then \
+		echo "Vorta is not installed. Install and configure $(VORTA_APP_ID) before running make backup." >&2; \
+		exit 1; \
+	fi; \
+	echo "Vorta only opens the interface: start the configured backup and verify that it completes successfully."; \
+	if flatpak ps --columns=application 2>/dev/null | awk '$$0 == "$(VORTA_APP_ID)" { found = 1 } END { exit !found }'; then \
+		echo "Vorta is already running; not launching another instance."; \
+	else \
+		flatpak run "$(VORTA_APP_ID)"; \
+	fi

@@ -37,8 +37,15 @@ Avoid storing secrets directly in Git or shared folders. Use a password manager 
 ## Weekly routine
 
 - Connect the weekly backup HDD.
-- Run or verify the Vorta/Borg backup.
-- Check that the backup completed successfully before disconnecting the drive.
+- Confirm that Vorta is already configured with the external HDD backup repository, then run:
+
+  ```sh
+  make backup
+  ```
+
+  This prints placeholder reminders for future Nextcloud sync and Git repository checks, then opens Vorta. It does not perform the checks, delete Nextcloud metadata, or empty the local Trash.
+- In the Vorta window, initiate the configured backup. Opening Vorta does not start or complete a backup.
+- Verify that the backup completed successfully before disconnecting the external HDD.
 - Review local-only folders and decide whether they should become Git repositories, Nextcloud folders, or remain backup-only.
 
 ## Monthly routine

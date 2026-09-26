@@ -106,6 +106,92 @@ exit 0
         self.assertNotIn("sudo dnf upgrade --refresh", commands)
         self.assertNotIn("flatpak update", commands)
 
+    def run_backup(self, home_path: Path, flatpak_script: str):
+        bin_path = home_path.parent / "bin"
+        bin_path.mkdir()
+        flatpak_path = bin_path / "flatpak"
+        flatpak_path.write_text(flatpak_script)
+        flatpak_path.chmod(0o755)
+
+        environment = os.environ.copy()
+        environment["HOME"] = str(home_path)
+        environment["PATH"] = f"{bin_path}:{environment['PATH']}"
+        environment["COMMAND_LOG"] = str(home_path.parent / "commands.log")
+        return subprocess.run(
+            [
+                "make",
+                "--no-print-directory",
+                "backup",
+            ],
+            cwd=ROOT,
+            capture_output=True,
+            text=True,
+            env=environment,
+        )
+
+    def test_backup_preserves_user_files_and_launches_vorta(self):
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            temporary_path = Path(temporary_directory)
+            home_path = temporary_path / "home"
+            nextcloud_path = home_path / "Nextcloud"
+            nextcloud_path.mkdir(parents=True)
+            trash_path = home_path / ".local" / "share" / "Trash"
+            trash_path.mkdir(parents=True)
+
+            thumbs_file = nextcloud_path / "Thumbs.db"
+            encrypted_thumbs_file = nextcloud_path / "Thumbs.db:encryptable"
+            trash_file = trash_path / "keep.txt"
+            thumbs_file.write_text("keep")
+            encrypted_thumbs_file.write_text("keep")
+            trash_file.write_text("keep")
+
+            result = self.run_backup(
+                home_path,
+                """#!/bin/sh
+echo "flatpak $*" >> "$COMMAND_LOG"
+case "$1" in
+  info) exit 0 ;;
+  ps) exit 0 ;;
+  run) exit 0 ;;
+esac
+exit 1
+""",
+            )
+
+            self.assertEqual(result.returncode, 0, result.stderr)
+            self.assertTrue(thumbs_file.exists())
+            self.assertTrue(encrypted_thumbs_file.exists())
+            self.assertTrue(trash_file.exists())
+            self.assertIn("[TODO] nextcloud-sync-check", result.stdout)
+            self.assertIn("[TODO] git-repo-check", result.stdout)
+            commands = (temporary_path / "commands.log").read_text()
+            self.assertIn("flatpak info com.borgbase.Vorta", commands)
+            self.assertIn("flatpak run com.borgbase.Vorta", commands)
+
+    def test_backup_does_not_launch_a_second_vorta_instance(self):
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            temporary_path = Path(temporary_directory)
+            home_path = temporary_path / "home"
+            (home_path / ".local" / "share" / "Trash").mkdir(parents=True)
+
+            result = self.run_backup(
+                home_path,
+                """#!/bin/sh
+echo "flatpak $*" >> "$COMMAND_LOG"
+case "$1" in
+  info) exit 0 ;;
+  ps) echo com.borgbase.Vorta; exit 0 ;;
+  run) exit 99 ;;
+esac
+exit 1
+""",
+            )
+
+            self.assertEqual(result.returncode, 0, result.stderr)
+            self.assertIn("already running", result.stdout)
+            commands = (temporary_path / "commands.log").read_text()
+            self.assertNotIn("flatpak run", commands)
+
 
 if __name__ == "__main__":
     unittest.main()
