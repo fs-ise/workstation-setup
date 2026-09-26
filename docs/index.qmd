@@ -5,6 +5,75 @@ title: "workstation-setup"
 This repository documents reproducible Fedora workstation and server-oriented (non-GUI) research
 environments used by [FS-ISE](https://fs-ise.github.io/handbook/).
 
+```{mermaid}
+%%| fig-align: center
+---
+config:
+  theme: base
+  themeCSS: |-
+    .node { color-scheme: light dark; }
+
+    .nodeLabel { line-height: 1.15 !important; }
+---
+%%{init: {"flowchart":{"rankSpacing":25,"nodeSpacing":20,"curve":"linear","htmlLabels":true}}}%%
+flowchart TB
+
+    %% Top: Configuration recipe
+    A@{ shape: doc, label: "⚙️ <a href='https://github.com/fs-ise/workstation-setup'>workstation-setup</a><br/>" }
+
+    %% Middle: Workstation lifecycle
+    subgraph WS["<strong>Workstation</strong>"]
+        direction LR
+
+        Setup["<strong>Setup</strong><br/>
+        • <a href='install_os.html'>Install OS & Ansible</a><br/>
+        • <a href='install_software.html'>Install software</a><br/>
+        <span style='font-family:monospace;'>make install</span><br/>
+        <i>Fully automated setup</i>"]
+
+        Daily["<strong>Day-to-day operations</strong><br/>
+        • <a href='update_software.html'>Update software</a><br/>
+        • <a href='update_software.html#audit'>Audit software</a><br/>
+        • <a href='backup.html'>Backup</a><br/>
+        <span style='font-family:monospace;'>make update<br/>make audit<br/>make backup</span><br/>
+        <i>Keep the workstation reproducible</i>"]
+
+        Restore["<strong>Restore</strong><br/>
+        • <a href='install_os.html'>Install OS & Ansible</a><br/>
+        • <a href='install_software.html'>Install software</a><br/>
+        • <a href='restore.html#data'>Restore data</a><br/>
+        <span style='font-family:monospace;'>make restore</span><br/>
+        <i>Rebuild in minutes</i>"]
+
+        %% Invisible links enforce left-to-right ordering
+        Setup ~~~ Daily ~~~ Restore
+    end
+
+    %% Bottom: Shared data infrastructure
+    DATA[("<strong>Data infrastructure<br/>for sync and backup</strong><br/>
+    • <a href='backup.html#hdd-backup'>HDD backup</a><br/>
+    • <a href='backup.html#github'>GitHub</a><br/>
+    • <a href='backup.html#nextcloud'>Nextcloud</a>")]
+
+    %% External connections
+    A -.-> WS
+    WS <-.-> DATA
+
+    %% Node styles
+    classDef ansible fill:#fff3bf,stroke:#f08c00,stroke-width:2px,color:#1e293b;
+    classDef phase fill:#ffffff,stroke:#94a3b8,stroke-width:1px,color:#1e293b,text-align:left;
+    classDef storage fill:#f0fdfa,stroke:#0d9488,stroke-width:2px,color:#115e59,text-align:left;
+
+    class A ansible;
+    class Setup,Daily,Restore phase;
+    class DATA storage;
+
+    %% Workstation container
+    style WS fill:#eff6ff,stroke:#2563eb,stroke-width:2px
+
+    linkStyle default stroke:#94a3b8,stroke-width:1.5px
+```
+
 ::: {.callout-tip title="Supported platform"}
 The workstation and cloud stacks are tested/supported on **Fedora 44 x86_64**.
 Their preflight role rejects other distributions, Fedora major versions, and
@@ -33,52 +102,6 @@ We use Ansible to translate the following pragmatic principles into a reproducib
 Research work often depends on fast-moving open-source software, custom tools, and local services.
 Ansible is the mechanism used here to turn that changing setup knowledge into a programmatic desired state: packages, configuration files, services, and checks can be reviewed in Git, applied to a new machine, and reapplied during maintenance.
 The diagram shows how the same repository connects initial setup, recurring updates, backup/sync, and data restoration.
-
-```{mermaid}
-flowchart TD
-  %% External infrastructure (outside the subgraphs)
-  GH[(<a href='backup.html#github'>GitHub</a>)]
-  BK[(<a href='backup.html#hdd-backup'>HDD Backup</a>)]
-  NC[(<a href='backup.html#nextcloud'>Nextcloud</a>)]
-  A[("<a href='https://github.com/fs-ise/workstation-setup'>workstation-setup<br/>(Ansible)</a>")]
-
-  %% Day-to-day flow
-  subgraph Daily["<strong>Day-to-day operations</strong>"]
-     AUpd["<a href='update_software.html'>Update software</a>"] --> S[<a href='backup.html'>Backup and sync</a>]
-     S --> AUpd
-  end
-  A <-.-> AUpd
-
-  S -. "~/*" .-> BK
-  S <-. ~/repos* .-> GH
-  S <-. ~/Nextcloud* .-> NC
-
-
-  %% New machine flow
-  subgraph New["<strong>New machine</strong>"]
-    OS[<a href='install_os.html'>Install OS/Ansible</a>]
-    OS --> AInst["<a href='install_software.html'>Install software</a>"] --> R
-    R[<a href='restore.html'>Set up/restore data</a>]
-  end
-  A -.-> AInst
-
-  BK -.-> R
-  GH -.-> R
-  NC -.-> R
-
-  %% Styling
-  classDef highlight fill:#ffec99,stroke:#f08c00,stroke-width:3px,color:#1b1b1b;
-  classDef muted fill:#f6f7f9,stroke:#c9ced6,stroke-width:1px,color:#2b2b2b;
-
-  class A highlight;
-  class GH,BK,NC,AUpd,S,OS,AInst,R muted;
-
-  %% Optional: soften subgraph borders
-  style Daily fill:#ffffff,stroke:#d0d5dd,stroke-width:1px;
-  style New fill:#ffffff,stroke:#d0d5dd,stroke-width:1px;
-
-```
-
 
 ::: {.callout-note title="Why Ansible?"}
 Workstation setup is a recurring configuration-management task.
