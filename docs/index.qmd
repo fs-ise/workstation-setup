@@ -27,22 +27,22 @@ flowchart TB
 
         Setup["<strong>Setup</strong><br/>
         • <a href='install_os.html'>Install OS</a><br/>
-        • <a href='install_software.html'>Install software</a><br/>
-        <span style='font-family:monospace;'>make install</span><br/>
+        • <a href='install_software.html'>Apply Configuration</a><br/>
+        <span style='font-family:monospace;'>make configure</span><br/>
         <i>Fully automated setup</i>"]
 
         Daily["<strong>Day-to-day operations</strong><br/>
-        • <a href='update_software.html'>Update software</a><br/>
-        • <a href='update_software.html#audit'>Audit software</a><br/>
+        • <a href='install_software.html#update-and-reapply-configuration'>Apply Configuration</a><br/>
+        • <a href='update_software.html'>Audit Configuration</a><br/>
         • <a href='backup.html'>Backup</a><br/>
         <span style='font-family:monospace;'>make update<br/>make audit<br/>make backup</span><br/>
         <i>Keep the workstation reproducible</i>"]
 
         Restore["<strong>Restore</strong><br/>
         • <a href='install_os.html'>Install OS</a><br/>
-        • <a href='install_software.html'>Install software</a><br/>
-        • <a href='restore.html#data'>Restore data</a><br/>
-        <span style='font-family:monospace;'>make restore</span><br/>
+        • <a href='install_software.html'>Apply Configuration</a><br/>
+        • <a href='restore.html'>Restore data</a><br/>
+        <span style='font-family:monospace;'>make configure</span><br/>
         <i>Rebuild in minutes</i>"]
 
         %% Invisible links enforce left-to-right ordering

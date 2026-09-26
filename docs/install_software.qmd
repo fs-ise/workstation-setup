@@ -1,24 +1,24 @@
 ---
-title: "Install software"
+title: "Apply Configuration"
 ---
 
-Use this page to apply the managed workstation configuration to a new or freshly prepared machine after completing [Install OS](install_os.html).
-Installing software through Ansible makes the setup repeatable, reviewable, and easier to share across the team.
+Use this page after completing [Install OS](install_os.html), both for initial
+configuration and for subsequent reconfiguration. Ansible makes the setup
+repeatable, reviewable, and easier to share across the team.
 
 This workflow is tested/supported on **Fedora Workstation 44 x86_64**. The
 playbook gathers platform facts first and stops with the detected platform if
 the distribution, major version, or architecture is unsupported.
 
 ```sh
-make install
+make configure
 ```
 
-The command first installs the required bootstrap packages, including
+`make configure` is the canonical command. It first installs the required packages, including
 `ansible-core`, Python prerequisites, and `dnf-plugins-core`. It then installs
 or updates the pinned Ansible Galaxy collections from `requirements.yml` and
 runs the main workstation playbook through the `lab-stack` target. You do not
-need to install Ansible separately before running `make install`.
-[Update software](update_software.html) updates Fedora and Flatpak software, then reapplies and audits that same state during routine maintenance.
+need to install Ansible separately.
 Both workflows rely on Ansible and documented package policy rather than manual, undocumented changes.
 For a workstation with user- or machine-specific automation, apply this shared
 baseline first and then apply a separate [personal overlay](personal_overlays.html).
@@ -26,7 +26,34 @@ baseline first and then apply a separate [personal overlay](personal_overlays.ht
 Ansible playbooks are designed to be **idempotent**: 
 they describe the desired final state of the workstation.
 When you rerun the command, Ansible checks what is already installed or configured and only applies missing or changed steps.
-This makes repeated runs safe after an interrupted installation or after changing documented configuration.
+Ansible converges the machine toward that declared state, so a repeated run
+should leave already-correct state unchanged. This makes the same command useful
+after an interrupted run or after changing documented configuration.
+
+`make setup` performs only prerequisite and Galaxy collection setup. It is
+available for troubleshooting, but normally does not need to be called manually.
+
+## Update and reapply configuration
+
+Use the complete maintenance workflow when repository and installed software
+versions should also be refreshed:
+
+```sh
+make update
+```
+
+In order, this command:
+
+1. runs `git pull --ff-only` on a branch, or preserves a detached checkout and
+   prints a notice;
+2. refreshes Fedora packages with `sudo dnf upgrade --refresh`;
+3. refreshes Flatpak applications with `flatpak update`;
+4. runs the same `make configure` workflow described above; and
+5. runs `make audit`.
+
+The update stops when a step fails. It does not switch a detached checkout to a
+branch or newer tag. Fedora and Flatpak prompts remain interactive so that you
+can review consequential changes.
 
 ::: {.callout-manual}
 **🔧 Manual setup and configuration**
@@ -85,7 +112,7 @@ ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags keepassxc,chrome
 
 ## Best practices and useful links
 
-- [Update software](update_software.html)
+- [Audit configuration](update_software.html)
 - [Ansible playbook guide](https://docs.ansible.com/ansible/latest/playbook_guide/playbooks_intro.html)
 - [Repository structure](repo_structure.html)
 - [Troubleshooting](troubleshooting.html)

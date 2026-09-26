@@ -4,8 +4,8 @@ title: "New machine"
 
 Provision a workstation in the following order. The supported starting point is Fedora Workstation 44 x86_64.
 
-1. **[Install OS](install_os.qmd).** Install Fedora, apply the first system update, clone this repository, and run `make install`. That command bootstraps Ansible, installs the pinned Galaxy dependencies, and applies the main workstation playbook.
-2. **[Install software](install_software.qmd).** Review what the canonical `make install` workflow applies and complete the account sign-ins, credentials, GUI preferences, and other user-specific configuration that must remain manual.
+1. **[Install OS](install_os.qmd).** Install Fedora, apply the first system update, install Git and Make, and clone this repository.
+2. **[Apply Configuration](install_software.qmd).** Run the canonical `make configure` workflow, then complete account sign-ins, credentials, GUI preferences, and other user-specific configuration that must remain manual.
 3. **[Set up or restore data](restore.qmd).** Reconnect Git repositories and synchronized storage, then restore trusted local data, profiles, and keys only where needed. Restoration sources, credentials, and recovery decisions are intentionally not automated.
 
 Complete each page's checks before continuing to the next step. After provisioning, use the [day-to-day operations](operations.qmd) workflow to keep the workstation current and recoverable.

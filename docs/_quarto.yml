@@ -20,14 +20,17 @@ website:
       - section: New machine
         href: new_machine.qmd
         contents:
-          - install_os.qmd
-          - install_software.qmd
+          - href: install_os.qmd
+            text: Install OS
+          - href: install_software.qmd
+            text: Apply Configuration
           - restore.qmd
 
       - section: Day-to-day operations
         href: operations.qmd
         contents:
-          - update_software.qmd
+          - href: update_software.qmd
+            text: Audit Configuration
           - backup.qmd
 
       - section: Software

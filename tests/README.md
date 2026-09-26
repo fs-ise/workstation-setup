@@ -21,7 +21,7 @@ source .venv/bin/activate
 python -m pip install --upgrade pip
 python -m pip install -r requirements.txt
 
-make deps
+ansible-galaxy collection install -r requirements.yml --upgrade
 
 python -m unittest discover -s tests -p 'test_*.py'
 
@@ -68,7 +68,7 @@ docker run --rm \
   --volume "$PWD:/workspace:Z" \
   --workdir /workspace \
   fedora:44 \
-  bash -lc 'dnf install -y ansible-core git make python3-libdnf5 && make deps && tests/run-idempotence.sh'
+  bash -lc 'dnf install -y ansible-core git make python3-libdnf5 && ansible-galaxy collection install -r requirements.yml --upgrade && tests/run-idempotence.sh'
 ```
 
 The container is not privileged. All changes are confined to its disposable

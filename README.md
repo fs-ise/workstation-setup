@@ -15,13 +15,13 @@ Documentation available at [https://fs-ise.github.io/workstation-setup/](https:/
 From the repository root, use the same main commands as a personal overlay:
 
 ```sh
-make install  # Apply the desired workstation configuration
+make configure  # Apply or reapply the desired workstation configuration
 make update   # Update software, reapply configuration, and audit
-make audit    # Audit the resulting workstation state
+make audit    # Audit unmanaged packages and manual installations
 ```
 
-See [Install software](https://fs-ise.github.io/workstation-setup/install_software.html)
-and [Update software](https://fs-ise.github.io/workstation-setup/update_software.html)
+See [Apply Configuration](https://fs-ise.github.io/workstation-setup/install_software.html)
+and [Audit Configuration](https://fs-ise.github.io/workstation-setup/update_software.html)
 for prerequisites, behavior, and verification guidance.
 
 > **Supported platform:** This repository is currently tested/supported on

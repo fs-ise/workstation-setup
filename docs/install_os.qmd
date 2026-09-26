@@ -2,7 +2,7 @@
 title: "Install OS"
 ---
 
-Use this checklist for a new workstation before running the full lab software setup.
+Use this checklist to install Fedora and prepare a new workstation to run Make.
 
 ::: {.callout-important title="Supported platform"}
 The repository is tested/supported on **Fedora Workstation 44 x86_64**. Install
@@ -16,21 +16,25 @@ preflight check before making changes on any other platform.
 - Install it with the default GNOME desktop unless you have a documented reason to do otherwise.
 - Apply the first system update offered by GNOME Software or `dnf` before installing the lab stack.
 
-## 2. Clone the repository and install the workstation
+## 2. Prepare the system
 
-Clone the workstation setup repository over HTTPS, enter it, and run the canonical setup command:
+Install Git and Make, which are the only tools needed before invoking the
+repository's workflow:
+
+```sh
+sudo dnf install git make
+```
+
+## 3. Clone the repository
+
+Clone the workstation setup repository over HTTPS and enter it:
 
 ```sh
 git clone https://github.com/fs-ise/workstation-setup.git
 cd workstation-setup
-make install
 ```
 
-`make install` installs the Ansible and Python bootstrap packages, installs the
-pinned Ansible Galaxy collections, and runs the workstation playbook. You do
-not need to install Ansible separately.
-
-## 3. Verify the inventory
+## 4. Verify the checkout
 
 The repository includes the local Ansible `inventory` used by the documented commands. It tells Ansible to configure the current machine. If a workstation needs host-specific variables, create `host_vars/localhost.yml` separately and do not put secrets in it.
 
@@ -39,7 +43,7 @@ The repository includes the local Ansible `inventory` used by the documented com
 
 ```sh
 test -f inventory
-ansible-inventory -i inventory --list
+test -f Makefile
 ```
 :::
 
@@ -52,9 +56,10 @@ sudo systemctl enable --now sshd
 systemctl status sshd --no-pager
 ```
 
-## Continue to software installation
+## Continue to configuration
 
-Continue to [install software](install_software.html).
+Continue to [Apply configuration](install_software.html). It installs Ansible
+and all other automation prerequisites; do not install Ansible separately.
 
 ## Best practices and useful links
 

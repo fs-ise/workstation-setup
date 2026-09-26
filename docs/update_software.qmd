@@ -1,66 +1,19 @@
 ---
-title: "Update software"
+title: "Audit Configuration"
 ---
 
-Use this page to update installed software and keep an existing workstation aligned with this repository.
-Fedora and Flatpak update software from their configured repositories, Ansible reapplies the desired state used during [Install software](install_software.html), and the package audit detects unmanaged software or drift.
-
-## Routine update workflow
-
-On a shared-only workstation, run the complete update and audit from this repository:
+Run the existing package and manual-installation audit:
 
 ```sh
-make update
-```
-
-This target stops immediately if a step fails. Its Git behavior depends on the
-kind of checkout:
-
-- **Branch checkout:** `make update` runs `git pull --ff-only` before updating
-  the workstation. Divergent local history is not merged automatically.
-- **Tagged or other detached checkout:** `make update` skips the Git pull and
-  prints a notice. It preserves the selected configuration snapshot while still
-  updating Fedora and Flatpak software, refreshing dependencies, reapplying the
-  stack, and running the audit. It does not switch branches or select a newer tag.
-
-It then runs the following underlying commands in order; use them individually
-for troubleshooting:
-
-```sh
-# On a branch only; skipped on a tagged or other detached checkout
-git pull --ff-only
-
-# Update Fedora packages
-sudo dnf upgrade --refresh
-
-# Update Flatpak applications
-flatpak update
-
-# Bootstrap prerequisites, refresh pinned Galaxy collections, and reapply the configuration
-make install
-# Underlying command: ansible-playbook -i inventory -K playbooks/lab-stack.yml
-
-# Audit DNF packages and manual filesystem installations
 make audit
-# Underlying command: ansible-playbook -i inventory -K playbooks/audit-unmanaged-packages.yml
 ```
 
-The commands intentionally run in this order:
-
-1. On a branch, update the setup repository with a fast-forward-only pull. On a
-   tagged or other detached checkout, keep the selected Git snapshot unchanged.
-2. Update Fedora packages and Flatpak applications from their configured repositories. These commands omit `-y` so you can review consequential changes before installation.
-3. Run `make install` to ensure the bootstrap packages are present, refresh the
-   pinned Galaxy collections from `requirements.yml`, and reapply the Ansible
-   desired state.
-4. Audit the resulting system for DNF package drift and high-signal manual filesystem installations.
-
-`ansible-playbook` is not a substitute for `dnf upgrade` or `flatpak update`. Most roles ensure that selected packages are present and configured; they do not generally upgrade every installed package.
-
-`make update` delegates the update and configuration steps to `make update-base`,
-then runs `make audit`. A [personal overlay](personal_overlays.html) calls `update-base`,
-applies its own roles, and owns the final combined audit. This keeps the shared
-workflow composable without making it depend on any overlay.
+This invokes `playbooks/audit-unmanaged-packages.yml`. Its scope is deliberately
+limited: it detects DNF packages outside the Ansible-managed package declarations
+and selected unmanaged filesystem installations. It does **not** compare every
+file, service, preference, or application setting and is not comprehensive
+configuration-drift detection. See [Apply configuration](install_software.html)
+for the configuration and update workflows.
 
 ::: {.callout-note title="What is an unmanaged package?"}
 
@@ -112,7 +65,7 @@ flowchart TD
   L --> DS
   R --> C[Local drift removed]
 
-  DS --> U[Run make install again]
+  DS --> U[Run make configure again]
   U --> W[Workstation aligned]
 ```
 :::
@@ -151,7 +104,7 @@ Prefer a suitable official RPM or package-managed installation over a tarball/ma
 
 ## Best practices and useful links
 
-- [Install software](install_software.html)
+- [Apply Configuration](install_software.html)
 - [Personal overlays](personal_overlays.html)
 - [Troubleshooting](troubleshooting.html)
 - [Ansible playbook guide](https://docs.ansible.com/ansible/latest/playbook_guide/playbooks_intro.html)

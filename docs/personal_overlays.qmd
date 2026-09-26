@@ -13,12 +13,12 @@ The shared repository works independently and never refers to a particular overl
 The overlay should provide the same main commands as the shared workstation setup:
 
 ```sh
-make install
+make configure
 make update
 make audit
 ```
 
-- `make install` applies the desired workstation configuration.
+- `make configure` applies the desired workstation configuration.
 - `make update` updates dependencies and software, reapplies the configuration,
   and audits the result.
 - `make audit` audits the resulting workstation state.
@@ -74,7 +74,7 @@ the overlay.
 
 ## Best practices and useful links
 
-- [Update software](update_software.html)
+- [Audit Configuration](update_software.html)
 - [Repository structure](repo_structure.html)
 - [Ansible variable precedence](https://docs.ansible.com/ansible/latest/playbook_guide/playbooks_variables.html#understanding-variable-precedence)
 - [Ansible Vault](https://docs.ansible.com/ansible/latest/vault_guide/index.html)

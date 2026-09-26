@@ -2,7 +2,7 @@
 title: "Software"
 ---
 
-The main lab-stack playbook installs and configures most documented software through focused Ansible roles. Use the individual pages to run a role by tag, understand what it manages, complete any manual account or GUI setup, and verify the result. Start with [Install software](install_software.qmd) when configuring the complete workstation rather than running every role separately.
+The main lab-stack playbook installs and configures most documented software through focused Ansible roles. Use the individual pages to run a role by tag, understand what it manages, complete any manual account or GUI setup, and verify the result. Start with [Apply Configuration](install_software.qmd) when configuring the complete workstation rather than running every role separately.
 
 | Area | Software and configuration pages |
 |---|---|

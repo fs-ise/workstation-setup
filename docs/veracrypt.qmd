@@ -30,5 +30,5 @@ veracrypt --version
 
 - [VeraCrypt documentation](https://veracrypt.io/en/Documentation.html)
 - [VeraCrypt security precautions](https://veracrypt.io/en/Security%20Requirements%20and%20Precautions.html)
-- [Install software](install_software.html)
+- [Apply Configuration](install_software.html)
 - [Baseline](baseline.html)

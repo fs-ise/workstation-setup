@@ -19,8 +19,8 @@ class MakefileTargetTests(unittest.TestCase):
         )
         return result.stdout
 
-    def test_install_bootstraps_dependencies_before_lab_stack(self):
-        output = self.dry_run("install")
+    def test_configure_sets_up_dependencies_before_lab_stack(self):
+        output = self.dry_run("configure")
         bootstrap = "sudo dnf -y install ansible-core python3 python3-pip dnf-plugins-core"
         galaxy = "ansible-galaxy collection install -r requirements.yml --upgrade"
 
@@ -31,9 +31,15 @@ class MakefileTargetTests(unittest.TestCase):
         self.assertLess(output.index(bootstrap), output.index(galaxy))
         self.assertLess(output.index(galaxy), output.index("playbooks/lab-stack.yml"))
 
-    def test_bootstrap_and_deps_remain_standalone_targets(self):
-        self.assertIn("ansible-core", self.dry_run("bootstrap"))
-        self.assertIn("requirements.yml", self.dry_run("deps"))
+    def test_setup_combines_prerequisites_and_galaxy_dependencies(self):
+        output = self.dry_run("setup")
+        self.assertIn("ansible-core", output)
+        self.assertIn("requirements.yml", output)
+
+    def test_install_is_a_backward_compatible_configure_alias(self):
+        output = self.dry_run("install")
+        self.assertIn("ansible-core", output)
+        self.assertIn("playbooks/lab-stack.yml", output)
 
     def test_audit_delegates_to_package_audit(self):
         output = self.dry_run("audit")
@@ -43,8 +49,11 @@ class MakefileTargetTests(unittest.TestCase):
     def test_update_composes_public_targets(self):
         output = self.dry_run("update")
         self.assertIn("make update-base", output)
-        self.assertIn("make install", output)
+        self.assertIn("make configure", output)
         self.assertIn("make audit", output)
+        self.assertEqual(output.count("ansible-galaxy collection install"), 1)
+        self.assertEqual(output.count("playbooks/lab-stack.yml"), 1)
+        self.assertEqual(output.count("playbooks/audit-unmanaged-packages.yml"), 1)
 
     def run_update_base_with_git_state(self, symbolic_ref_status: int):
         with tempfile.TemporaryDirectory() as temporary_directory:
