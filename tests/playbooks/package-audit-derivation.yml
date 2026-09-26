@@ -69,11 +69,11 @@
       vars:
         package_audit_query_has_reasons: true
         package_audit_query_lines:
-          - "ansible-managed{{ '\t' }}User"
-          - "fedora-workstation{{ '\t' }}Group"
-          - "dependency-package{{ '\t' }}Weak Dependency"
-          - "third-party{{ '\t' }}External User"
-          - "uncertain-package{{ '\t' }}Future Reason"
+          - "ansible-managed{{ '\t' }}User"  # noqa jinja[spacing]
+          - "fedora-workstation{{ '\t' }}Group"  # noqa jinja[spacing]
+          - "dependency-package{{ '\t' }}Weak Dependency"  # noqa jinja[spacing]
+          - "third-party{{ '\t' }}External User"  # noqa jinja[spacing]
+          - "uncertain-package{{ '\t' }}Future Reason"  # noqa jinja[spacing]
 
     - name: Verify reason-aware package classification
       ansible.builtin.assert:

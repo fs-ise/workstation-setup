@@ -2,7 +2,8 @@
 - name: Build role search paths
   ansible.builtin.set_fact:
     package_audit_all_roles_paths: >-
-      {{ ([package_audit_roles_path] + (package_audit_extra_roles_paths | default([]))) | unique }}
+      {{ ([package_audit_roles_path | default(playbook_dir ~ '/../roles')]
+          + (package_audit_extra_roles_paths | default([]))) | unique }}
 
 - name: Inspect role search paths
   ansible.builtin.stat:
