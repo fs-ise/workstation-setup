@@ -1,0 +1,20 @@
+---
+title: "HDD/Borg"
+---
+
+An external HDD with Vorta/Borg provides versioned, encrypted backups of local
+workstation data. It complements GitHub and Nextcloud: synchronization and
+remote Git hosting do not replace an independently recoverable backup.
+
+Keep the drive disconnected except while backing up, checking, or restoring
+data. Configure or reconnect its repository, sources, retention policy, and
+schedule through [Borg/Vorta](borg_vorta.qmd), then follow the recurring
+[backup routine](backup.qmd).
+
+## Best practices and useful links
+
+- [Borg/Vorta configuration](borg_vorta.qmd)
+- [Backup data](backup.qmd)
+- [Restore data](restore.qmd)
+- [Borg documentation](https://borgbackup.readthedocs.io/)
+- [Vorta documentation](https://vorta.borgbase.com/)

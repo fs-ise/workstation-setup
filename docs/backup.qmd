@@ -1,27 +1,11 @@
 ---
-title: "Backup and sync"
+title: "Backup data"
 ---
 
-Use this page for the recurring routines that keep workstation data synchronized and recoverable. It describes the intended roles of GitHub, Nextcloud, and HDD backups.
+Use this page for the recurring routines that keep workstation data synchronized and recoverable.
+For the intended roles of each storage service, see [Data infrastructure](data_infrastructure.qmd).
 
-Backup-tool installation is documented separately from this recurring workflow. See [Borg/Vorta configuration](borg_vorta.html) to apply the dedicated `borg_vorta` Ansible role, verify the installation, create or reconnect the repository, and choose its sources, retention policy, and schedule before using the HDD backup routine below.
-
-::: {.callout-note collapse="true" title="Alternative: rclone"}
-Keep the native Dropbox/Nextcloud clients as the recommended approach for workstations.
-They react automatically to filesystem changes and provide desktop integration, including visible sync status and interactive conflict handling.
-
-[rclone](https://github.com/rclone/rclone) may be suitable when synchronization is explicitly scripted or scheduled, when working with multiple servers, remote storage providers, or headless systems, or when reproducible command-line automation matters more than desktop integration.
-It is an alternative for those workflows, not a replacement for the Nextcloud/Dropbox clients.
-:::
-
-The workstation setup uses the following default directory conventions:
-
-| Area                   |            Default location | Purpose                                                                       |
-| ---------------------------- | :-------------------------- | ----------------------------------------------------------------------------- |
-| Git repositories       |                   `~/repos` | Source code, documentation, text-based projects, and versioned configuration. |
-| Nextcloud folders      |               `~/Nextcloud` | Synced documents, PDFs, media, and shared project folders.                    |
-| Local workstation data |             `~/workstation` | Local working data that is not managed through Git or Nextcloud.              |
-| HDD backup             | External HDD                | Versioned encrypted backup of local workstation data (via Vorta/Borg).        |
+Backup-tool installation is documented separately from this recurring workflow. See [Borg/Vorta configuration](borg_vorta.qmd) to apply the dedicated `borg_vorta` Ansible role, verify the installation, create or reconnect the repository, and choose its sources, retention policy, and schedule before using the HDD backup routine below.
 
 <br>
 

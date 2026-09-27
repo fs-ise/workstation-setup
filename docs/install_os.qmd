@@ -2,7 +2,8 @@
 title: "Install OS"
 ---
 
-Use this checklist to install Fedora and prepare a new workstation to run Make.
+Use this checklist to install Fedora and prepare a new workstation to run the
+Ansible automation.
 
 ::: {.callout-important title="Supported platform"}
 The repository is tested/supported on **Fedora Workstation 44 x86_64**. Install
@@ -47,6 +48,28 @@ test -f Makefile
 ```
 :::
 
+## 5. Install Ansible and its prerequisites
+
+Run the repository's setup target:
+
+```sh
+make setup
+```
+
+This installs `ansible-core`, Python prerequisites, and `dnf-plugins-core`, then
+installs or updates the pinned Ansible Galaxy collections from
+`requirements.yml`. The later `make configure` workflow reruns this idempotent
+setup before applying the workstation configuration.
+
+::: {.callout-check}
+**✅ Check**
+
+```sh
+ansible --version
+ansible-galaxy collection list
+```
+:::
+
 ## Optional: Enable SSH if remote administration is needed
 
 Most local workstation setup does not require an SSH server. Enable it only when this machine must be administered remotely:
@@ -58,8 +81,7 @@ systemctl status sshd --no-pager
 
 ## Continue to configuration
 
-Continue to [Apply configuration](install_software.html). It installs Ansible
-and all other automation prerequisites; do not install Ansible separately.
+Continue to [Apply configuration](install_software.qmd).
 
 ## Best practices and useful links
 

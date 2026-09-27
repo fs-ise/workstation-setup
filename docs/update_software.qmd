@@ -1,5 +1,5 @@
 ---
-title: "Audit Configuration"
+title: "Audit configuration"
 ---
 
 Run the existing package and manual-installation audit:
@@ -12,8 +12,8 @@ This invokes `playbooks/audit-unmanaged-packages.yml`. Its scope is deliberately
 limited: it detects DNF packages outside the Ansible-managed package declarations
 and selected unmanaged filesystem installations. It does **not** compare every
 file, service, preference, or application setting and is not comprehensive
-configuration-drift detection. See [Apply configuration](install_software.html)
-for the configuration and update workflows.
+configuration-drift detection. See [Apply configuration](install_software.qmd)
+or [Update configuration](update_configuration.qmd) for the operational workflows.
 
 ::: {.callout-note title="What is an unmanaged package?"}
 

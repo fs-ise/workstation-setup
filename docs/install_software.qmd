@@ -1,5 +1,5 @@
 ---
-title: "Apply Configuration"
+title: "Apply configuration"
 ---
 
 Use this page after completing [Install OS](install_os.html), both for initial
@@ -14,12 +14,10 @@ the distribution, major version, or architecture is unsupported.
 make configure
 ```
 
-`make configure` is the canonical command. It first installs the required packages, including
-`ansible-core`, Python prerequisites, and `dnf-plugins-core`. It then installs
-or updates the pinned Ansible Galaxy collections from `requirements.yml` and
-runs the main workstation playbook through the `lab-stack` target. You do not
-need to install Ansible separately.
-Both workflows rely on Ansible and documented package policy rather than manual, undocumented changes.
+`make configure` is the canonical command. It reruns the prerequisite setup from
+[Install OS](install_os.qmd), then runs the main workstation playbook through
+the `lab-stack` target. This workflow relies on Ansible and documented package
+policy rather than manual, undocumented changes.
 For a workstation with user- or machine-specific automation, apply this shared
 baseline first and then apply a separate [personal overlay](personal_overlays.html).
 
@@ -30,30 +28,8 @@ Ansible converges the machine toward that declared state, so a repeated run
 should leave already-correct state unchanged. This makes the same command useful
 after an interrupted run or after changing documented configuration.
 
-`make setup` performs only prerequisite and Galaxy collection setup. It is
-available for troubleshooting, but normally does not need to be called manually.
-
-## Update and reapply configuration
-
-Use the complete maintenance workflow when repository and installed software
-versions should also be refreshed:
-
-```sh
-make update
-```
-
-In order, this command:
-
-1. runs `git pull --ff-only` on a branch, or preserves a detached checkout and
-   prints a notice;
-2. refreshes Fedora packages with `sudo dnf upgrade --refresh`;
-3. refreshes Flatpak applications with `flatpak update`;
-4. runs the same `make configure` workflow described above; and
-5. runs `make audit`.
-
-The update stops when a step fails. It does not switch a detached checkout to a
-branch or newer tag. Fedora and Flatpak prompts remain interactive so that you
-can review consequential changes.
+Use [Update configuration](update_configuration.qmd) when repository and
+installed software versions should also be refreshed before reconfiguration.
 
 ::: {.callout-manual}
 **🔧 Manual setup and configuration**

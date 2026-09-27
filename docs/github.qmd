@@ -1,0 +1,20 @@
+---
+title: "GitHub"
+---
+
+GitHub is the remote collaboration and recovery location for pushed Git
+repositories. Store source code, documentation, text-based projects, and
+versioned configuration in repositories under a local directory such as
+`~/repos`.
+
+Commit or stash important work and push branches that must not remain
+local-only. GitHub does not back up uncommitted work, ignored files, local-only
+branches, or unrelated workstation folders.
+
+## Best practices and useful links
+
+- [Git tools configuration](git.qmd)
+- [Backup data](backup.qmd)
+- [Restore data](restore.qmd)
+- [GitHub documentation](https://docs.github.com/)
+- [GitHub SSH documentation](https://docs.github.com/en/authentication/connecting-to-github-with-ssh)

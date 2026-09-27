@@ -1,0 +1,6 @@
+---
+title: "Settings"
+---
+
+Shared desktop and application settings will be documented here as they are
+added to the managed workstation configuration.

@@ -1,0 +1,11 @@
+---
+title: "Configuration overview"
+---
+
+Use this section to understand the desired workstation state after running
+[Apply configuration](install_software.qmd).
+
+- **[Software & packages](software.qmd):** Review the Ansible-managed tools,
+  role-specific commands, manual setup, and installation checks.
+- **[Settings](settings.qmd):** Reserved for future documentation of shared
+  desktop and application settings.

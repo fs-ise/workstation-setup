@@ -51,7 +51,7 @@ If present, this directory contains GitHub-specific project automation such as w
    collections before calling the main Ansible playbook through `lab-stack`.
 3. The playbook applies focused roles from `roles/`.
 4. Use Software pages for role-specific manual steps and checks.
-5. Use Day-to-day operations pages for recurring [configuration updates](install_software.html#update-and-reapply-configuration), [audits](update_software.html), and [backup and sync](backup.html) routines.
+5. Use the operational pages for recurring [configuration updates](update_configuration.qmd), [audits](update_software.qmd), and [data backups](backup.qmd).
 
 ## Best practices and useful links
 

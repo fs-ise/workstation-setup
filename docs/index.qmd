@@ -27,20 +27,21 @@ flowchart TB
 
         Setup["<strong>Setup</strong><br/>
         • <a href='install_os.html'>Install OS</a><br/>
-        • <a href='install_software.html'>Apply Configuration</a><br/>
+        • <a href='install_software.html'>Apply configuration</a><br/>
         <span style='font-family:monospace;'>make configure</span><br/>
         <i>Fully automated setup</i>"]
 
         Daily["<strong>Day-to-day operations</strong><br/>
-        • <a href='install_software.html#update-and-reapply-configuration'>Apply Configuration</a><br/>
-        • <a href='update_software.html'>Audit Configuration</a><br/>
+        • <a href='install_software.html'>Apply configuration</a><br/>
+        • <a href='update_software.html'>Audit configuration</a><br/>
+        • <a href='update_configuration.html'>Update configuration</a><br/>
         • <a href='backup.html'>Backup data</a><br/>
-        <span style='font-family:monospace;'>make configure<br/>make audit<br/>make backup</span><br/>
+        <span style='font-family:monospace;'>make configure<br/>make audit<br/>make update<br/>make backup</span><br/>
         <i>Keep the workstation reproducible</i>"]
 
         Restore["<strong>Restore</strong><br/>
         • <a href='install_os.html'>Install OS</a><br/>
-        • <a href='install_software.html'>Apply Configuration</a><br/>
+        • <a href='install_software.html'>Apply configuration</a><br/>
         • <a href='restore.html'>Restore data</a><br/>
         <span style='font-family:monospace;'>make configure</span><br/>
         <i>Rebuild in minutes</i>"]
@@ -51,9 +52,9 @@ flowchart TB
 
     %% Bottom: Shared data infrastructure
     DATA[("<strong>Data infrastructure</strong><br/>
-    • <a href='backup.html#hdd-backup'>HDD backup</a><br/>
-    • <a href='backup.html#github'>GitHub</a><br/>
-    • <a href='backup.html#nextcloud'>Nextcloud</a>")]
+    • <a href='hdd_borg.html'>HDD/Borg</a><br/>
+    • <a href='github.html'>GitHub</a><br/>
+    • <a href='nextcloud.html'>Nextcloud</a>")]
 
     %% External connections
     A -.-> WS

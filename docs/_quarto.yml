@@ -16,51 +16,58 @@ website:
     contents:
       - href: index.qmd
         text: Home
+      - href: install_os.qmd
+        text: Install OS
+      - href: install_software.qmd
+        text: Apply configuration
+      - href: update_software.qmd
+        text: Audit configuration
+      - href: update_configuration.qmd
+        text: Update configuration
+      - href: backup.qmd
+        text: Backup data
+      - href: restore.qmd
+        text: Restore data
 
-      - section: New machine
-        href: new_machine.qmd
+      - section: Configuration overview
+        href: configuration.qmd
         contents:
-          - href: install_os.qmd
-            text: Install OS
-          - href: install_software.qmd
-            text: Apply Configuration
-          - restore.qmd
+          - section: Software & packages
+            href: software.qmd
+            contents:
+              - baseline.qmd
+              - git.qmd
+              - borg_vorta.qmd
+              - nemo.qmd
+              - dropbox.qmd
+              - veracrypt.qmd
+              - docker.qmd
+              - thunderbird.qmd
+              - thunderbird-mcp.qmd
+              - keepassxc.qmd
+              - chrome.qmd
+              - vscode.qmd
+              - languagetool.qmd
+              - teams.qmd
+              - onlyoffice.qmd
+              - okular.qmd
+              - virtualbox.qmd
+              - latex.qmd
+              - quarto.qmd
+              - r.qmd
+              - rstudio.qmd
+              - obsidian.qmd
+              - ocr.qmd
+              - grobid.qmd
+              - llm.qmd
+          - settings.qmd
 
-      - section: Day-to-day operations
-        href: operations.qmd
+      - section: Data infrastructure
+        href: data_infrastructure.qmd
         contents:
-          - href: update_software.qmd
-            text: Audit Configuration
-          - backup.qmd
-
-      - section: Software
-        href: software.qmd
-        contents:
-          - baseline.qmd
-          - git.qmd
-          - borg_vorta.qmd
-          - nemo.qmd
-          - dropbox.qmd
-          - veracrypt.qmd
-          - docker.qmd
-          - thunderbird.qmd
-          - thunderbird-mcp.qmd
-          - keepassxc.qmd
-          - chrome.qmd
-          - vscode.qmd
-          - languagetool.qmd
-          - teams.qmd
-          - onlyoffice.qmd
-          - okular.qmd
-          - virtualbox.qmd
-          - latex.qmd
-          - quarto.qmd
-          - r.qmd
-          - rstudio.qmd
-          - obsidian.qmd
-          - ocr.qmd
-          - grobid.qmd
-          - llm.qmd
+          - hdd_borg.qmd
+          - github.qmd
+          - nextcloud.qmd
 
       - section: Reference
         href: reference.qmd

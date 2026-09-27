@@ -1,5 +1,5 @@
 ---
-title: "Set up/restore data"
+title: "Restore data"
 ---
 
 Use this page after the operating system and managed software are installed.

@@ -1,0 +1,27 @@
+---
+title: "Data infrastructure"
+---
+
+The workstation uses complementary storage systems rather than treating sync,
+version control, and backup as interchangeable.
+
+| Area | Default location | Purpose |
+|---|---|---|
+| Git repositories | `~/repos` | Source code, documentation, text-based projects, and versioned configuration. |
+| Nextcloud folders | `~/Nextcloud` | Synced documents, PDFs, media, and shared project folders. |
+| Local workstation data | `~/workstation` | Local working data that is not managed through Git or Nextcloud. |
+| HDD backup | External HDD | Versioned encrypted backup of local workstation data through Vorta/Borg. |
+
+Read the service-specific pages before deciding where data belongs:
+
+- **[HDD/Borg](hdd_borg.qmd):** Recoverable, versioned copies of local data.
+- **[GitHub](github.qmd):** Remote collaboration and version history for Git repositories.
+- **[Nextcloud](nextcloud.qmd):** File synchronization for documents and shared folders.
+
+## Best practices and useful links
+
+- [Backup data](backup.qmd)
+- [Restore data](restore.qmd)
+- [Borg documentation](https://borgbackup.readthedocs.io/)
+- [GitHub documentation](https://docs.github.com/)
+- [Nextcloud desktop client documentation](https://docs.nextcloud.com/desktop/latest/)

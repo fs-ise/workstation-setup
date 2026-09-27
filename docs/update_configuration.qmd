@@ -1,0 +1,42 @@
+---
+title: "Update configuration"
+---
+
+Use the complete maintenance workflow to refresh the repository and installed
+software before reapplying and auditing the workstation configuration:
+
+```sh
+make update
+```
+
+In order, this command:
+
+1. runs `git pull --ff-only` on a branch, or preserves a detached checkout and
+   prints a notice;
+2. refreshes Fedora packages with `sudo dnf upgrade --refresh`;
+3. refreshes Flatpak applications with `flatpak update`;
+4. runs the same `make configure` workflow described in
+   [Apply configuration](install_software.qmd); and
+5. runs `make audit`.
+
+The update stops when a step fails. It does not switch a detached checkout to a
+branch or newer tag. Fedora and Flatpak prompts remain interactive so that you
+can review consequential changes.
+
+::: {.callout-check}
+**✅ Check**
+
+Review the final play recap and audit output, then confirm that the checkout is
+clean:
+
+```sh
+git status --short
+```
+:::
+
+## Best practices and useful links
+
+- [Apply configuration](install_software.qmd)
+- [Audit configuration](update_software.qmd)
+- [DNF system upgrade documentation](https://docs.fedoraproject.org/en-US/quick-docs/upgrading-fedora-offline/)
+- [Flatpak update documentation](https://docs.flatpak.org/en/latest/flatpak-command-reference.html#flatpak-update)

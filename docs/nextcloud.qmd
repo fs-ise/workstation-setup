@@ -1,0 +1,30 @@
+---
+title: "Nextcloud"
+---
+
+Nextcloud synchronizes documents, PDFs, media, and shared project folders. The
+default local location is `~/Nextcloud`, though selected folders may differ by
+workstation.
+
+The native Nextcloud and Dropbox desktop clients are recommended for
+workstations because they react to filesystem changes and provide visible sync
+status and interactive conflict handling.
+
+::: {.callout-note collapse="true" title="Alternative: rclone"}
+[rclone](https://github.com/rclone/rclone) may be suitable when synchronization
+is explicitly scripted or scheduled, when working with multiple servers or
+remote storage providers, or when reproducible command-line automation matters
+more than desktop integration. It is an alternative for those workflows, not a
+replacement for the Nextcloud desktop client.
+:::
+
+Synchronization is not a backup: deletions and conflicts can propagate between
+clients. Keep important local data in the separate HDD/Borg backup as well.
+
+## Best practices and useful links
+
+- [Backup data](backup.qmd)
+- [Restore data](restore.qmd)
+- [HDD/Borg](hdd_borg.qmd)
+- [Nextcloud desktop client documentation](https://docs.nextcloud.com/desktop/latest/)
+- [rclone documentation](https://rclone.org/docs/)
