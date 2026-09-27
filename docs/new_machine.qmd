@@ -8,4 +8,4 @@ Provision a workstation in the following order. The supported starting point is 
 2. **[Apply configuration](install_configuration.qmd).** Run the canonical `make configure` workflow, then complete account sign-ins, credentials, GUI preferences, and other user-specific configuration that must remain manual.
 3. **[Set up or restore data](restore.qmd).** Reconnect Git repositories and synchronized storage, then restore trusted local data, profiles, and keys only where needed. Restoration sources, credentials, and recovery decisions are intentionally not automated.
 
-Complete each page's checks before continuing to the next step. After provisioning, use [Update configuration](update_configuration.qmd), [Audit configuration](update_software.qmd), and [Backup data](backup.qmd) to keep the workstation current and recoverable.
+Complete each page's checks before continuing to the next step. After provisioning, use [Update configuration](update_configuration.qmd), [Audit configuration](audit_configuration.qmd), and [Backup data](backup.qmd) to keep the workstation current and recoverable.

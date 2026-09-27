@@ -37,6 +37,6 @@ git status --short
 ## Best practices and useful links
 
 - [Apply configuration](install_configuration.qmd)
-- [Audit configuration](update_software.qmd)
+- [Audit configuration](audit_configuration.qmd)
 - [DNF system upgrade documentation](https://docs.fedoraproject.org/en-US/quick-docs/upgrading-fedora-offline/)
 - [Flatpak update documentation](https://docs.flatpak.org/en/latest/flatpak-command-reference.html#flatpak-update)

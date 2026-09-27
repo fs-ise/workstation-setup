@@ -89,7 +89,7 @@ ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags keepassxc,chrome
 
 ## Best practices and useful links
 
-- [Audit configuration](update_software.html)
+- [Audit configuration](audit_configuration.html)
 - [Ansible playbook guide](https://docs.ansible.com/ansible/latest/playbook_guide/playbooks_intro.html)
 - [Repository structure](repo_structure.html)
 - [Troubleshooting](troubleshooting.html)

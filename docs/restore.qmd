@@ -136,7 +136,7 @@ Also check manually that:
 ## Best practices and useful links
 
 - [Apply configuration](install_configuration.html)
-- [Audit Configuration](update_software.html)
+- [Audit configuration](audit_configuration.html)
 - [GitHub SSH documentation](https://docs.github.com/en/authentication/connecting-to-github-with-ssh)
 - [Borg documentation](https://borgbackup.readthedocs.io/)
 - [Vorta documentation](https://vorta.borgbase.com/)

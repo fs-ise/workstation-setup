@@ -21,7 +21,7 @@ make audit    # Audit unmanaged packages and manual installations
 ```
 
 See [Apply configuration](https://fs-ise.github.io/workstation-setup/install_configuration.html)
-and [Audit Configuration](https://fs-ise.github.io/workstation-setup/update_software.html)
+and [Audit configuration](https://fs-ise.github.io/workstation-setup/audit_configuration.html)
 for prerequisites, behavior, and verification guidance.
 
 > **Supported platform:** This repository is currently tested/supported on
