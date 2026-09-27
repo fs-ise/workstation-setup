@@ -18,7 +18,7 @@ website:
         text: Home
       - href: install_os.qmd
         text: Install OS
-      - href: install_software.qmd
+      - href: install_configuration.qmd
         text: Apply configuration
       - href: update_software.qmd
         text: Audit configuration

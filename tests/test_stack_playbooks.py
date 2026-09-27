@@ -6,7 +6,9 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 LAB = (ROOT / "playbooks/lab-stack.yml").read_text(encoding="utf-8")
 CLOUD = (ROOT / "playbooks/cloud-stack.yml").read_text(encoding="utf-8")
-INSTALL_DOCS = (ROOT / "docs/install_software.qmd").read_text(encoding="utf-8")
+CONFIGURATION_DOCS = (ROOT / "docs/install_configuration.qmd").read_text(
+    encoding="utf-8"
+)
 CLOUD_DOCS = (ROOT / "docs/cloud_setup.qmd").read_text(encoding="utf-8")
 
 
@@ -32,8 +34,8 @@ class StackPlaybookTests(unittest.TestCase):
         self.assertIn("latex_additional_packages: []", CLOUD)
 
     def test_cloud_instructions_have_a_separate_reference_page(self):
-        self.assertNotIn("playbooks/cloud-stack.yml", INSTALL_DOCS)
-        self.assertIn("playbooks/lab-stack.yml", INSTALL_DOCS)
+        self.assertNotIn("playbooks/cloud-stack.yml", CONFIGURATION_DOCS)
+        self.assertIn("playbooks/lab-stack.yml", CONFIGURATION_DOCS)
         self.assertIn("playbooks/cloud-stack.yml", CLOUD_DOCS)
         self.assertIn("OCRmyPDF and GROBID", CLOUD_DOCS)
 

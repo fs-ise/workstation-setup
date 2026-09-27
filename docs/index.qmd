@@ -27,12 +27,12 @@ flowchart TB
 
         Setup["<strong>Setup</strong><br/>
         • <a href='install_os.html'>Install OS</a><br/>
-        • <a href='install_software.html'>Apply configuration</a><br/>
+        • <a href='install_configuration.html'>Apply configuration</a><br/>
         <span style='font-family:monospace;'>make configure</span><br/>
         <i>Fully automated setup</i>"]
 
         Daily["<strong>Day-to-day operations</strong><br/>
-        • <a href='install_software.html'>Apply configuration</a><br/>
+        • <a href='install_configuration.html'>Apply configuration</a><br/>
         • <a href='update_software.html'>Audit configuration</a><br/>
         • <a href='update_configuration.html'>Update configuration</a><br/>
         • <a href='backup.html'>Backup data</a><br/>
@@ -41,7 +41,7 @@ flowchart TB
 
         Restore["<strong>Restore</strong><br/>
         • <a href='install_os.html'>Install OS</a><br/>
-        • <a href='install_software.html'>Apply configuration</a><br/>
+        • <a href='install_configuration.html'>Apply configuration</a><br/>
         • <a href='restore.html'>Restore data</a><br/>
         <span style='font-family:monospace;'>make configure</span><br/>
         <i>Rebuild in minutes</i>"]

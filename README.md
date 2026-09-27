@@ -20,7 +20,7 @@ make update   # Update software, reapply configuration, and audit
 make audit    # Audit unmanaged packages and manual installations
 ```
 
-See [Apply Configuration](https://fs-ise.github.io/workstation-setup/install_software.html)
+See [Apply configuration](https://fs-ise.github.io/workstation-setup/install_configuration.html)
 and [Audit Configuration](https://fs-ise.github.io/workstation-setup/update_software.html)
 for prerequisites, behavior, and verification guidance.
 

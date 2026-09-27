@@ -2,8 +2,11 @@
 title: "Restore data"
 ---
 
-Use this page after the operating system and managed software are installed.
-Software setup and data restoration are related, but separate operations: [Apply Configuration](install_software.html) configures the machine through Ansible; restore brings back user data, project state, synced folders, credentials, and backup connections.
+Use this page after the operating system is installed and the Ansible-managed
+configuration has been applied. Configuration and data restoration are related,
+but separate operations: [Apply configuration](install_configuration.html)
+converges the machine through Ansible; restore brings back user data, project
+state, synced folders, credentials, and backup connections.
 
 | Area | Typical location or service | Role in restore |
 |---|---|---|
@@ -132,7 +135,7 @@ Also check manually that:
 
 ## Best practices and useful links
 
-- [Apply Configuration](install_software.html)
+- [Apply configuration](install_configuration.html)
 - [Audit Configuration](update_software.html)
 - [GitHub SSH documentation](https://docs.github.com/en/authentication/connecting-to-github-with-ssh)
 - [Borg documentation](https://borgbackup.readthedocs.io/)

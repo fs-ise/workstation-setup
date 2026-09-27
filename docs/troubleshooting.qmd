@@ -65,6 +65,6 @@ Resolve findings by adding deliberate workstation packages to Ansible-managed pa
 ## Best practices and useful links
 
 - [Install OS](install_os.html)
-- [Apply Configuration](install_software.html)
+- [Apply configuration](install_configuration.html)
 - [Audit Configuration](update_software.html)
 - [Docker Linux post-installation steps](https://docs.docker.com/engine/install/linux-postinstall/)

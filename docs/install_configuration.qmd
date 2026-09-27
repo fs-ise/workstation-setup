@@ -34,7 +34,8 @@ installed software versions should also be refreshed before reconfiguration.
 ::: {.callout-manual}
 **🔧 Manual setup and configuration**
 
-After the automated installation, complete only the manual steps for software you use:
+After Ansible applies the shared configuration, complete only the manual steps
+for software you use:
 
 - Set up GitHub SSH/GPG identity and workstation basics in [Baseline](baseline.html).
 - Log out and back in before testing Docker group access; see [Docker](docker.html).

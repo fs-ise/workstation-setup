@@ -56,7 +56,7 @@ If present, this directory contains GitHub-specific project automation such as w
 ## Best practices and useful links
 
 - [Install OS](install_os.html)
-- [Apply Configuration](install_software.html)
+- [Apply configuration](install_configuration.html)
 - [Audit Configuration](update_software.html)
 - [Personal overlays](personal_overlays.html)
 - [Ansible playbooks](https://docs.ansible.com/ansible/latest/playbook_guide/playbooks_intro.html)

@@ -81,7 +81,7 @@ systemctl status sshd --no-pager
 
 ## Continue to configuration
 
-Continue to [Apply configuration](install_software.qmd).
+Continue to [Apply configuration](install_configuration.qmd).
 
 ## Best practices and useful links
 

@@ -16,7 +16,7 @@ In order, this command:
 2. refreshes Fedora packages with `sudo dnf upgrade --refresh`;
 3. refreshes Flatpak applications with `flatpak update`;
 4. runs the same `make configure` workflow described in
-   [Apply configuration](install_software.qmd); and
+   [Apply configuration](install_configuration.qmd); and
 5. runs `make audit`.
 
 The update stops when a step fails. It does not switch a detached checkout to a
@@ -36,7 +36,7 @@ git status --short
 
 ## Best practices and useful links
 
-- [Apply configuration](install_software.qmd)
+- [Apply configuration](install_configuration.qmd)
 - [Audit configuration](update_software.qmd)
 - [DNF system upgrade documentation](https://docs.fedoraproject.org/en-US/quick-docs/upgrading-fedora-offline/)
 - [Flatpak update documentation](https://docs.flatpak.org/en/latest/flatpak-command-reference.html#flatpak-update)

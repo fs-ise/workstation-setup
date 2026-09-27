@@ -4,7 +4,7 @@ title: "Day-to-day operations"
 
 Use this section to keep an existing workstation aligned with the repository and its data recoverable.
 
-- **[Apply configuration](install_software.qmd):** Run `make configure` to converge the workstation.
+- **[Apply configuration](install_configuration.qmd):** Run `make configure` to converge the workstation.
 - **[Audit configuration](update_software.qmd):** Run the focused unmanaged-package and manual-installation audit, and review its deliberately limited scope.
 - **[Update configuration](update_configuration.qmd):** Run `make update` to refresh repository and software versions before reconfiguring and auditing.
 - **[Backup data](backup.qmd):** Follow the daily Git and Nextcloud checks, run or verify the Vorta/Borg backup each week, and test recovery regularly. Backup destinations, credentials, and schedules require deliberate manual configuration.
