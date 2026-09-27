@@ -11,7 +11,8 @@ default_applications_associations:
   - name: Visual Studio Code
     desktop_ids: >-
       {{ (([vscode_desktop_id] if vscode_desktop_id is defined else [])
-          + [vscode_rpm_desktop_id, vscode_flatpak_desktop_id]) | unique | list }}
+          + vscode_rpm_desktop_ids
+          + [vscode_flatpak_desktop_id]) | unique | list }}
     required: true
     mime_types:
       - "{{ default_applications_quarto_mime_type }}"

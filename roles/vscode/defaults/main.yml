@@ -2,7 +2,10 @@
 vscode_repo_name: "vscode"
 vscode_rpm_package: "code"
 vscode_flatpak_id: "com.visualstudio.code"
-vscode_rpm_desktop_id: "code.desktop"
+vscode_rpm_desktop_id: "com.microsoft.VSCode.desktop"
+vscode_rpm_desktop_ids:
+  - "{{ vscode_rpm_desktop_id }}"
+  - "code.desktop"
 vscode_flatpak_desktop_id: "com.visualstudio.code.desktop"
 vscode_extensions:
   - ms-python.python

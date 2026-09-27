@@ -5,6 +5,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULTS = (ROOT / "roles/default_applications/defaults/main.yml").read_text(encoding="utf-8")
 TASKS = (ROOT / "roles/default_applications/tasks/main.yml").read_text(encoding="utf-8")
+VSCODE_DEFAULTS = (ROOT / "roles/vscode/defaults/main.yml").read_text(encoding="utf-8")
+VSCODE_TASKS = (ROOT / "roles/vscode/tasks/main.yml").read_text(encoding="utf-8")
 
 
 class DefaultApplicationsRoleTests(unittest.TestCase):
@@ -51,6 +53,17 @@ class DefaultApplicationsRoleTests(unittest.TestCase):
     def test_okular_owns_pdf_association(self):
         self.assertIn("desktop_ids: [org.kde.okular.desktop]", DEFAULTS)
         self.assertIn("mime_types: [application/pdf]", DEFAULTS)
+
+    def test_vscode_rpm_desktop_entry_is_a_default_application_candidate(self):
+        self.assertIn(
+            'vscode_rpm_desktop_id: "com.microsoft.VSCode.desktop"',
+            VSCODE_DEFAULTS,
+        )
+        self.assertIn('  - "code.desktop"', VSCODE_DEFAULTS)
+        self.assertIn("+ vscode_rpm_desktop_ids", DEFAULTS)
+        self.assertIn('vscode_desktop_id: "{{ vscode_rpm_desktop_id }}"', VSCODE_TASKS)
+        self.assertNotIn("com.microsoft.VSCode.UrlHandler.desktop", DEFAULTS)
+        self.assertNotIn("com.microsoft.VSCode.UrlHandler.desktop", VSCODE_DEFAULTS)
 
     def test_role_still_validates_and_configures_declared_associations(self):
         for task in (
