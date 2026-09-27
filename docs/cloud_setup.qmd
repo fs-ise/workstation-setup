@@ -1,5 +1,5 @@
 ---
-title: "Server-oriented setup"
+title: "Cloud setup"
 ---
 
 Configure an existing server-oriented (non-GUI) Fedora Cloud or server VM with

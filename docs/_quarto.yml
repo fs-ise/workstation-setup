@@ -72,11 +72,11 @@ website:
       - section: Reference
         href: reference.qmd
         contents:
+          - remote_ssh_setup.qmd
+          - cloud_setup.qmd
           - repo_structure.qmd
-          - windows_ssh_setup.qmd
           - principles.qmd
           - personal_overlays.qmd
-          - cloud_setup.qmd
           - troubleshooting.qmd
 
 format:
