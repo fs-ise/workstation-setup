@@ -89,11 +89,11 @@
   when: thunderbird_mcp_enabled | bool
 
 - name: Write the merged Thunderbird MCP policy
-  ansible.builtin.template:
-    src: policies.json.j2
+  ansible.builtin.copy:
     dest: "{{ thunderbird_mcp_policies_file }}"
     owner: root
     group: root
     mode: "0644"
+    content: "{{ thunderbird_mcp_policies_document | to_nice_json(indent=2, sort_keys=true) }}\n"
   notify: Report Thunderbird MCP policy change
   when: thunderbird_mcp_enabled | bool

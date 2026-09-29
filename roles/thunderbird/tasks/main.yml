@@ -74,11 +74,11 @@
   when: thunderbird_extensions_enabled | bool
 
 - name: Write Thunderbird enterprise policies
-  ansible.builtin.template:
-    src: policies.json.j2
+  ansible.builtin.copy:
     dest: "{{ thunderbird_policies_file }}"
     owner: root
     group: root
     mode: "0644"
+    content: "{{ thunderbird_policies_document | to_nice_json(indent=2, sort_keys=true) }}\n"
   notify: Report Thunderbird policy change
   when: thunderbird_extensions_enabled | bool

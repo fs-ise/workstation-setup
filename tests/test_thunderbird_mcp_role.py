@@ -12,6 +12,8 @@ class Tests(unittest.TestCase):
    self.assertNotIn(package,D)
  def test_safe_policy_merge(self):
   self.assertIn("if thunderbird_mcp_policies_stat.stat.exists else {'policies': {}}",T); self.assertIn('ExtensionSettings',T); self.assertIn('combine',T); self.assertIn('mode: "0644"',T)
+  self.assertIn('ansible.builtin.copy:',T); self.assertIn('to_nice_json(indent=2, sort_keys=true)',T); self.assertIn(' }}\\n"',T)
+  self.assertFalse((R/'roles/thunderbird_mcp/templates/policies.json.j2').exists())
  def test_base_and_tags(self):
   self.assertNotIn('thunderbird_mcp',BD+BT); self.assertIn('tags: [thunderbird, thunderbird_mcp]',P); self.assertIn('role: thunderbird_mcp',P)
 

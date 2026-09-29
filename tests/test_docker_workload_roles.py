@@ -12,7 +12,7 @@ class DockerWorkloadRoleTests(unittest.TestCase):
         return block.split("\n- name:", 1)[0]
 
     def test_docker_conflict_removal_surfaces_dnf_failures(self):
-        tasks = (ROOT / "roles/docker/tasks/main.yml").read_text(encoding="utf-8")
+        tasks = (ROOT / "roles/docker/tasks/provision.yml").read_text(encoding="utf-8")
         removal = self.task_block(
             tasks, "Remove podman-docker (conflicts with Docker CE CLI)"
         )
@@ -24,7 +24,7 @@ class DockerWorkloadRoleTests(unittest.TestCase):
 
     def test_docker_repository_enforces_signature_verification(self):
         defaults = (ROOT / "roles/docker/defaults/main.yml").read_text(encoding="utf-8")
-        tasks = (ROOT / "roles/docker/tasks/main.yml").read_text(encoding="utf-8")
+        tasks = (ROOT / "roles/docker/tasks/provision.yml").read_text(encoding="utf-8")
         self.assertIn("ansible.builtin.rpm_key:", tasks)
         self.assertIn("ansible.builtin.yum_repository:", tasks)
         self.assertIn("gpgcheck: true", tasks)
@@ -35,7 +35,7 @@ class DockerWorkloadRoleTests(unittest.TestCase):
 
     def test_all_docker_engine_packages_use_the_verified_install_task(self):
         defaults = (ROOT / "roles/docker/defaults/main.yml").read_text(encoding="utf-8")
-        tasks = (ROOT / "roles/docker/tasks/main.yml").read_text(encoding="utf-8")
+        tasks = (ROOT / "roles/docker/tasks/provision.yml").read_text(encoding="utf-8")
         for package in (
             "docker-ce",
             "docker-ce-cli",
@@ -60,6 +60,21 @@ class DockerWorkloadRoleTests(unittest.TestCase):
             "alekzonder/puppeteer",
         ):
             self.assertNotIn(image, docker_files)
+
+    def test_docker_provisioning_is_guarded_across_role_dependencies(self):
+        tasks = (ROOT / "roles/docker/tasks/main.yml").read_text(encoding="utf-8")
+        self.assertIn("ansible.builtin.include_tasks: provision.yml", tasks)
+        self.assertEqual(
+            tasks.count("docker_provisioning_complete | default(false)"), 2
+        )
+        self.assertIn("docker_provisioning_complete: true", tasks)
+
+        # Workloads retain dependencies for tagged and standalone execution.
+        for role in ("grobid", "languagetool"):
+            metadata = (ROOT / f"roles/{role}/meta/main.yml").read_text(
+                encoding="utf-8"
+            )
+            self.assertIn("dependencies:\n  - role: docker", metadata)
 
     def test_grobid_keeps_its_pinned_image(self):
         defaults = (ROOT / "roles/grobid/defaults/main.yml").read_text(encoding="utf-8")
