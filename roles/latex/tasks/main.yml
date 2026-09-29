@@ -90,7 +90,7 @@
     latex_tinytex_bin_dir: "{{ latex_tinytex_working_paths | first | dirname }}"
   when: not (latex_install_texlive_scheme_full | bool)
 
-- name: Check explicitly managed TinyTeX packages
+- name: Query installed TinyTeX packages
   ansible.builtin.command:
     argv:
       - "{{ latex_tinytex_bin_dir }}/tlmgr"
@@ -98,11 +98,8 @@
       - --only-installed
       - --data
       - name
-      - "{{ item }}"
-  loop: "{{ latex_tinytex_packages }}"
-  register: latex_tinytex_package_status
+  register: latex_tinytex_package_inventory
   changed_when: false
-  failed_when: false
   environment:
     HOME: "{{ target_home }}"
     PATH: "{{ latex_tinytex_bin_dir }}:{{ ansible_env.PATH }}"
@@ -110,27 +107,21 @@
   become_user: "{{ target_user }}"
   when: not (latex_install_texlive_scheme_full | bool)
 
-- name: Require successful TinyTeX package checks
-  ansible.builtin.assert:
-    that:
-      - item.rc == 0
-    fail_msg: >-
-      TinyTeX's package manager failed while checking {{ item.item }}
-      (exit {{ item.rc }}): {{ item.stderr | default('') | trim }}
-  loop: "{{ latex_tinytex_package_status.results }}"
-  loop_control:
-    label: "{{ item.item }}"
+- name: Record missing explicitly managed TinyTeX packages
+  ansible.builtin.set_fact:
+    latex_tinytex_missing_packages: >-
+      {{ latex_tinytex_packages
+         | difference(latex_tinytex_package_inventory.stdout_lines
+                      | map('trim')
+                      | reject('equalto', '')
+                      | list) }}
   when: not (latex_install_texlive_scheme_full | bool)
 
 - name: Install missing explicitly managed TinyTeX packages
   ansible.builtin.command:
-    argv:
-      - "{{ latex_tinytex_bin_dir }}/tlmgr"
-      - install
-      - "{{ item.item }}"
-  loop: "{{ latex_tinytex_package_status.results }}"
-  loop_control:
-    label: "{{ item.item }}"
+    argv: >-
+      {{ [latex_tinytex_bin_dir + '/tlmgr', 'install']
+         + latex_tinytex_missing_packages }}
   environment:
     HOME: "{{ target_home }}"
     PATH: "{{ latex_tinytex_bin_dir }}:{{ ansible_env.PATH }}"
@@ -138,7 +129,7 @@
   become_user: "{{ target_user }}"
   when:
     - not (latex_install_texlive_scheme_full | bool)
-    - item.stdout | trim != item.item
+    - latex_tinytex_missing_packages | length > 0
 
 - name: Verify required LaTeX files with TinyTeX
   ansible.builtin.command:

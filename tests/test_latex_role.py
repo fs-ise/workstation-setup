@@ -132,9 +132,8 @@ class LatexRoleTests(unittest.TestCase):
         tasks = {task["name"]: task for task in self.tasks}
         install = tasks["Install TinyTeX through Quarto"]
         self.assertIn("latex_tinytex_install_required", install["when"])
-        package_check = tasks["Check explicitly managed TinyTeX packages"]
+        package_check = tasks["Query installed TinyTeX packages"]
         self.assertFalse(package_check["changed_when"])
-        self.assertFalse(package_check["failed_when"])
 
     def test_old_partial_texlive_packages_are_removed(self):
         role_text = DEFAULTS_PATH.read_text() + TASKS_PATH.read_text()
@@ -149,15 +148,55 @@ class LatexRoleTests(unittest.TestCase):
 
     def test_tinytex_packages_are_checked_and_installed_as_target_user(self):
         tasks = {task["name"]: task for task in self.tasks}
-        check = tasks["Check explicitly managed TinyTeX packages"]
-        require_check = tasks["Require successful TinyTeX package checks"]
+        check = tasks["Query installed TinyTeX packages"]
+        record_missing = tasks[
+            "Record missing explicitly managed TinyTeX packages"
+        ]
         install = tasks["Install missing explicitly managed TinyTeX packages"]
-        self.assertEqual(check["loop"], "{{ latex_tinytex_packages }}")
+        self.assertEqual(
+            check["ansible.builtin.command"]["argv"],
+            [
+                "{{ latex_tinytex_bin_dir }}/tlmgr",
+                "info",
+                "--only-installed",
+                "--data",
+                "name",
+            ],
+        )
         self.assertEqual(check["become_user"], "{{ target_user }}")
         self.assertFalse(check["changed_when"])
-        self.assertIn("item.rc == 0", require_check["ansible.builtin.assert"]["that"])
+        self.assertNotIn("failed_when", check)
+        missing_expression = record_missing["ansible.builtin.set_fact"][
+            "latex_tinytex_missing_packages"
+        ]
+        self.assertIn("difference", missing_expression)
+        self.assertIn("stdout_lines", missing_expression)
         self.assertEqual(install["become_user"], "{{ target_user }}")
-        self.assertIn("item.stdout | trim != item.item", install["when"])
+        self.assertIn(
+            "latex_tinytex_missing_packages | length > 0", install["when"]
+        )
+        self.assertNotIn("failed_when", install)
+
+    def test_tinytex_package_inventory_regression_cases(self):
+        """Missing package queries are data, while tlmgr failures remain fatal."""
+        managed = self.defaults["latex_tinytex_packages"]
+
+        def missing(installed):
+            return [package for package in managed if package not in installed]
+
+        self.assertEqual(missing([]), ["babel-german", "hanging"])
+        self.assertEqual(missing(["babel-german"]), ["hanging"])
+        self.assertEqual(missing(["babel-german", "hanging"]), [])
+
+        tasks = {task["name"]: task for task in self.tasks}
+        query = tasks["Query installed TinyTeX packages"]
+        package_install = tasks["Install missing explicitly managed TinyTeX packages"]
+        # Ansible's default command behavior fails on nonzero return codes. Neither
+        # inventory errors nor installation errors may be converted to success.
+        self.assertNotIn("failed_when", query)
+        self.assertNotIn("ignore_errors", query)
+        self.assertNotIn("failed_when", package_install)
+        self.assertNotIn("ignore_errors", package_install)
 
     def test_role_verifies_required_files_with_selected_distribution(self):
         tasks = {task["name"]: task for task in self.tasks}
@@ -177,7 +216,7 @@ class LatexRoleTests(unittest.TestCase):
         )
         for name in (
             "Discover the Quarto-managed TinyTeX installation",
-            "Check explicitly managed TinyTeX packages",
+            "Query installed TinyTeX packages",
             "Verify required LaTeX files with TinyTeX",
         ):
             condition = tasks[name]["when"]
