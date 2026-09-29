@@ -4,6 +4,16 @@ latex_install_texlive_scheme_full: false
 latex_additional_packages:
   - texstudio
 
+latex_tinytex_packages:
+  - babel-german
+  - hanging
+
+latex_fedora_texlive_packages:
+  - texlive-babel-german
+  - texlive-hanging
+
 # DNF packages owned by this role; consumed by the package audit.
 latex_managed_dnf_packages: >-
-  {{ latex_additional_packages + ['texlive-scheme-full'] }}
+  {{ latex_additional_packages
+     + ['texlive-scheme-full']
+     + latex_fedora_texlive_packages }}

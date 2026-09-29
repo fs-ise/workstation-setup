@@ -10,9 +10,10 @@ ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags latex
 ```
 
 TinyTeX is the default because this workstation primarily uses LaTeX for Quarto PDF
-generation. Quarto manages the TinyTeX installation and installs additional TeX
-packages as documents need them. The role also asks Quarto to add TinyTeX to the
-user's `PATH`.
+generation. Quarto manages the TinyTeX installation, and the role uses TinyTeX's
+`tlmgr` to install the explicitly managed `babel-german` and `hanging` packages.
+The role runs `tlmgr` as the target user and only installs packages that are
+missing. It also asks Quarto to add TinyTeX to the user's `PATH`.
 
 ## Install the full Fedora TeX Live scheme
 
@@ -25,7 +26,9 @@ latex_install_texlive_scheme_full: true
 
 This installs `texlive-scheme-full` instead of TinyTeX. The full scheme is
 intentionally not the default because of its substantial download and installed
-size. The two TeX distributions are never installed together by this role.
+size. It also explicitly installs the Fedora `texlive-babel-german` and
+`texlive-hanging` packages. The two TeX distributions are never installed together
+by this role.
 
 Use `latex_additional_packages` to configure utilities installed with either TeX Live
 option. Its default installs the TeXstudio graphical editor:
@@ -42,6 +45,8 @@ latex_additional_packages:
 quarto check
 pdflatex --version
 xelatex --version
+kpsewhich german.ldf
+kpsewhich hanging.sty
 texstudio --version
 ```
 :::

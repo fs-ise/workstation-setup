@@ -7,7 +7,7 @@
 
 - name: Install the full TeX Live scheme
   ansible.builtin.dnf:
-    name: texlive-scheme-full
+    name: "{{ ['texlive-scheme-full'] + latex_fedora_texlive_packages }}"
     state: present
   when: latex_install_texlive_scheme_full | bool
 
@@ -34,3 +34,95 @@
   when:
     - not (latex_install_texlive_scheme_full | bool)
     - not (latex_tinytex_bin.stat.isdir | default(false))
+
+- name: Locate TinyTeX package manager
+  ansible.builtin.find:
+    paths: "{{ target_home }}/.TinyTeX/bin"
+    patterns: tlmgr
+    recurse: true
+    file_type: file
+  register: latex_tlmgr_files
+  become: true
+  become_user: "{{ target_user }}"
+  when: not (latex_install_texlive_scheme_full | bool)
+
+- name: Require the TinyTeX package manager
+  ansible.builtin.assert:
+    that:
+      - latex_tlmgr_files.matched == 1
+    fail_msg: >-
+      Expected one tlmgr executable below {{ target_home }}/.TinyTeX/bin, but
+      found {{ latex_tlmgr_files.matched }}. Reinstall TinyTeX with Quarto.
+  when: not (latex_install_texlive_scheme_full | bool)
+
+- name: Record the TinyTeX binary directory
+  ansible.builtin.set_fact:
+    latex_tinytex_bin_dir: "{{ latex_tlmgr_files.files[0].path | dirname }}"
+  when: not (latex_install_texlive_scheme_full | bool)
+
+- name: Check explicitly managed TinyTeX packages
+  ansible.builtin.command:
+    argv:
+      - "{{ latex_tinytex_bin_dir }}/tlmgr"
+      - info
+      - --only-installed
+      - --data
+      - name
+      - "{{ item }}"
+  loop: "{{ latex_tinytex_packages }}"
+  register: latex_tinytex_package_status
+  changed_when: false
+  environment:
+    HOME: "{{ target_home }}"
+  become: true
+  become_user: "{{ target_user }}"
+  when: not (latex_install_texlive_scheme_full | bool)
+
+- name: Install missing explicitly managed TinyTeX packages
+  ansible.builtin.command:
+    argv:
+      - "{{ latex_tinytex_bin_dir }}/tlmgr"
+      - install
+      - "{{ item.item }}"
+  loop: "{{ latex_tinytex_package_status.results }}"
+  loop_control:
+    label: "{{ item.item }}"
+  environment:
+    HOME: "{{ target_home }}"
+  become: true
+  become_user: "{{ target_user }}"
+  when:
+    - not (latex_install_texlive_scheme_full | bool)
+    - item.stdout | trim != item.item
+
+- name: Verify required LaTeX files with TinyTeX
+  ansible.builtin.command:
+    argv:
+      - "{{ latex_tinytex_bin_dir }}/kpsewhich"
+      - "{{ item }}"
+  loop:
+    - german.ldf
+    - hanging.sty
+  register: latex_tinytex_file_checks
+  changed_when: false
+  failed_when: latex_tinytex_file_checks.stdout | trim == ''
+  environment:
+    HOME: "{{ target_home }}"
+  become: true
+  become_user: "{{ target_user }}"
+  when: not (latex_install_texlive_scheme_full | bool)
+
+- name: Verify required LaTeX files with Fedora TeX Live
+  ansible.builtin.command:
+    argv:
+      - /usr/bin/kpsewhich
+      - "{{ item }}"
+  loop:
+    - german.ldf
+    - hanging.sty
+  register: latex_fedora_file_checks
+  changed_when: false
+  failed_when: latex_fedora_file_checks.stdout | trim == ''
+  become: true
+  become_user: "{{ target_user }}"
+  when: latex_install_texlive_scheme_full | bool

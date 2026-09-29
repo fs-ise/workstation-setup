@@ -36,8 +36,14 @@ class LatexRoleTests(unittest.TestCase):
 
     def test_defaults_declare_expected_packages(self):
         self.assertIs(self.defaults["latex_install_texlive_scheme_full"], False)
-        self.assertNotIn("latex_texlive_packages", self.defaults)
         self.assertEqual(self.defaults["latex_additional_packages"], ["texstudio"])
+        self.assertEqual(
+            self.defaults["latex_tinytex_packages"], ["babel-german", "hanging"]
+        )
+        self.assertEqual(
+            self.defaults["latex_fedora_texlive_packages"],
+            ["texlive-babel-german", "texlive-hanging"],
+        )
 
     def test_obsolete_packages_are_not_declared(self):
         obsolete_package = "un" + "tex"
@@ -55,6 +61,10 @@ class LatexRoleTests(unittest.TestCase):
             "not (latex_tinytex_bin.stat.isdir | default(false))", tinytex_when
         )
         self.assertEqual(additional_when, "latex_additional_packages | length > 0")
+        self.assertIn(
+            "latex_fedora_texlive_packages",
+            tasks["Install the full TeX Live scheme"]["ansible.builtin.dnf"]["name"],
+        )
 
     def test_tinytex_uses_supported_quarto_cli_and_path_integration(self):
         task = next(
@@ -76,8 +86,27 @@ class LatexRoleTests(unittest.TestCase):
 
     def test_role_does_not_hide_installation_failures(self):
         tasks_text = TASKS_PATH.read_text(encoding="utf-8")
-        self.assertNotIn("failed_when", tasks_text)
         self.assertNotIn("ignore_errors", tasks_text)
+
+    def test_tinytex_packages_are_checked_and_installed_as_target_user(self):
+        tasks = {task["name"]: task for task in self.tasks}
+        check = tasks["Check explicitly managed TinyTeX packages"]
+        install = tasks["Install missing explicitly managed TinyTeX packages"]
+        self.assertEqual(check["loop"], "{{ latex_tinytex_packages }}")
+        self.assertEqual(check["become_user"], "{{ target_user }}")
+        self.assertFalse(check["changed_when"])
+        self.assertEqual(install["become_user"], "{{ target_user }}")
+        self.assertIn("item.stdout | trim != item.item", install["when"])
+
+    def test_role_verifies_required_files_with_selected_distribution(self):
+        tasks = {task["name"]: task for task in self.tasks}
+        for name in (
+            "Verify required LaTeX files with TinyTeX",
+            "Verify required LaTeX files with Fedora TeX Live",
+        ):
+            self.assertEqual(tasks[name]["loop"], ["german.ldf", "hanging.sty"])
+            self.assertEqual(tasks[name]["become_user"], "{{ target_user }}")
+            self.assertFalse(tasks[name]["changed_when"])
 
     def test_baseline_has_no_latex_ownership(self):
         baseline_text = (
@@ -101,6 +130,7 @@ class LatexRoleTests(unittest.TestCase):
         managed = self.defaults["latex_managed_dnf_packages"]
         self.assertIn("latex_additional_packages", managed)
         self.assertIn("texlive-scheme-full", managed)
+        self.assertIn("latex_fedora_texlive_packages", managed)
 
 
 if __name__ == "__main__":
