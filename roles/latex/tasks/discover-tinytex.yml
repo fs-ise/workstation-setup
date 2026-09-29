@@ -1,0 +1,63 @@
+---
+- name: Find regular TinyTeX package managers
+  ansible.builtin.find:
+    paths: "{{ target_home }}/.TinyTeX/bin"
+    patterns: tlmgr
+    recurse: true
+    file_type: file
+  register: latex_tlmgr_regular_files
+  become: true
+  become_user: "{{ target_user }}"
+
+- name: Find symlinked TinyTeX package managers
+  ansible.builtin.find:
+    paths: "{{ target_home }}/.TinyTeX/bin"
+    patterns: tlmgr
+    recurse: true
+    file_type: link
+  register: latex_tlmgr_links
+  become: true
+  become_user: "{{ target_user }}"
+
+- name: Inspect TinyTeX package-manager symlinks
+  ansible.builtin.stat:
+    path: "{{ item.path }}"
+    follow: true
+  loop: "{{ latex_tlmgr_links.files }}"
+  loop_control:
+    label: "{{ item.path }}"
+  register: latex_tlmgr_link_stats
+  become: true
+  become_user: "{{ target_user }}"
+
+- name: Record TinyTeX package-manager candidates
+  ansible.builtin.set_fact:
+    latex_tinytex_candidates: >-
+      {{ (latex_tlmgr_regular_files.files + latex_tlmgr_links.files)
+         | map(attribute='path') | sort | list }}
+    latex_tinytex_broken_symlinks: >-
+      {{ latex_tlmgr_link_stats.results
+         | rejectattr('stat.exists') | map(attribute='item.path') | list }}
+
+- name: Check TinyTeX package-manager candidates
+  ansible.builtin.command:
+    argv:
+      - "{{ item }}"
+      - --version
+  loop: "{{ latex_tinytex_candidates }}"
+  loop_control:
+    label: "{{ item }}"
+  register: latex_tlmgr_version_checks
+  changed_when: false
+  failed_when: false
+  environment:
+    HOME: "{{ target_home }}"
+    PATH: "{{ item | dirname }}:{{ ansible_env.PATH }}"
+  become: true
+  become_user: "{{ target_user }}"
+
+- name: Record functional TinyTeX package managers
+  ansible.builtin.set_fact:
+    latex_tinytex_working_paths: >-
+      {{ latex_tlmgr_version_checks.results | default([])
+         | selectattr('rc', 'equalto', 0) | map(attribute='item') | list }}

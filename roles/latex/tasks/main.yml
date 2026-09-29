@@ -11,12 +11,13 @@
     state: present
   when: latex_install_texlive_scheme_full | bool
 
-- name: Check whether Quarto-managed TinyTeX is installed
-  ansible.builtin.stat:
-    path: "{{ target_home }}/.TinyTeX/bin"
-  register: latex_tinytex_bin
-  become: true
-  become_user: "{{ target_user }}"
+- name: Discover the Quarto-managed TinyTeX installation
+  ansible.builtin.include_tasks: discover-tinytex.yml
+  when: not (latex_install_texlive_scheme_full | bool)
+
+- name: Record whether TinyTeX installation is required
+  ansible.builtin.set_fact:
+    latex_tinytex_install_required: "{{ latex_tinytex_working_paths | length == 0 }}"
   when: not (latex_install_texlive_scheme_full | bool)
 
 - name: Install TinyTeX through Quarto
@@ -27,37 +28,66 @@
       - tinytex
       - --no-prompt
       - --update-path
+  register: latex_tinytex_install
+  changed_when: latex_tinytex_install.rc == 0
+  failed_when: false
   environment:
     HOME: "{{ target_home }}"
+    PATH: "{{ target_home }}/.local/bin:{{ ansible_env.PATH }}"
   become: true
   become_user: "{{ target_user }}"
   when:
     - not (latex_install_texlive_scheme_full | bool)
-    - not (latex_tinytex_bin.stat.isdir | default(false))
+    - latex_tinytex_install_required
 
-- name: Locate TinyTeX package manager
-  ansible.builtin.find:
-    paths: "{{ target_home }}/.TinyTeX/bin"
-    patterns: tlmgr
-    recurse: true
-    file_type: file
-  register: latex_tlmgr_files
-  become: true
-  become_user: "{{ target_user }}"
-  when: not (latex_install_texlive_scheme_full | bool)
-
-- name: Require the TinyTeX package manager
+- name: Report a TinyTeX installation failure
   ansible.builtin.assert:
     that:
-      - latex_tlmgr_files.matched == 1
+      - latex_tinytex_install.rc == 0
     fail_msg: >-
-      Expected one tlmgr executable below {{ target_home }}/.TinyTeX/bin, but
-      found {{ latex_tlmgr_files.matched }}. Reinstall TinyTeX with Quarto.
+      Quarto could not install a working TinyTeX (exit
+      {{ latex_tinytex_install.rc }}).
+      {% if latex_tinytex_broken_symlinks | length > 0 %}
+      Broken tlmgr symlink(s) were found: {{ latex_tinytex_broken_symlinks | join(', ') }}.
+      {% elif latex_tinytex_candidates | length > 0 %}
+      Existing tlmgr candidate(s) failed their version check:
+      {{ latex_tinytex_candidates | join(', ') }}.
+      {% else %}
+      No tlmgr executable was found below {{ target_home }}/.TinyTeX/bin.
+      {% endif %}
+      Existing files were not removed. Move or back up the incomplete
+      {{ target_home }}/.TinyTeX installation, then rerun this role. Quarto said:
+      {{ latex_tinytex_install.stderr | default('') | trim }}
+  when:
+    - not (latex_install_texlive_scheme_full | bool)
+    - latex_tinytex_install_required
+
+- name: Rediscover TinyTeX after installation
+  ansible.builtin.include_tasks: discover-tinytex.yml
+  when:
+    - not (latex_install_texlive_scheme_full | bool)
+    - latex_tinytex_install_required
+
+- name: Require a functional TinyTeX package manager
+  ansible.builtin.assert:
+    that:
+      - latex_tinytex_working_paths | length > 0
+    fail_msg: >-
+      Quarto completed the TinyTeX installation, but tlmgr is not functional.
+      {% if latex_tinytex_broken_symlinks | length > 0 %}
+      Broken tlmgr symlink(s): {{ latex_tinytex_broken_symlinks | join(', ') }}.
+      {% elif latex_tinytex_candidates | length == 0 %}
+      No tlmgr executable exists below {{ target_home }}/.TinyTeX/bin.
+      {% else %}
+      The discovered tlmgr candidate(s) failed their version check:
+      {{ latex_tinytex_candidates | join(', ') }}.
+      {% endif %}
+      Existing TinyTeX files were left unchanged.
   when: not (latex_install_texlive_scheme_full | bool)
 
 - name: Record the TinyTeX binary directory
   ansible.builtin.set_fact:
-    latex_tinytex_bin_dir: "{{ latex_tlmgr_files.files[0].path | dirname }}"
+    latex_tinytex_bin_dir: "{{ latex_tinytex_working_paths | first | dirname }}"
   when: not (latex_install_texlive_scheme_full | bool)
 
 - name: Check explicitly managed TinyTeX packages
@@ -72,10 +102,24 @@
   loop: "{{ latex_tinytex_packages }}"
   register: latex_tinytex_package_status
   changed_when: false
+  failed_when: false
   environment:
     HOME: "{{ target_home }}"
+    PATH: "{{ latex_tinytex_bin_dir }}:{{ ansible_env.PATH }}"
   become: true
   become_user: "{{ target_user }}"
+  when: not (latex_install_texlive_scheme_full | bool)
+
+- name: Require successful TinyTeX package checks
+  ansible.builtin.assert:
+    that:
+      - item.rc == 0
+    fail_msg: >-
+      TinyTeX's package manager failed while checking {{ item.item }}
+      (exit {{ item.rc }}): {{ item.stderr | default('') | trim }}
+  loop: "{{ latex_tinytex_package_status.results }}"
+  loop_control:
+    label: "{{ item.item }}"
   when: not (latex_install_texlive_scheme_full | bool)
 
 - name: Install missing explicitly managed TinyTeX packages
@@ -89,6 +133,7 @@
     label: "{{ item.item }}"
   environment:
     HOME: "{{ target_home }}"
+    PATH: "{{ latex_tinytex_bin_dir }}:{{ ansible_env.PATH }}"
   become: true
   become_user: "{{ target_user }}"
   when:
@@ -105,9 +150,12 @@
     - hanging.sty
   register: latex_tinytex_file_checks
   changed_when: false
-  failed_when: latex_tinytex_file_checks.stdout | trim == ''
+  failed_when: >-
+    latex_tinytex_file_checks.rc != 0
+    or latex_tinytex_file_checks.stdout | trim == ''
   environment:
     HOME: "{{ target_home }}"
+    PATH: "{{ latex_tinytex_bin_dir }}:{{ ansible_env.PATH }}"
   become: true
   become_user: "{{ target_user }}"
   when: not (latex_install_texlive_scheme_full | bool)
@@ -122,7 +170,12 @@
     - hanging.sty
   register: latex_fedora_file_checks
   changed_when: false
-  failed_when: latex_fedora_file_checks.stdout | trim == ''
+  failed_when: >-
+    latex_fedora_file_checks.rc != 0
+    or latex_fedora_file_checks.stdout | trim == ''
+  environment:
+    HOME: "{{ target_home }}"
+    PATH: "/usr/bin:{{ ansible_env.PATH }}"
   become: true
   become_user: "{{ target_user }}"
   when: latex_install_texlive_scheme_full | bool

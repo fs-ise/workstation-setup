@@ -8,6 +8,7 @@ from ruamel.yaml import YAML
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULTS_PATH = ROOT / "roles/latex/defaults/main.yml"
 TASKS_PATH = ROOT / "roles/latex/tasks/main.yml"
+DISCOVERY_TASKS_PATH = ROOT / "roles/latex/tasks/discover-tinytex.yml"
 BASELINE_DEFAULTS_PATH = ROOT / "roles/baseline/defaults/main.yml"
 BASELINE_TASKS_PATH = ROOT / "roles/baseline/tasks/main.yml"
 PLAYBOOK_PATH = ROOT / "playbooks/lab-stack.yml"
@@ -27,12 +28,14 @@ class LatexRoleTests(unittest.TestCase):
     def setUpClass(cls):
         cls.defaults = YAML_PARSER.load(DEFAULTS_PATH)
         cls.tasks = YAML_PARSER.load(TASKS_PATH)
+        cls.discovery_tasks = YAML_PARSER.load(DISCOVERY_TASKS_PATH)
         cls.baseline_defaults = YAML_PARSER.load(BASELINE_DEFAULTS_PATH)
         cls.playbook = YAML_PARSER.load(PLAYBOOK_PATH)
 
     def test_role_files_exist(self):
         self.assertTrue(DEFAULTS_PATH.is_file())
         self.assertTrue(TASKS_PATH.is_file())
+        self.assertTrue(DISCOVERY_TASKS_PATH.is_file())
 
     def test_defaults_declare_expected_packages(self):
         self.assertIs(self.defaults["latex_install_texlive_scheme_full"], False)
@@ -57,9 +60,7 @@ class LatexRoleTests(unittest.TestCase):
         additional_when = tasks["Install additional LaTeX packages"]["when"]
         self.assertEqual(full_when, "latex_install_texlive_scheme_full | bool")
         self.assertIn("not (latex_install_texlive_scheme_full | bool)", tinytex_when)
-        self.assertIn(
-            "not (latex_tinytex_bin.stat.isdir | default(false))", tinytex_when
-        )
+        self.assertIn("latex_tinytex_install_required", tinytex_when)
         self.assertEqual(additional_when, "latex_additional_packages | length > 0")
         self.assertIn(
             "latex_fedora_texlive_packages",
@@ -75,7 +76,65 @@ class LatexRoleTests(unittest.TestCase):
             ["quarto", "install", "tinytex", "--no-prompt", "--update-path"],
         )
         self.assertEqual(task["environment"]["HOME"], "{{ target_home }}")
+        self.assertIn("ansible_env.PATH", task["environment"]["PATH"])
         self.assertEqual(task["become_user"], "{{ target_user }}")
+
+    def test_regular_and_symlinked_tlmgr_are_discovered_recursively(self):
+        tasks = {task["name"]: task for task in self.discovery_tasks}
+        regular = tasks["Find regular TinyTeX package managers"]
+        links = tasks["Find symlinked TinyTeX package managers"]
+        self.assertEqual(regular["ansible.builtin.find"]["file_type"], "file")
+        self.assertEqual(links["ansible.builtin.find"]["file_type"], "link")
+        for task in (regular, links):
+            find = task["ansible.builtin.find"]
+            self.assertEqual(find["paths"], "{{ target_home }}/.TinyTeX/bin")
+            self.assertEqual(find["patterns"], "tlmgr")
+            self.assertTrue(find["recurse"])
+            self.assertEqual(task["become_user"], "{{ target_user }}")
+        ci_playbook = (ROOT / "tests/playbooks/ci.yml").read_text(encoding="utf-8")
+        self.assertIn(".TinyTeX/bin/x86_64-linux/tlmgr", ci_playbook)
+
+    def test_tinytex_functionality_controls_install_and_rediscovery(self):
+        tasks = {task["name"]: task for task in self.tasks}
+        discovery = {task["name"]: task for task in self.discovery_tasks}
+        probe = discovery["Check TinyTeX package-manager candidates"]
+        self.assertEqual(probe["ansible.builtin.command"]["argv"][-1], "--version")
+        self.assertFalse(probe["changed_when"])
+        self.assertFalse(probe["failed_when"])
+        self.assertEqual(probe["become_user"], "{{ target_user }}")
+        self.assertIn("ansible_env.PATH", probe["environment"]["PATH"])
+        required = tasks["Record whether TinyTeX installation is required"]
+        install_required = required["ansible.builtin.set_fact"][
+            "latex_tinytex_install_required"
+        ]
+        self.assertIn("latex_tinytex_working_paths | length == 0", install_required)
+        self.assertIn(
+            "latex_tinytex_install_required",
+            tasks["Rediscover TinyTeX after installation"]["when"],
+        )
+
+    def test_incomplete_tinytex_is_preserved_and_errors_are_distinct(self):
+        tasks = {task["name"]: task for task in self.tasks}
+        link_stat = next(
+            task
+            for task in self.discovery_tasks
+            if task["name"] == "Inspect TinyTeX package-manager symlinks"
+        )
+        self.assertTrue(link_stat["ansible.builtin.stat"]["follow"])
+        failure = tasks["Report a TinyTeX installation failure"]
+        message = failure["ansible.builtin.assert"]["fail_msg"]
+        self.assertIn("Broken tlmgr symlink", message)
+        self.assertIn("No tlmgr executable", message)
+        self.assertIn("failed their version check", message)
+        self.assertIn("Existing files were not removed", message)
+
+    def test_working_tinytex_skips_reinstallation_on_repeated_runs(self):
+        tasks = {task["name"]: task for task in self.tasks}
+        install = tasks["Install TinyTeX through Quarto"]
+        self.assertIn("latex_tinytex_install_required", install["when"])
+        package_check = tasks["Check explicitly managed TinyTeX packages"]
+        self.assertFalse(package_check["changed_when"])
+        self.assertFalse(package_check["failed_when"])
 
     def test_old_partial_texlive_packages_are_removed(self):
         role_text = DEFAULTS_PATH.read_text() + TASKS_PATH.read_text()
@@ -91,10 +150,12 @@ class LatexRoleTests(unittest.TestCase):
     def test_tinytex_packages_are_checked_and_installed_as_target_user(self):
         tasks = {task["name"]: task for task in self.tasks}
         check = tasks["Check explicitly managed TinyTeX packages"]
+        require_check = tasks["Require successful TinyTeX package checks"]
         install = tasks["Install missing explicitly managed TinyTeX packages"]
         self.assertEqual(check["loop"], "{{ latex_tinytex_packages }}")
         self.assertEqual(check["become_user"], "{{ target_user }}")
         self.assertFalse(check["changed_when"])
+        self.assertIn("item.rc == 0", require_check["ansible.builtin.assert"]["that"])
         self.assertEqual(install["become_user"], "{{ target_user }}")
         self.assertIn("item.stdout | trim != item.item", install["when"])
 
@@ -107,6 +168,20 @@ class LatexRoleTests(unittest.TestCase):
             self.assertEqual(tasks[name]["loop"], ["german.ldf", "hanging.sty"])
             self.assertEqual(tasks[name]["become_user"], "{{ target_user }}")
             self.assertFalse(tasks[name]["changed_when"])
+
+    def test_fedora_configuration_bypasses_tinytex(self):
+        tasks = {task["name"]: task for task in self.tasks}
+        self.assertEqual(
+            tasks["Install the full TeX Live scheme"]["when"],
+            "latex_install_texlive_scheme_full | bool",
+        )
+        for name in (
+            "Discover the Quarto-managed TinyTeX installation",
+            "Check explicitly managed TinyTeX packages",
+            "Verify required LaTeX files with TinyTeX",
+        ):
+            condition = tasks[name]["when"]
+            self.assertIn("not (latex_install_texlive_scheme_full | bool)", condition)
 
     def test_baseline_has_no_latex_ownership(self):
         baseline_text = (

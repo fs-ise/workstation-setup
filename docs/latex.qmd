@@ -15,6 +15,16 @@ generation. Quarto manages the TinyTeX installation, and the role uses TinyTeX's
 The role runs `tlmgr` as the target user and only installs packages that are
 missing. It also asks Quarto to add TinyTeX to the user's `PATH`.
 
+::: {.callout-manual}
+**🔧 Manual recovery for an incomplete installation**
+
+If TinyTeX is missing or its `tlmgr` package manager does not run, the role asks
+Quarto to install it again. It does not delete an incomplete installation. If
+Quarto cannot repair it, back up or move `~/.TinyTeX` and rerun the role. The
+failure message identifies broken `tlmgr` symlinks separately from missing files
+and package-manager errors.
+:::
+
 ## Install the full Fedora TeX Live scheme
 
 To opt into the complete Fedora distribution, set this variable in your inventory
