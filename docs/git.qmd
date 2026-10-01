@@ -2,7 +2,7 @@
 title: "Git tools"
 ---
 
-Install Git, Git LFS, Gitk, and the shared global Git defaults.
+Install Git, Git LFS, Gitk, [GitHub CLI](github_cli.qmd), and the shared global Git defaults.
 
 ```sh
 ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags git
@@ -20,12 +20,16 @@ Configure your identity and register SSH or GPG keys with your Git hosting provi
 ```sh
 git --version
 git lfs version
+gh --version
 git config --global init.defaultBranch
 ```
 :::
+
+Use Git for local and version-control operations such as commits, branches, merges, tags, and push or pull. Use GitHub CLI (`gh`) for GitHub-specific operations such as pull requests, issues, Actions, repositories, and releases. See [GitHub CLI](github_cli.qmd) for authentication and common commands.
 
 ## Best practices and useful links
 
 - [Git documentation](https://git-scm.com/doc)
 - [Git LFS documentation](https://git-lfs.com/)
+- [GitHub CLI documentation](https://cli.github.com/manual/)
 - [Baseline setup](baseline.html)

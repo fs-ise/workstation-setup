@@ -37,6 +37,7 @@ website:
             contents:
               - baseline.qmd
               - git.qmd
+              - github_cli.qmd
               - borg_vorta.qmd
               - nemo.qmd
               - dropbox.qmd

@@ -3,6 +3,7 @@ git_tools_packages:
   - git
   - git-lfs
   - gitk
+  - gh
 
 git_tools_global_config:
   - name: log.date

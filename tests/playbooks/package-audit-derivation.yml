@@ -26,6 +26,7 @@
         that:
           - package_audit_role_default_files | length > 0
           - "'git' in package_audit_managed_packages"
+          - "'gh' in package_audit_managed_packages"
           - "'quarto' in package_audit_managed_packages"
           - "'docker-ce' in package_audit_managed_packages"
           - "'R' in package_audit_managed_packages"

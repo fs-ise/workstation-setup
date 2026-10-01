@@ -85,6 +85,7 @@ the tag. Do not mark mutating commands unchanged merely to satisfy the test.
 ## Coverage and limitations
 
 - **Executed in Fedora:** the baseline role's global Git configuration, the
+  `git_tools` role's GitHub CLI installation and global Git configuration, the
   `borg_vorta` role with Borg and Vorta installation disabled, the KeePassXC
   role with its package list intentionally empty, and the
   default-applications role's Fedora Quarto MIME recognition, legacy association

@@ -113,7 +113,8 @@
     - role: desktop_apps
     - role: git_tools
       vars:
-        git_tools_packages: []
+        git_tools_packages:
+          - gh
     - role: borg_vorta
       vars:
         borg_vorta_packages: []
@@ -148,6 +149,11 @@
         that:
           - ci_git_default_branch.stdout == "main"
         fail_msg: The git_tools role did not configure Git as expected.
+
+    - name: Verify GitHub CLI is installed  # noqa command-instead-of-module
+      become: false
+      ansible.builtin.command: gh --version
+      changed_when: false
 
     - name: Read the CI default applications
       ansible.builtin.slurp:

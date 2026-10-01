@@ -1,0 +1,85 @@
+---
+title: "GitHub CLI"
+---
+
+Install GitHub CLI (`gh`) with the Git tools role. It provides GitHub functionality from the command line; ordinary source-control operations remain Git commands.
+
+```sh
+ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags git
+```
+
+::: {.callout-manual}
+**🔧 Manual setup and configuration**
+
+Authenticate once for each user account:
+
+```sh
+gh auth login --web
+```
+
+Each user runs this interactive command and authenticates their own GitHub account in the browser. Ansible does not store credentials, tokens, usernames, or other account-specific data.
+:::
+
+::: {.callout-check}
+**✅ Check**
+
+```sh
+gh --version
+gh auth status
+```
+:::
+
+## Common commands
+
+View or clone repositories:
+
+```sh
+gh repo view
+gh repo clone OWNER/REPOSITORY
+```
+
+Work with pull requests and issues:
+
+```sh
+gh pr list
+gh pr view
+gh pr create
+gh issue list
+```
+
+Inspect GitHub Actions runs and releases:
+
+```sh
+gh run list
+gh run view
+gh release list
+```
+
+## Creating releases
+
+Create and push the Git tag explicitly before creating the GitHub release:
+
+```sh
+git tag -a v0.1.0 -m "v0.1.0"
+git push origin v0.1.0
+
+gh release create v0.1.0 \
+    --verify-tag \
+    --title "v0.1.0" \
+    --generate-notes
+```
+
+`--verify-tag` prevents accidentally creating a release for a tag that does not already exist remotely. `--generate-notes` lets GitHub generate the release notes automatically.
+
+View the release or list available releases afterward:
+
+```sh
+gh release view v0.1.0
+gh release list
+```
+
+## Best practices and useful links
+
+- [GitHub CLI manual](https://cli.github.com/manual/)
+- [GitHub CLI authentication manual](https://cli.github.com/manual/gh_auth_login)
+- [Git tools](git.qmd)
