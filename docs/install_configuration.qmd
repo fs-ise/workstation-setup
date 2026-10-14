@@ -50,10 +50,12 @@ for software you use:
 
 ::: {.callout-note title="Advanced: explicit commands and tags" collapse=true}
 
-Run only one playbook tag when you need to test or reapply a specific area:
+Run a playbook tag when you need to test or reapply a specific area. Copier uses
+`uv` from the baseline role, so include both tags when running it separately:
 
 ```sh
 ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags baseline
+ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags baseline,copier
 ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags desktop_apps
 ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags git
 ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags borg_vorta

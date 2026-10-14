@@ -1,0 +1,5 @@
+---
+copier_package: copier
+copier_template_extensions_package: copier-template-extensions
+copier_uv_tool_dir: "{{ target_home }}/.local/share/uv/tools"
+copier_uv_tool_bin_dir: "{{ target_home }}/.local/bin"

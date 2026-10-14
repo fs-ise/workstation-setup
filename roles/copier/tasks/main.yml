@@ -1,0 +1,115 @@
+---
+- name: Inspect the target user's uv-managed tools
+  become: true
+  become_user: "{{ target_user }}"
+  ansible.builtin.command:
+    argv:
+      - uv
+      - tool
+      - list
+      - --show-with
+  environment:
+    HOME: "{{ target_home }}"
+    UV_TOOL_DIR: "{{ copier_uv_tool_dir }}"
+    UV_TOOL_BIN_DIR: "{{ copier_uv_tool_bin_dir }}"
+    PATH: "{{ copier_uv_tool_bin_dir }}:/usr/local/bin:/usr/bin:/bin"
+  register: copier_uv_tools
+  changed_when: false
+
+- name: Inspect the target user's Copier launcher
+  ansible.builtin.stat:
+    path: "{{ copier_uv_tool_bin_dir }}/{{ copier_package }}"
+    follow: false
+  register: copier_launcher
+
+- name: Avoid replacing a Copier launcher not managed by uv
+  ansible.builtin.assert:
+    that:
+      - not copier_launcher.stat.exists
+    fail_msg: >-
+      {{ copier_launcher.stat.path }} already exists, but uv does not list Copier
+      as one of {{ target_user }}'s managed tools. Manage this existing
+      installation with its current installer or migrate it before enabling the
+      Copier role.
+  when: "'copier v' not in copier_uv_tools.stdout"
+
+- name: Install Copier with the template extensions loader
+  become: true
+  become_user: "{{ target_user }}"
+  ansible.builtin.command:
+    argv:
+      - uv
+      - tool
+      - install
+      - --with
+      - "{{ copier_template_extensions_package }}"
+      - "{{ copier_package }}"
+  environment:
+    HOME: "{{ target_home }}"
+    UV_TOOL_DIR: "{{ copier_uv_tool_dir }}"
+    UV_TOOL_BIN_DIR: "{{ copier_uv_tool_bin_dir }}"
+    PATH: "{{ copier_uv_tool_bin_dir }}:/usr/local/bin:/usr/bin:/bin"
+  when: "'copier v' not in copier_uv_tools.stdout"
+  changed_when: true
+
+- name: Add the template extensions loader to an existing uv-managed Copier
+  become: true
+  become_user: "{{ target_user }}"
+  ansible.builtin.command:
+    argv:
+      - uv
+      - tool
+      - install
+      - --force
+      - --with
+      - "{{ copier_template_extensions_package }}"
+      - "{{ copier_package }}"
+  environment:
+    HOME: "{{ target_home }}"
+    UV_TOOL_DIR: "{{ copier_uv_tool_dir }}"
+    UV_TOOL_BIN_DIR: "{{ copier_uv_tool_bin_dir }}"
+    PATH: "{{ copier_uv_tool_bin_dir }}:/usr/local/bin:/usr/bin:/bin"
+  when:
+    - "'copier v' in copier_uv_tools.stdout"
+    - "copier_template_extensions_package not in copier_uv_tools.stdout"
+  changed_when: true
+
+- name: Verify the Copier CLI
+  become: true
+  become_user: "{{ target_user }}"
+  ansible.builtin.command:
+    argv:
+      - "{{ copier_uv_tool_bin_dir }}/{{ copier_package }}"
+      - --version
+  environment:
+    HOME: "{{ target_home }}"
+    UV_TOOL_DIR: "{{ copier_uv_tool_dir }}"
+    UV_TOOL_BIN_DIR: "{{ copier_uv_tool_bin_dir }}"
+    PATH: "{{ copier_uv_tool_bin_dir }}:/usr/local/bin:/usr/bin:/bin"
+  changed_when: false
+
+- name: Verify the extension is installed with Copier
+  become: true
+  become_user: "{{ target_user }}"
+  ansible.builtin.command:
+    argv:
+      - uv
+      - tool
+      - list
+      - --show-with
+  environment:
+    HOME: "{{ target_home }}"
+    UV_TOOL_DIR: "{{ copier_uv_tool_dir }}"
+    UV_TOOL_BIN_DIR: "{{ copier_uv_tool_bin_dir }}"
+    PATH: "{{ copier_uv_tool_bin_dir }}:/usr/local/bin:/usr/bin:/bin"
+  register: copier_uv_tools_verified
+  changed_when: false
+
+- name: Confirm Copier and its template extensions loader are uv-managed
+  ansible.builtin.assert:
+    that:
+      - "'copier v' in copier_uv_tools_verified.stdout"
+      - "copier_template_extensions_package in copier_uv_tools_verified.stdout"
+    fail_msg: >-
+      Copier and {{ copier_template_extensions_package }} must be installed in
+      the same uv tool environment for {{ target_user }}.

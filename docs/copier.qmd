@@ -1,0 +1,47 @@
+---
+title: "Copier"
+---
+
+Install Copier and the template extension loader in the target user's isolated
+`uv` tool environment. The extension is required by templates that declare
+`copier_template_extensions.TemplateExtensionLoader` in `copier.yml`. The normal
+`make configure` workflow installs Copier automatically.
+
+```sh
+ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags baseline,copier
+```
+
+::: {.callout-check}
+**✅ Check**
+
+```sh
+copier --version
+uv tool list --show-with
+```
+
+The tool list should include both `copier` and `copier-template-extensions`.
+:::
+
+## Using Copier
+
+Create a project from a template with:
+
+```sh
+copier copy TEMPLATE_URL DESTINATION
+```
+
+For a template that requires trusted hooks, run:
+
+```sh
+copier copy --trust TEMPLATE_URL DESTINATION
+```
+
+Only trust templates whose code you trust. The `--trust` option allows Copier to
+run template hooks; it does not install Python dependencies. This role installs
+the extension loader alongside Copier.
+
+## Best practices and useful links
+
+- [Copier documentation](https://copier.readthedocs.io/)
+- [Copier template extensions](https://github.com/copier-org/copier-template-extensions)
+- [uv tool documentation](https://docs.astral.sh/uv/guides/tools/)

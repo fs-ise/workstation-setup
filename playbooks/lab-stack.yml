@@ -20,6 +20,9 @@
     - role: baseline  # should include packages (except for those needed in the following roles)
       tags: [baseline]
 
+    - role: copier
+      tags: [copier]
+
     - role: desktop_apps
       tags: [desktop_apps, desktop]
 

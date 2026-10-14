@@ -38,6 +38,7 @@ website:
               - baseline.qmd
               - git.qmd
               - github_cli.qmd
+              - copier.qmd
               - borg_vorta.qmd
               - nemo.qmd
               - dropbox.qmd
