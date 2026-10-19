@@ -75,3 +75,4 @@ The following settings are recommended for Windows VMs:
 ## Best practices and useful links
 
 - [VirtualBox documentation](https://www.virtualbox.org/wiki/Documentation)
+- Alternative: [Winboat](https://www.winboat.app/)
