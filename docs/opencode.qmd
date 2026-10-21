@@ -1,0 +1,119 @@
+
+---
+title: "OpenCode"
+---
+
+[OpenCode](https://opencode.ai/) is an open-source AI coding agent
+that runs in the terminal and works directly with local repositories.
+
+## Installation
+
+OpenCode is installed through the `opencode` Ansible role.
+
+```sh
+ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags opencode
+```
+
+The role also installs CLI tools commonly used when exploring and working with
+repositories: `ripgrep`, `fd-find`, `jq`, `gh`, `git-delta`, `fzf`, `bat`,
+`ShellCheck`, and `tree`.
+
+The role also installs the [OpenCode Voice plugin](https://github.com/ihxnnxs/opencode-voice)
+in the target user's global OpenCode configuration. Restart OpenCode after installation
+or an update. On first use, choose a local transcription model; its runtime and model
+files are downloaded automatically.
+
+::: {.callout-check}
+**✅ Check**
+
+```sh
+opencode --version
+rg --version
+fd --version
+jq --version
+gh --version
+delta --version
+fzf --version
+bat --version
+shellcheck --version
+tree --version
+```
+:::
+
+## Authentication
+
+Authentication is configured manually and is not managed by Ansible.
+
+Launch OpenCode:
+
+```sh
+opencode
+```
+
+Inside OpenCode, enter `/connect`, select a provider, and follow its authentication
+prompts. Providers may use an API key or an account sign-in flow. Then run `/models`
+to select an available model. See the [OpenCode provider guide](https://opencode.ai/docs/providers/)
+for provider-specific instructions.
+
+OpenCode stores credentials locally; do not commit credentials or local authentication
+files to this repository.
+
+## Voice input
+
+Press `Ctrl+R` to start recording, then press it again to stop and transcribe into the
+prompt. Use `/voice-settings` to change the model, microphone, language, and recording
+hotkey. Voice transcription runs locally.
+
+## Working with repositories
+
+Launch OpenCode from the repository root:
+
+```sh
+cd ~/repos/colrev
+opencode
+```
+
+Use Plan mode to review proposed changes before allowing edits.
+
+Review modifications using:
+
+```bash
+git status
+git diff
+```
+
+## Best practices and useful links
+
+Start OpenCode from the repository root so it can read the project guidance in
+`AGENTS.md`. If the project does not have one, run `/init`, review the generated
+instructions, and commit the file with the project.
+
+For larger changes, use Plan mode (`Tab`) to agree on an approach before editing.
+Before committing, review `git status` and `git diff` and run the project's relevant
+checks.
+
+Useful references:
+
+- [OpenCode rules and `AGENTS.md`](https://opencode.ai/docs/rules/)
+- [OpenCode tools and permissions](https://opencode.ai/docs/tools/)
+- [Workstation setup and verification](install_configuration.qmd)
+
+## Updates
+
+OpenCode is managed by the workstation Ansible role.
+The regular configuration run ensures it is installed.
+
+To upgrade OpenCode explicitly:
+
+```sh
+opencode upgrade
+```
+
+Restart OpenCode after upgrading so it reloads the installed CLI and plugins.
+
+## References
+
+- [OpenCode School](https://opencode.school/)
+- [OpenCode documentation](https://opencode.ai/docs/)
+- [OpenCode GitHub repository](https://github.com/anomalyco/opencode)
+- [OpenCode Voice plugin](https://github.com/ihxnnxs/opencode-voice)

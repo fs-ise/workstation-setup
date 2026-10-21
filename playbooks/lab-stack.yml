@@ -29,6 +29,9 @@
     - role: git_tools
       tags: [git, git_tools]
 
+    - role: opencode
+      tags: [opencode, ai_coding]
+
     - role: borg_vorta
       tags: [borg_vorta, backup, borg, vorta]
 

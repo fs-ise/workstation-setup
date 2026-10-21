@@ -1,0 +1,20 @@
+
+---
+opencode_dependencies:
+  - nodejs
+  - npm
+  - ripgrep
+  - fd-find
+  - jq
+  - gh
+  - git-delta
+  - fzf
+  - bat
+  - ShellCheck
+  - tree
+
+opencode_npm_package: opencode-ai
+opencode_voice_plugin: "@hxnnxs/opencode-voice"
+
+# DNF package audit integration
+opencode_managed_dnf_packages: "{{ opencode_dependencies }}"

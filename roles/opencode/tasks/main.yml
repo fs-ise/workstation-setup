@@ -1,0 +1,50 @@
+
+---
+- name: Install OpenCode prerequisites
+  ansible.builtin.dnf:
+    name: "{{ opencode_dependencies }}"
+    state: present
+
+- name: Install OpenCode CLI
+  community.general.npm:
+    name: "{{ opencode_npm_package }}"
+    global: true
+    state: present
+
+- name: Check OpenCode global configuration for the Voice plugin
+  ansible.builtin.command:
+    argv:
+      - python3
+      - -c
+      - >-
+        import json, pathlib, sys;
+        config = pathlib.Path.home() / '.config/opencode/opencode.json';
+        data = json.loads(config.read_text()) if config.exists() else {};
+        sys.exit(0 if {{ opencode_voice_plugin | to_json }} in data.get('plugin', []) else 1)
+  register: opencode_voice_plugin_configured
+  changed_when: false
+  failed_when: opencode_voice_plugin_configured.rc not in [0, 1]
+  become_user: "{{ target_user }}"
+  environment:
+    HOME: "{{ target_home }}"
+
+- name: Install OpenCode Voice plugin for the target user
+  ansible.builtin.command:
+    argv:
+      - opencode
+      - plugin
+      - "{{ opencode_voice_plugin }}"
+      - --global
+  when: opencode_voice_plugin_configured.rc == 1
+  become_user: "{{ target_user }}"
+  environment:
+    HOME: "{{ target_home }}"
+
+- name: Verify OpenCode installation
+  ansible.builtin.command: opencode --version
+  register: opencode_version
+  changed_when: false
+
+- name: Report OpenCode version
+  ansible.builtin.debug:
+    msg: "OpenCode {{ opencode_version.stdout }}"

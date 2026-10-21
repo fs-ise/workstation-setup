@@ -38,7 +38,6 @@ website:
               - baseline.qmd
               - git.qmd
               - github_cli.qmd
-              - copier.qmd
               - borg_vorta.qmd
               - nemo.qmd
               - dropbox.qmd
@@ -48,6 +47,8 @@ website:
               - thunderbird-mcp.qmd
               - keepassxc.qmd
               - chrome.qmd
+              - copier.qmd
+              - opencode.qmd
               - vscode.qmd
               - languagetool.qmd
               - teams.qmd
