@@ -198,6 +198,27 @@ class LatexRoleTests(unittest.TestCase):
         self.assertNotIn("failed_when", package_install)
         self.assertNotIn("ignore_errors", package_install)
 
+        ci_playbook = YAML_PARSER.load(ROOT / "tests/playbooks/ci.yml")
+        mock_task = next(
+            task
+            for task in ci_playbook[0]["pre_tasks"]
+            if task["name"] == "Seed a functional TinyTeX package manager for role checks"
+        )
+        mock_script = mock_task["ansible.builtin.copy"]["content"]
+        for expected in (
+            "--version)",
+            'info)',
+            '"--only-installed"',
+            '"--data"',
+            '"name"',
+            "state_file=/root/.TinyTeX/installed-packages",
+            "install)",
+            'grep -Fqx -- "$package" "$state_file"',
+            'sort -u "$state_file" -o "$state_file"',
+        ):
+            with self.subTest(expected=expected):
+                self.assertIn(expected, mock_script)
+
     def test_role_verifies_required_files_with_selected_distribution(self):
         tasks = {task["name"]: task for task in self.tasks}
         for name in (

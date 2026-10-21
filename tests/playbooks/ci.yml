@@ -58,12 +58,40 @@
         mode: "0755"
         content: |
           #!/bin/sh
-          if [ "$1" = "--version" ]; then
-            echo "tlmgr revision test"
-          elif [ "$1" = "info" ]; then
-            eval "package=\${$#}"
-            echo "$package"
-          fi
+          set -eu
+
+          state_file=/root/.TinyTeX/installed-packages
+          mkdir -p "$(dirname "$state_file")"
+          touch "$state_file"
+
+          case "${1:-}" in
+            --version)
+              printf '%s\n' 'tlmgr revision test'
+              ;;
+            info)
+              if [ "${2:-}" = "--only-installed" ] \
+                && [ "${3:-}" = "--data" ] \
+                && [ "${4:-}" = "name" ]; then
+                sort -u "$state_file"
+              else
+                printf '%s\n' "Unsupported tlmgr info arguments" >&2
+                exit 2
+              fi
+              ;;
+            install)
+              shift
+              for package in "$@"; do
+                if ! grep -Fqx -- "$package" "$state_file"; then
+                  printf '%s\n' "$package" >> "$state_file"
+                fi
+              done
+              sort -u "$state_file" -o "$state_file"
+              ;;
+            *)
+              printf '%s\n' "Unsupported tlmgr command: ${1:-}" >&2
+              exit 2
+              ;;
+          esac
 
     - name: Seed a TinyTeX file lookup command for role checks
       ansible.builtin.copy:
