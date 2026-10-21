@@ -1,4 +1,3 @@
-
 ---
 - name: Install OpenCode prerequisites
   ansible.builtin.dnf:
@@ -24,6 +23,7 @@
   register: opencode_voice_plugin_configured
   changed_when: false
   failed_when: opencode_voice_plugin_configured.rc not in [0, 1]
+  become: true
   become_user: "{{ target_user }}"
   environment:
     HOME: "{{ target_home }}"
@@ -36,6 +36,7 @@
       - "{{ opencode_voice_plugin }}"
       - --global
   when: opencode_voice_plugin_configured.rc == 1
+  become: true
   become_user: "{{ target_user }}"
   environment:
     HOME: "{{ target_home }}"
