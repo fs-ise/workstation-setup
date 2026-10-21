@@ -11,12 +11,6 @@ thunderbird_base_extensions:
     id: filtaquilla@mesquilla.com
     install_url: https://addons.thunderbird.net/thunderbird/downloads/latest/filtaquilla/latest.xpi
     comment: Extends Thunderbird message filters with extra actions and search terms. Use it for workflow rules that Thunderbird cannot express by default.
-  - name: mailmindr
-    id: mailmindr@arndissler.net
-    install_url: https://addons.thunderbird.net/thunderbird/downloads/latest/mailmindr/latest.xpi
-    comment: >-
-      Moves messages out of the inbox when you cannot currently act on them, then reminds you when follow-up is due.
-      Use it for time-bound replies, delegated work, and review tasks.
   - name: Move Mail Shortcuts
     id: mailMoveShortcuts@extension
     install_url: https://addons.thunderbird.net/thunderbird/downloads/latest/move-mail-shortcuts/latest.xpi
