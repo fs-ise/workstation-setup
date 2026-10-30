@@ -48,9 +48,10 @@ class BaselineRoleTests(unittest.TestCase):
     def test_desktop_packages_and_cleanup_are_not_in_baseline(self):
         optional = self.defaults.split("baseline_optional_packages:\n", 1)[1]
         optional = optional.split("\n# DNF packages", 1)[0]
-        for package in ("audacity", "gimp", "flatpak", "obs-studio", "xclip"):
+        for package in ("audacity", "gimp", "flatpak", "xclip"):
             self.assertNotIn(f"  - {package}\n", optional)
             self.assertIn(f"  - {package}\n", self.desktop_defaults)
+        self.assertNotIn("  - obs-studio\n", self.desktop_defaults)
         self.assertNotIn("baseline_remove_packages", self.defaults + self.tasks)
         for package in ("gnome-terminal", "malcontent-control", "yelp"):
             self.assertIn(f"  - {package}\n", self.desktop_defaults)

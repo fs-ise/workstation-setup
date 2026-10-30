@@ -1,0 +1,40 @@
+---
+title: "OBS Studio"
+---
+
+Install OBS Studio and the Background Removal plugin from Flathub as user-level
+Flatpaks. The `obs` role ensures that the user Flathub remote exists, uses exact
+application IDs when checking OBS presence, and independently verifies both
+installations. This avoids a false positive in the Flatpak Ansible module: the
+plugin ID starts with the OBS ID, so substring matching can mistake a plugin-only
+installation for OBS Studio.
+
+```bash
+ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags obs
+
+flatpak info --user com.obsproject.Studio
+flatpak info --user com.obsproject.Studio.Plugin.BackgroundRemoval
+
+flatpak run --user com.obsproject.Studio
+```
+
+::: {.callout-manual}
+**🔧 Manual setup and configuration**
+
+- In OBS, select **Video Capture Device → Filters → Effect Filters → Background Removal** to enable the filter.
+:::
+
+::: {.callout-check}
+**✅ Check**
+
+```bash
+flatpak info --user com.obsproject.Studio
+flatpak info --user com.obsproject.Studio.Plugin.BackgroundRemoval
+```
+:::
+
+## Best practices and useful links
+
+- [OBS Studio](https://obsproject.com/)
+- [OBS Studio on Flathub](https://flathub.org/apps/com.obsproject.Studio)
+- [Background Removal plugin on Flathub](https://flathub.org/apps/com.obsproject.Studio.Plugin.BackgroundRemoval)

@@ -9,7 +9,6 @@ desktop_apps_packages:
   - hplip
   - hplip-gui
   - nextcloud-client
-  - obs-studio
   - pdfarranger
   - python3-tkinter
   - recoll

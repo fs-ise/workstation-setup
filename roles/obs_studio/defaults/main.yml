@@ -1,0 +1,7 @@
+---
+obs_studio_flatpak_id: com.obsproject.Studio
+obs_studio_plugin_flatpak_id: com.obsproject.Studio.Plugin.BackgroundRemoval
+
+# DNF packages owned by this role; consumed by the package audit.
+obs_studio_managed_dnf_packages:
+  - flatpak

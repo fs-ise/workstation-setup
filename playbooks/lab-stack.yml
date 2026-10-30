@@ -106,6 +106,9 @@
     - role: obsidian
       tags: [obsidian]
 
+    - role: obs_studio
+      tags: [obs]
+
     - role: desktop_gnome
       tags: [desktop, desktop_gnome]
 

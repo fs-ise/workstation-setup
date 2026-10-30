@@ -1,0 +1,8 @@
+---
+- name: Ensure Flatpak is installed for OBS Studio
+  ansible.builtin.dnf:
+    name: "{{ obs_studio_managed_dnf_packages }}"
+    state: present
+
+- name: Install and verify user OBS Studio Flatpaks
+  ansible.builtin.include_tasks: flatpak_install.yml

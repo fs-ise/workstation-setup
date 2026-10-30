@@ -10,6 +10,7 @@ The main lab-stack playbook installs and configures most documented software thr
 | Storage, backup, and security | [Borg/Vorta](borg_vorta.qmd), [Dropbox](dropbox.qmd), [VeraCrypt](veracrypt.qmd), [KeePassXC](keepassxc.qmd) |
 | Communication and productivity | [Chrome](chrome.qmd), [Thunderbird](thunderbird.qmd), [Thunderbird MCP](thunderbird-mcp.qmd), [Teams](teams.qmd), [ONLYOFFICE](onlyoffice.qmd), [Okular](okular.qmd) |
 | Research, writing, and data analysis | [LanguageTool](languagetool.qmd), [LaTeX](latex.qmd), [Quarto](quarto.qmd), [R](r.qmd), [RStudio Desktop](rstudio.qmd), [Obsidian](obsidian.qmd) |
+| Media | [OBS Studio](obs.qmd) |
 | Containers and virtualization | [Docker](docker.qmd), [VirtualBox](virtualbox.qmd) |
 | AI and document processing services | [OCRmyPDF](ocr.qmd), [GROBID](grobid.qmd), [LLM](llm.qmd) |
 

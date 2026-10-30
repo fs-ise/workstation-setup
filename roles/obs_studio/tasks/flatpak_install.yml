@@ -1,0 +1,74 @@
+---
+- name: Ensure the user Flathub remote is available for OBS Studio
+  become: true
+  become_user: "{{ target_user }}"
+  community.general.flatpak_remote:
+    name: flathub
+    state: present
+    flatpakrepo_url: https://flathub.org/repo/flathub.flatpakrepo
+    method: user
+
+- name: Check installed user Flatpak application IDs
+  become: true
+  become_user: "{{ target_user }}"
+  ansible.builtin.command:
+    argv:
+      - flatpak
+      - list
+      - --user
+      - --app
+      - --columns=application
+  register: obs_studio_installed
+  changed_when: false
+
+# community.general.flatpak currently checks IDs using substring matching. Since
+# the plugin ID starts with the OBS ID, a plugin-only install can falsely satisfy
+# the OBS check. Use an exact-ID condition and Flatpak's explicit user install.
+- name: Install OBS Studio if its exact user Flatpak ID is missing
+  become: true
+  become_user: "{{ target_user }}"
+  ansible.builtin.command:
+    argv:
+      - flatpak
+      - install
+      - --user
+      - --noninteractive
+      - flathub
+      - "{{ obs_studio_flatpak_id }}"
+  when: obs_studio_flatpak_id not in obs_studio_installed.stdout_lines
+  changed_when: true
+
+- name: Install Background Removal via user Flatpak
+  become: true
+  become_user: "{{ target_user }}"
+  community.general.flatpak:
+    name: "{{ obs_studio_plugin_flatpak_id }}"
+    remote: flathub
+    state: present
+    method: user
+
+- name: Verify user-level OBS Studio installation
+  become: true
+  become_user: "{{ target_user }}"
+  ansible.builtin.command:
+    argv:
+      - flatpak
+      - info
+      - --user
+      - "{{ obs_studio_flatpak_id }}"
+  register: obs_studio_verify
+  changed_when: false
+  failed_when: obs_studio_verify.rc != 0
+
+- name: Verify user-level Background Removal installation
+  become: true
+  become_user: "{{ target_user }}"
+  ansible.builtin.command:
+    argv:
+      - flatpak
+      - info
+      - --user
+      - "{{ obs_studio_plugin_flatpak_id }}"
+  register: obs_studio_plugin_verify
+  changed_when: false
+  failed_when: obs_studio_plugin_verify.rc != 0

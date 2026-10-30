@@ -60,6 +60,7 @@ website:
               - r.qmd
               - rstudio.qmd
               - obsidian.qmd
+              - obs.qmd
               - ocr.qmd
               - grobid.qmd
               - llm.qmd
