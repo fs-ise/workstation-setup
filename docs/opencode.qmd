@@ -92,9 +92,31 @@ For larger changes, use Plan mode (`Tab`) to agree on an approach before editing
 Before committing, review `git status` and `git diff` and run the project's relevant
 checks.
 
+To fork the conversation history of the most recent session (e.g., in a new tab):
+
+```bash
+opencode --continue --fork
+# alternatively
+opencode session list
+opencode -s <session-id> --fork
+```
+
+Change **reasoning effort** using `ctrl`+`t`.
+
+Attach files to prompt using `@filename`.
+
+Interrupt and continue: `Esc` , `/undo`, `Enter` (to keep changes and continue, give a prompt like "The network connection was interrupted. Check what has already been completed and continue the remaining work without repeating completed steps.")
+
+Provide pytest output (adding `@pytest.log` in the prompt):
+
+```bash
+pytest -v 2>&1 | tee pytest.log
+```
+
 Useful references:
 
 - [OpenCode rules and `AGENTS.md`](https://opencode.ai/docs/rules/)
+- [How Makers build: AGENTS.md](https://howmakersbuild.com/agents-md/python)
 - [OpenCode tools and permissions](https://opencode.ai/docs/tools/)
 - [Workstation setup and verification](install_configuration.qmd)
 
