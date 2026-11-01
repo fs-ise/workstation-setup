@@ -26,7 +26,7 @@ docker run --rm hello-world
 ```
 :::
 
-Application roles own their images and containers. The `grobid` and `languagetool` tags install Docker automatically through role dependencies. Optional image sets are available with the `ocr_containers` and `development_containers` tags. R and RStudio are installed locally rather than through Docker.
+Application roles own their images and containers. The `grobid`, `languagetool`, and `whisper` tags install Docker automatically through role dependencies. Whisper runs a short-lived container on demand and does not keep a service running or expose a port. Optional image sets are available with the `ocr_containers` and `development_containers` tags. R and RStudio are installed locally rather than through Docker.
 
 ## Best practices and useful links
 

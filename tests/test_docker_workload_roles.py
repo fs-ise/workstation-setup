@@ -91,7 +91,8 @@ class DockerWorkloadRoleTests(unittest.TestCase):
         self.assertIn("state: started", container)
         self.assertIn("pull: missing", container)
         self.assertIn("restart_policy: unless-stopped", container)
-        self.assertIn('- "{{ grobid_port }}:8070"', container)
+        self.assertIn('- "127.0.0.1:{{ grobid_port }}:8070"', container)
+        self.assertNotIn('- "{{ grobid_port }}:8070"', container)
         self.assertNotIn("recreate: true", container)
 
         for imperative_command in (
@@ -100,6 +101,11 @@ class DockerWorkloadRoleTests(unittest.TestCase):
             "docker start",
         ):
             self.assertNotIn(imperative_command, tasks)
+
+    def test_grobid_documentation_describes_localhost_only_access(self):
+        documentation = (ROOT / "docs/grobid.qmd").read_text(encoding="utf-8")
+        self.assertIn("`127.0.0.1` only", documentation)
+        self.assertIn("`127.0.0.1:8070->8070/tcp`", documentation)
 
     def test_languagetool_build_is_pinned_and_change_driven(self):
         defaults = (ROOT / "roles/languagetool/defaults/main.yml").read_text(
@@ -130,7 +136,9 @@ class DockerWorkloadRoleTests(unittest.TestCase):
         self.assertNotIn("recreate: true", container)
 
     def test_container_roles_depend_on_docker(self):
-        for role in ("grobid", "languagetool", "ocr_containers", "development_containers"):
+        for role in (
+            "grobid", "languagetool", "ocr_containers", "development_containers", "whisper"
+        ):
             metadata = (ROOT / f"roles/{role}/meta/main.yml").read_text(encoding="utf-8")
             self.assertIn("dependencies:\n  - role: docker", metadata)
 

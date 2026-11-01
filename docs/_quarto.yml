@@ -62,6 +62,7 @@ website:
               - obsidian.qmd
               - obs.qmd
               - ocr.qmd
+              - whisper.qmd
               - grobid.qmd
               - llm.qmd
           - settings.qmd

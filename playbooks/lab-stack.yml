@@ -50,6 +50,9 @@
     - role: docker
       tags: [docker]
 
+    - role: whisper
+      tags: [whisper]
+
     # Image-only roles are opt-in; their Docker dependency installs the engine first.
     - role: ocr_containers
       tags: [never, ocr_containers]

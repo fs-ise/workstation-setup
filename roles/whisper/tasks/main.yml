@@ -1,0 +1,39 @@
+---
+- name: Pull whisper.cpp image
+  community.docker.docker_image_pull:
+    name: "{{ whisper_image }}"
+    platform: amd64
+
+- name: Ensure Whisper model directory exists
+  ansible.builtin.file:
+    path: "{{ whisper_model_dir }}"
+    state: directory
+    owner: "{{ target_user }}"
+    group: "{{ target_user }}"
+    mode: "0755"
+
+- name: Download and validate Whisper model
+  ansible.builtin.get_url:
+    url: "{{ whisper_model_url }}"
+    dest: "{{ whisper_model_dir }}/ggml-{{ whisper_model_name }}.bin"
+    checksum: "{{ whisper_model_sha256 }}"
+    owner: "{{ target_user }}"
+    group: "{{ target_user }}"
+    mode: "0644"
+    timeout: 600
+
+- name: Ensure user-local bin directory exists
+  ansible.builtin.file:
+    path: "{{ whisper_transcribe_path | dirname }}"
+    state: directory
+    owner: "{{ target_user }}"
+    group: "{{ target_user }}"
+    mode: "0755"
+
+- name: Install local transcription helper
+  ansible.builtin.template:
+    src: transcribe.py.j2
+    dest: "{{ whisper_transcribe_path }}"
+    owner: "{{ target_user }}"
+    group: "{{ target_user }}"
+    mode: "0755"

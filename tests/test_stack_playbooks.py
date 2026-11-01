@@ -16,6 +16,9 @@ class StackPlaybookTests(unittest.TestCase):
     def test_workstation_includes_desktop_apps(self):
         self.assertIn("- role: desktop_apps", LAB)
 
+    def test_whisper_is_available_by_tag_on_the_workstation(self):
+        self.assertIn("- role: whisper\n      tags: [whisper]", LAB)
+
     def test_copier_is_installed_by_the_workstation_playbook_only(self):
         self.assertIn("- role: copier", LAB)
         self.assertIn("tags: [copier]", LAB)
@@ -32,7 +35,7 @@ class StackPlaybookTests(unittest.TestCase):
     def test_cloud_excludes_desktop_roles(self):
         for role in (
             "desktop_apps", "desktop_gnome", "default_applications", "chrome",
-            "ocrmypdf", "grobid",
+            "ocrmypdf", "grobid", "whisper",
             "dropbox", "keepassxc", "nemo", "obsidian", "okular", "onlyoffice",
             "rstudio", "teams_for_linux", "thunderbird", "virtualbox", "vscode",
         ):

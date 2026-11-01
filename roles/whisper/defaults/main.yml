@@ -1,0 +1,13 @@
+---
+whisper_image: ghcr.io/ggerganov/whisper.cpp:main
+whisper_model_name: base.en
+whisper_model_dir: "{{ target_home }}/.local/share/whisper/models"
+whisper_language: en
+
+whisper_model_url: >-
+  https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-{{ whisper_model_name }}.bin
+# SHA-256 published by Hugging Face for ggml-base.en.bin. When changing
+# whisper_model_name, set the matching checksum as well.
+whisper_model_sha256: sha256:a03779c86df3323075f5e796cb2ce5029f00ec8869eee3fdfb897afe36c6d002
+
+whisper_transcribe_path: "{{ target_home }}/.local/bin/transcribe"

@@ -9,6 +9,8 @@ to verify DNF's idempotent `state: absent` behavior. It
 also runs `default_applications` with a reduced fixture and a fake desktop entry,
 without installing GUI software. It asserts the Git and MIME configuration, runs
 the playbook a second time, and requires `changed=0` in the second play recap.
+Whisper provisioning and CLI behavior are covered with static Ansible idempotence
+checks and mocked Docker commands; CI does not download a model or perform inference.
 
 ## Run the checks locally
 

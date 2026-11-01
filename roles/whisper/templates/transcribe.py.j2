@@ -1,0 +1,219 @@
+#!/usr/bin/env python3
+"""Transcribe local audio/video files with whisper.cpp in Docker."""
+
+import argparse
+import os
+import re
+import shutil
+import subprocess
+import sys
+import tempfile
+from pathlib import Path
+from typing import Optional, Sequence
+
+
+DEFAULT_IMAGE = {{ whisper_image | to_json }}
+DEFAULT_MODEL = {{ whisper_model_name | to_json }}
+DEFAULT_LANGUAGE = {{ whisper_language | to_json }}
+MODEL_DIRECTORY = {{ whisper_model_dir | to_json }}
+FFMPEG_FAILURE = 73
+MODEL_NAME_PATTERN = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]*$")
+LANGUAGE_PATTERN = re.compile(r"^[A-Za-z0-9][A-Za-z0-9_-]*$")
+
+
+class TranscribeError(Exception):
+    """An expected error that can be explained directly to the user."""
+
+
+def build_parser() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(
+        prog="transcribe",
+        description=(
+            "Convert an audio or video file to 16 kHz mono WAV and transcribe it "
+            "locally with whisper.cpp. The .txt output is saved next to the input."
+        ),
+    )
+    parser.add_argument("input", help="audio or video file to transcribe")
+    parser.add_argument(
+        "--model",
+        default=DEFAULT_MODEL,
+        metavar="NAME",
+        help=f"installed ggml model name (default: {DEFAULT_MODEL})",
+    )
+    parser.add_argument(
+        "--language",
+        default=DEFAULT_LANGUAGE,
+        metavar="CODE",
+        help=f"Whisper language code, or 'auto' (default: {DEFAULT_LANGUAGE})",
+    )
+    parser.add_argument(
+        "--overwrite",
+        action="store_true",
+        help="replace an existing .txt transcription",
+    )
+    return parser
+
+
+def output_path_for(input_path: Path) -> Path:
+    """Return the adjacent .txt path, preserving the input directory and stem."""
+    return input_path.with_name(f"{input_path.stem}.txt")
+
+
+def container_command(
+    work_directory: Path,
+    model_directory: Path,
+    model: str,
+    language: str,
+) -> Sequence[str]:
+    model_path = f"/models/ggml-{model}.bin"
+    command = (
+        "umask 022; "
+        "if ! ffmpeg -nostdin -v error -y -i /work/input.media -vn "
+        "-ac 1 -ar 16000 -c:a pcm_s16le /work/input.wav; then "
+        "printf '%s\\n' 'transcribe: FFmpeg audio conversion failed.' >&2; "
+        f"exit {FFMPEG_FAILURE}; "
+        "fi; "
+        "exec /app/build/bin/whisper-cli "
+        f"-m {model_path} -f /work/input.wav "
+        f"-l {language} -otxt -of /work/transcription"
+    )
+    return [
+        "docker",
+        "run",
+        "--rm",
+        "--volume",
+        f"{work_directory}:/work:Z",
+        "--volume",
+        f"{model_directory}:/models:ro,Z",
+        DEFAULT_IMAGE,
+        command,
+    ]
+
+
+def publish_transcription(source: Path, output: Path, overwrite: bool) -> None:
+    """Publish as the calling user, atomically and without accidental overwrite."""
+    descriptor, staged_name = tempfile.mkstemp(
+        prefix=f".{output.name}.", suffix=".tmp", dir=output.parent
+    )
+    staged = Path(staged_name)
+    try:
+        with os.fdopen(descriptor, "wb") as staged_file, source.open("rb") as text_file:
+            shutil.copyfileobj(text_file, staged_file)
+        if overwrite:
+            os.replace(staged, output)
+        else:
+            # A hard link is an atomic no-clobber create on this same filesystem.
+            os.link(staged, output)
+    except FileExistsError as error:
+        raise TranscribeError(
+            f"output already exists: {output} (use --overwrite to replace it)"
+        ) from error
+    except OSError as error:
+        raise TranscribeError(f"could not write output {output}: {error}") from error
+    finally:
+        try:
+            staged.unlink()
+        except FileNotFoundError:
+            pass
+
+
+def transcribe(arguments: argparse.Namespace) -> Path:
+    supplied_input = Path(arguments.input).expanduser()
+    if not supplied_input.is_absolute():
+        supplied_input = Path.cwd() / supplied_input
+    input_path = Path(os.path.abspath(supplied_input))
+    if not input_path.is_file():
+        raise TranscribeError(f"input file does not exist or is not a file: {input_path}")
+
+    output_path = output_path_for(input_path)
+    if output_path.exists() and not arguments.overwrite:
+        raise TranscribeError(
+            f"output already exists: {output_path} (use --overwrite to replace it)"
+        )
+
+    if not MODEL_NAME_PATTERN.fullmatch(arguments.model):
+        raise TranscribeError(
+            "invalid model name; use a model name such as 'base.en' without a path"
+        )
+    if not LANGUAGE_PATTERN.fullmatch(arguments.language):
+        raise TranscribeError("invalid language code")
+
+    model_directory = Path(MODEL_DIRECTORY).expanduser().resolve()
+    model_path = model_directory / f"ggml-{arguments.model}.bin"
+    try:
+        model_is_available = model_path.is_file() and model_path.stat().st_size > 0
+    except OSError as error:
+        raise TranscribeError(f"could not access model '{arguments.model}': {error}") from error
+    if not model_is_available:
+        raise TranscribeError(
+            f"model '{arguments.model}' is not installed at {model_path}; "
+            f"the configured model is '{DEFAULT_MODEL}' (run the whisper Ansible role "
+            "to install or change it)"
+        )
+
+    try:
+        with tempfile.TemporaryDirectory(prefix="transcribe-") as temporary_directory:
+            work_directory = Path(temporary_directory)
+            try:
+                shutil.copyfile(input_path, work_directory / "input.media")
+            except OSError as error:
+                raise TranscribeError(f"could not read input file {input_path}: {error}") from error
+
+            command = container_command(
+                work_directory,
+                model_directory,
+                arguments.model,
+                arguments.language,
+            )
+            try:
+                result = subprocess.run(command, check=False)
+            except FileNotFoundError as error:
+                raise TranscribeError(
+                    "Docker is not installed or is not on PATH; install the Docker role "
+                    "and rerun this command"
+                ) from error
+            except OSError as error:
+                raise TranscribeError(f"could not start Docker: {error}") from error
+
+            if result.returncode == FFMPEG_FAILURE:
+                raise TranscribeError(
+                    "FFmpeg could not convert this input; confirm that it contains a "
+                    "supported audio stream"
+                )
+            if result.returncode in (125, 126, 127):
+                raise TranscribeError(
+                    "Docker could not start the whisper.cpp container; check that the "
+                    "Docker service is running and your user can access it"
+                )
+            if result.returncode != 0:
+                raise TranscribeError(
+                    f"whisper.cpp transcription failed with exit code {result.returncode}"
+                )
+
+            transcription = work_directory / "transcription.txt"
+            if not transcription.is_file():
+                raise TranscribeError(
+                    "whisper.cpp completed without creating a transcription file"
+                )
+            publish_transcription(transcription, output_path, arguments.overwrite)
+    except TranscribeError:
+        raise
+    except OSError as error:
+        raise TranscribeError(f"transcription failed: {error}") from error
+
+    return output_path
+
+
+def main(argv: Optional[Sequence[str]] = None) -> int:
+    arguments = build_parser().parse_args(argv)
+    try:
+        output = transcribe(arguments)
+    except TranscribeError as error:
+        print(f"transcribe: {error}", file=sys.stderr)
+        return 1
+    print(f"Transcription saved to {output}")
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

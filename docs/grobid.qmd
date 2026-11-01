@@ -3,6 +3,8 @@ title: "GROBID"
 ---
 
 Run GROBID as a local Docker service and convert PDFs into TEI XML.
+Docker publishes its port on `127.0.0.1` only, so the service is not accessible
+through external network interfaces.
 
 ```sh
 ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags grobid
@@ -25,7 +27,7 @@ ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags grobid
 docker ps --filter "name=grobid" --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"
 ```
 
-Expected: container `grobid` is up and exposes port `8070`.
+Expected: container `grobid` is up and the port is bound as `127.0.0.1:8070->8070/tcp`.
 
 ---
 

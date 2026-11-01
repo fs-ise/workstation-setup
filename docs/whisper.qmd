@@ -1,0 +1,85 @@
+---
+title: "Audio transcription"
+---
+
+Install whisper.cpp for local transcription of audio and video.
+FFmpeg converts the input inside the official whisper.cpp Docker image; transcription runs on demand and writes a text file next to the input.
+
+```sh
+ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags whisper
+```
+
+The role pulls the image and downloads the checksummed default model to `~/.local/share/whisper/models`. It also installs `transcribe` in `~/.local/bin`, available from any project directory.
+
+::: {.callout-check}
+**✅ Check**
+
+```sh
+command -v transcribe
+transcribe --help
+test -s ~/.local/share/whisper/models/ggml-base.en.bin
+docker image inspect ghcr.io/ggerganov/whisper.cpp:main
+```
+
+Expected: `transcribe` is on `PATH`, help text is displayed, the model file is present, and Docker recognizes the image.
+:::
+
+## Usage
+
+Run `transcribe` from any directory. The helper accepts audio/video formats supported by the image's FFmpeg and writes `<input-stem>.txt` alongside the input.
+
+```sh
+transcribe presentation.mp4
+transcribe recording.wav
+transcribe "interview recording.mp3"
+```
+
+For example, `presentation.mp4` produces `presentation.txt` in the same directory. Existing text files are never silently replaced. Pass `--overwrite` to replace one deliberately:
+
+```sh
+transcribe presentation.mp4 --overwrite
+```
+
+The helper copies the source to a private temporary directory, converts its audio to mono 16 kHz 16-bit PCM WAV, runs `/app/build/bin/whisper-cli` in Docker, and removes temporary files even if conversion or inference fails. The original file is only read. The final output is created by the invoking user.
+
+## Models and languages
+
+The default model is `base.en` and the default language is English. Select an installed model or language with:
+
+```sh
+transcribe presentation.mp4 --model base.en
+transcribe interview.mp4 --language de
+```
+
+`--model` selects `ggml-<name>.bin` from `~/.local/share/whisper/models` (or the configured model directory). The role installs its configured model; other models must first be provisioned into that same directory. To have Ansible install another model, set `whisper_model_name` and the corresponding verified `whisper_model_sha256` when running the `whisper` tag. The default model checksum is checked on every run, so an incomplete or altered download is repaired and a valid model is not downloaded again.
+
+| Model | Approx. size | Trade-off |
+|--|---:|---------|
+| `tiny.en` | 75 MB | Fast and small, with lower accuracy on difficult speech. |
+| `base.en` | 148 MB | Default balance of speed, accuracy, and memory for English. |
+| `small.en` | 466 MB | Usually more accurate, with more memory use and slower inference. |
+| `base` / `small` | varies | Multilingual; use these rather than `.en` models for non-English speech. |
+
+Larger models can improve recognition of accents, noisy recordings, and specialized vocabulary, but use more memory and take longer. The `.en` models are English-only; choose a multilingual model for another language. The `--language` option accepts Whisper language codes such as `en`, `de`, and `fr`, or `auto`.
+
+## Troubleshooting
+
+- **`Docker could not start`**: confirm the Docker service is running and your user can access it. After first-time Docker installation, log out and back in.
+- **`model ... is not installed`**: rerun the `whisper` Ansible tag with that model configured, and confirm the corresponding `ggml-<name>.bin` exists in the configured model directory.
+- **FFmpeg conversion failed**: check that the file is readable and contains an audio stream supported by FFmpeg. Video is used only as a source of audio; visual content is not analyzed.
+- **Output already exists**: choose another input name or pass `--overwrite` to replace the existing transcription.
+- **Language results are poor**: use the correct `--language` and a multilingual model for non-English audio. An English-only `.en` model is not suitable for other languages.
+
+## Privacy and best practices
+
+The recording is processed locally by FFmpeg and whisper.cpp in Docker. It is not uploaded to an external transcription service. The container receives only a temporary staged copy and the read-only model directory; SELinux-aware private volume labels are used for the mounts. Docker and model downloads require network access during setup, but transcription itself does not send recordings over the network.
+
+Review the resulting text, especially names, numbers, accents, and technical terminology. Keep the original recording if it is needed for verification.
+
+## Best practices and useful links
+
+- [whisper.cpp documentation and Docker image](https://github.com/ggml-org/whisper.cpp#docker)
+- [Official whisper.cpp model repository on Hugging Face](https://huggingface.co/ggerganov/whisper.cpp)
+- [Docker Linux post-installation steps](https://docs.docker.com/engine/install/linux-postinstall/)
+- [Docker bind mounts and SELinux labels](https://docs.docker.com/engine/storage/bind-mounts/#configure-the-selinux-label)
+- [Docker role](docker.qmd)

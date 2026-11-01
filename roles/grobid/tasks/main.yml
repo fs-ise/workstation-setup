@@ -7,7 +7,7 @@
     pull: missing
     restart_policy: unless-stopped
     published_ports:
-      - "{{ grobid_port }}:8070"
+      - "127.0.0.1:{{ grobid_port }}:8070"
 
 - name: Ensure pdf-to-tei script directory exists
   ansible.builtin.file:
