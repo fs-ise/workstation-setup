@@ -10,6 +10,8 @@ local_llm_python_packages:
 
 local_llm_data_dir: /opt/local-llm
 local_llm_network_name: local-llm
+# Choose a subnet that does not overlap any LAN, VPN, or other Docker network.
+local_llm_network_subnet: 10.240.0.0/24
 
 local_llm_ollama_image: ollama/ollama:latest
 local_llm_ollama_container_name: ollama

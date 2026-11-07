@@ -28,10 +28,49 @@
     - "{{ local_llm_ollama_models_dir }}"
     - "{{ local_llm_webui_data_dir }}"
 
-- name: Ensure dedicated Docker network exists
+- name: Inspect dedicated Docker network
+  community.docker.docker_network_info:
+    name: "{{ local_llm_network_name }}"
+  register: local_llm_network_info
+
+- name: Determine whether the Docker network needs migration
+  ansible.builtin.set_fact:
+    local_llm_network_subnets: >-
+      {{ (local_llm_network_info.network.IPAM.Config | default([]))
+         | selectattr('Subnet', 'defined') | map(attribute='Subnet') | list
+         if local_llm_network_info.exists else [] }}
+
+- name: Stop Open WebUI before replacing its network
+  community.docker.docker_container:
+    name: "{{ local_llm_webui_container_name }}"
+    state: stopped
+  when:
+    - local_llm_network_info.exists
+    - local_llm_network_subnets != [local_llm_network_subnet]
+
+- name: Stop Ollama before replacing its network
+  community.docker.docker_container:
+    name: "{{ local_llm_ollama_container_name }}"
+    state: stopped
+  when:
+    - local_llm_network_info.exists
+    - local_llm_network_subnets != [local_llm_network_subnet]
+
+- name: Remove existing Docker network with incorrect subnet
+  community.docker.docker_network:
+    name: "{{ local_llm_network_name }}"
+    state: absent
+    force: true
+  when:
+    - local_llm_network_info.exists
+    - local_llm_network_subnets != [local_llm_network_subnet]
+
+- name: Ensure dedicated Docker network exists with configured subnet
   community.docker.docker_network:
     name: "{{ local_llm_network_name }}"
     state: present
+    ipam_config:
+      - subnet: "{{ local_llm_network_subnet }}"
 
 - name: Run Ollama container
   community.docker.docker_container:
