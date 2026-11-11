@@ -1,0 +1,6 @@
+---
+- name: Install FFmpeg and Kdenlive
+  ansible.builtin.dnf:
+    name: "{{ video_editing_packages }}"
+    state: present
+  when: video_editing_packages | length > 0

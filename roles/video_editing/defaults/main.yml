@@ -1,0 +1,7 @@
+---
+video_editing_packages:
+  - ffmpeg-free
+  - kdenlive
+
+# DNF packages owned by this role; consumed by the package audit.
+video_editing_managed_dnf_packages: "{{ video_editing_packages }}"

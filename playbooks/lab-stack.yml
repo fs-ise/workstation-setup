@@ -112,6 +112,9 @@
     - role: obs_studio
       tags: [obs]
 
+    - role: video_editing
+      tags: [video_editing]
+
     - role: desktop_gnome
       tags: [desktop, desktop_gnome]
 
