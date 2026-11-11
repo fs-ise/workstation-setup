@@ -61,6 +61,7 @@ website:
               - rstudio.qmd
               - obsidian.qmd
               - obs.qmd
+              - kdenlive.qmd
               - ocr.qmd
               - whisper.qmd
               - grobid.qmd

@@ -7,7 +7,7 @@ ROOT = Path(__file__).resolve().parents[1]
 DEFAULTS = (ROOT / "roles/video_editing/defaults/main.yml").read_text(encoding="utf-8")
 TASKS = (ROOT / "roles/video_editing/tasks/main.yml").read_text(encoding="utf-8")
 PLAYBOOK = (ROOT / "playbooks/lab-stack.yml").read_text(encoding="utf-8")
-DOCS = (ROOT / "docs/video_editing.qmd").read_text(encoding="utf-8")
+DOCS = (ROOT / "docs/kdenlive.qmd").read_text(encoding="utf-8")
 SOFTWARE_DOCS = (ROOT / "docs/software.qmd").read_text(encoding="utf-8")
 
 
@@ -29,7 +29,11 @@ class VideoEditingRoleTests(unittest.TestCase):
         self.assertIn("--tags video_editing", DOCS)
         self.assertIn("ffmpeg -version", DOCS)
         self.assertIn("kdenlive --version", DOCS)
-        self.assertIn("[Video editing](video_editing.qmd)", SOFTWARE_DOCS)
+        self.assertIn("[Kdenlive](kdenlive.qmd)", SOFTWARE_DOCS)
+        self.assertIn(
+            "https://fs-ise.github.io/handbook/research/presentation.html#video-recordings",
+            DOCS,
+        )
 
 
 if __name__ == "__main__":

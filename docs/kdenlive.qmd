@@ -1,8 +1,8 @@
 ---
-title: "Video editing"
+title: "Kdenlive"
 ---
 
-Install FFmpeg for media processing and Kdenlive for video editing from the configured Fedora repositories.
+Install Kdenlive for video editing and FFmpeg for media processing from the configured Fedora repositories.
 The role uses Fedora's `ffmpeg-free` package; it does not add third-party repositories.
 
 ```sh
@@ -26,5 +26,6 @@ Fedora's `ffmpeg-free` build may not include every codec or encoder. If a workfl
 
 - [FFmpeg documentation](https://ffmpeg.org/documentation.html)
 - [Kdenlive documentation](https://docs.kdenlive.org/)
+- [Video recording checklist (ISE Lab Handbook)](https://fs-ise.github.io/handbook/research/presentation.html#video-recordings)
 - [Fedora multimedia codecs](https://docs.fedoraproject.org/en-US/workstation-working-group/third-party-repos/)
 - [Apply workstation configuration](install_configuration.qmd)
