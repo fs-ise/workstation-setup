@@ -22,6 +22,19 @@ flatpak run --user com.obsproject.Studio
 **🔧 Manual setup and configuration**
 
 - In OBS, select **Video Capture Device → Filters → Effect Filters → Background Removal** to enable the filter.
+- Crop screen capture: Alt+drag edges
+- Show/hide mouse: right-clikc on **Screen Capture** source, select **Properties**, un/check **Capture Cursor**
+- Download circular webcam mask: [obs_circular_webcam_mask.png](../assets/obs_circular_webcam_mask.png)
+
+<iframe
+  src="https://www.youtube-nocookie.com/embed/wnKH4QaX6gY"
+  title="OBS setup video"
+  width="100%"
+  height="400"
+  loading="lazy"
+  allowfullscreen>
+</iframe>
+
 :::
 
 ::: {.callout-check}
