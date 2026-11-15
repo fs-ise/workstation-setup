@@ -1,3 +1,4 @@
 host_vars/localhost.yml
 tests/output/
 .ansible
+scripts/__pycache__/
