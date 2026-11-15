@@ -1,0 +1,17 @@
+[
+  {"name": "REPOS_DIR", "purpose": "Root for local Git repositories."},
+  {"name": "WORKSPACE_DIR", "purpose": "Root for local working data and projects not managed through Git or synchronization."},
+  {"name": "NEXTCLOUD_DIR", "purpose": "Root of the locally synchronized Nextcloud files."},
+  {"name": "PERSONAL_DIR", "purpose": "Root for personal files and data."},
+  {"name": "INBOX_DIR", "purpose": "Capture location for unprocessed tasks and incoming items."},
+  {"name": "TICKLER_DIR", "purpose": "Tasks and notes deferred until a specified future date."},
+  {"name": "WAITING_FOR_DIR", "purpose": "Tasks delegated to or blocked by another person or event."},
+  {"name": "ACTION_DIR", "purpose": "Current actionable tasks that are not assigned to a project."},
+  {"name": "WORK_PROJECTS_DIR", "purpose": "Active work project directories and their task notes."},
+  {"name": "TO_ARCHIVE_DIR", "purpose": "Items awaiting review and transfer to an archive."},
+  {"name": "SOMEDAY_DIR", "purpose": "Ideas and tasks that may be considered later, without a current commitment."},
+  {"name": "TEACHING_DIR", "purpose": "Teaching materials, course data, and teaching administration."},
+  {"name": "TEACHING_THESES_DIR", "purpose": "Thesis supervision materials and student thesis work."},
+  {"name": "CHECKLISTS_DIR", "purpose": "Reusable checklists for recurring work and procedures."},
+  {"name": "REVIEWS_DIR", "purpose": "Periodic review notes and supporting material."}
+]

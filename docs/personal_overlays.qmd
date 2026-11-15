@@ -27,6 +27,21 @@ Run these commands **from the overlay repository**. Its `Makefile` orchestrates 
 
 Typical responsibilities of an overlay include personal dotfiles and shell configuration, secrets or references to externally stored secrets, personal software, desktop preferences, and machine-specific configuration.
 
+## Directory values and exports
+
+The shared repository owns the required directory-variable contract in
+`scripts/directory_variables.json` and validates it during `make audit`. The
+personal overlay owns the actual values and should export the variables from its
+shell configuration or setup environment. The shared layer provides no personal
+paths or defaults and does not create these directories. See
+[Data infrastructure](data_infrastructure.qmd) for the complete list and each
+variable's intended use.
+
+Export the selected absolute paths in the environment used to run the overlay's
+combined audit. To make invalid or missing directory values fail that audit,
+also export `DIRECTORY_AUDIT_STRICT=true`; without it, the shared audit reports
+warnings and remains usable on its own.
+
 The shared repository remains independent and does not need to know about any overlays. Likewise, implementation details of the overlay—its Ansible roles, inventory, audit extensions, and orchestration—remain within the overlay repository.
 
 For a concrete example, see [geritwagner/workstation-setup-gw](https://github.com/geritwagner/workstation-setup-gw), which uses this composition approach: the personal repository keeps its own configuration while coordinating execution of the shared workstation setup.

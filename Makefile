@@ -1,4 +1,4 @@
-.PHONY: setup configure install update update-base audit lab-stack audit-packages backup
+.PHONY: setup configure install update update-base audit lab-stack audit-packages audit-directories backup
 
 VORTA_APP_ID := com.borgbase.Vorta
 
@@ -32,6 +32,7 @@ update-base:
 	$(MAKE) configure
 
 audit:
+	$(MAKE) audit-directories
 	$(MAKE) audit-packages
 
 lab-stack:
@@ -39,6 +40,9 @@ lab-stack:
 
 audit-packages:
 	ansible-playbook -i inventory -K playbooks/audit-unmanaged-packages.yml
+
+audit-directories:
+	python3 scripts/audit_directories.py
 
 backup:
 	@set -eu; \

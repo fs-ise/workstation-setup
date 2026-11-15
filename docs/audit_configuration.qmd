@@ -2,18 +2,45 @@
 title: "Audit configuration"
 ---
 
-Run the existing package and manual-installation audit:
+Run all audit categories:
 
 ```sh
 make audit
 ```
 
-This invokes `playbooks/audit-unmanaged-packages.yml`. Its scope is deliberately
-limited: it detects DNF packages outside the Ansible-managed package declarations
-and selected unmanaged filesystem installations. It does **not** compare every
-file, service, preference, or application setting and is not comprehensive
+`make audit` first runs the directory configuration audit directly as the invoking
+user, then invokes `playbooks/audit-unmanaged-packages.yml`. The directory audit
+reads the exported environment of the user running `make`; it is not run under
+Ansible privilege escalation. Its scope is deliberately limited: the package
+playbook detects DNF packages outside the Ansible-managed package declarations
+and selected unmanaged filesystem installations. These audits do **not** compare
+every file, service, preference, or application setting and are not comprehensive
 configuration-drift detection. See [Apply configuration](install_configuration.qmd)
 or [Update configuration](update_configuration.qmd) for the operational workflows.
+
+## Audit directory configuration
+
+The directory category validates every required variable in the shared contract
+at `scripts/directory_variables.json`: it must be set and nonempty, absolute, an
+existing directory, and accessible to the invoking (target) user for reading,
+writing, and traversal. It only reads environment and filesystem metadata; it
+does not create directories or modify user configuration.
+
+By default, invalid or missing personal values are reported as warnings and the
+shared repository remains usable without an overlay. A personal overlay can opt
+into strict validation by exporting `DIRECTORY_AUDIT_STRICT=true` in the shell
+environment that runs the shared audit. Invalid values then make
+`make audit-directories` (and consequently `make audit`) fail. The shared layer
+does not assign defaults or personal directory values.
+
+Run this category independently when needed:
+
+```sh
+make audit-directories
+```
+
+The output lists each variable with either its path or an actionable reason such
+as `Not defined`, `Path is not absolute`, or `Directory does not exist`.
 
 ::: {.callout-note title="What is an unmanaged package?"}
 

@@ -3,14 +3,40 @@ title: "Data infrastructure"
 ---
 
 The workstation uses complementary storage systems rather than treating sync,
-version control, and backup as interchangeable.
+version control, and backup as interchangeable. Personal paths are supplied by
+the workstation's overlay; the shared repository defines the variable names and
+audits their values, but does not choose or create directory locations.
 
-| Area | Default location | Purpose |
+## Directory variable contract
+
+Each variable below is exported by the personal overlay and contains an absolute
+path to an existing directory. `scripts/directory_variables.json` is the single
+authoritative list of required names and purposes.
+
+| Area | Variable | Purpose |
 |---|---|---|
-| Git repositories | `~/repos` | Source code, documentation, text-based projects, and versioned configuration. |
-| Nextcloud folders | `~/Nextcloud` | Synced documents, PDFs, media, and shared project folders. |
-| Local workstation data | `~/workstation` | Local working data that is not managed through Git or Nextcloud. |
+| Core | `REPOS_DIR` | Root for local Git repositories, source code, documentation, and versioned configuration. |
+| Core | `WORKSPACE_DIR` | Local working data and projects not managed through Git or synchronization. |
+| Core | `NEXTCLOUD_DIR` | Root of locally synchronized Nextcloud files. |
+| Core | `PERSONAL_DIR` | Root for personal files and data. |
+| Task management | `INBOX_DIR` | Unprocessed tasks and incoming items. |
+| Task management | `TICKLER_DIR` | Items deferred until a specified future date. |
+| Task management | `WAITING_FOR_DIR` | Items delegated to or blocked by another person or event. |
+| Task management | `ACTION_DIR` | Current actionable tasks not assigned to a project. |
+| Task management | `WORK_PROJECTS_DIR` | Active work projects and their task notes. |
+| Task management | `TO_ARCHIVE_DIR` | Items awaiting review and transfer to an archive. |
+| Task management | `SOMEDAY_DIR` | Ideas and tasks that may be considered later. |
+| Teaching | `TEACHING_DIR` | Teaching materials, course data, and teaching administration. |
+| Teaching | `TEACHING_THESES_DIR` | Thesis supervision materials and student thesis work. |
+| Knowledge/service | `CHECKLISTS_DIR` | Reusable checklists for recurring work and procedures. |
+| Knowledge/service | `REVIEWS_DIR` | Periodic review notes and supporting material. |
 | HDD backup | External HDD | Versioned encrypted backup of local workstation data through Vorta/Borg. |
+
+Shell scripts should refer to the exported variables instead of embedding local
+paths (for example, `"$REPOS_DIR/project"`). Python applications can read them
+from `os.environ`/`os.getenv`; automation should consume the overlay's exported
+environment or pass the values explicitly. The directories are user-managed:
+the shared setup does not create, move, or otherwise manage them.
 
 Read the service-specific pages before deciding where data belongs:
 
