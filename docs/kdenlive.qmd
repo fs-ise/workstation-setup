@@ -2,8 +2,9 @@
 title: "Kdenlive"
 ---
 
-Install Kdenlive for video editing and FFmpeg for media processing from the configured Fedora repositories.
-The role uses Fedora's `ffmpeg-free` package; it does not add third-party repositories.
+Install Kdenlive for video editing and FFmpeg for media processing. The role enables
+[RPM Fusion](https://rpmfusion.org/) and installs its `ffmpeg` package, which provides
+the full FFmpeg build and additional codec support.
 
 ```sh
 ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags video_editing
@@ -19,8 +20,6 @@ ffmpeg -version
 kdenlive --version
 ```
 :::
-
-Fedora's `ffmpeg-free` build may not include every codec or encoder. If a workflow requires a codec unavailable in this build, consult the Fedora multimedia documentation before changing package sources.
 
 ## Best practices and useful links
 

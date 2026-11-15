@@ -1,6 +1,6 @@
 ---
 video_editing_packages:
-  - ffmpeg-free
+  - ffmpeg
   - kdenlive
 
 # DNF packages owned by this role; consumed by the package audit.

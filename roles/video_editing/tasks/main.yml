@@ -1,4 +1,11 @@
 ---
+- name: Ensure RPM Fusion is available for FFmpeg
+  ansible.builtin.include_role:
+    name: repo_rpmfusion
+    apply:
+      tags: [video_editing]
+  tags: [video_editing]
+
 - name: Install FFmpeg and Kdenlive
   ansible.builtin.dnf:
     name: "{{ video_editing_packages }}"

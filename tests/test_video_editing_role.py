@@ -13,7 +13,7 @@ SOFTWARE_DOCS = (ROOT / "docs/software.qmd").read_text(encoding="utf-8")
 
 class VideoEditingRoleTests(unittest.TestCase):
     def test_role_installs_and_owns_ffmpeg_and_kdenlive_packages(self):
-        self.assertIn("video_editing_packages:\n  - ffmpeg-free\n  - kdenlive", DEFAULTS)
+        self.assertIn("video_editing_packages:\n  - ffmpeg\n  - kdenlive", DEFAULTS)
         self.assertIn(
             'video_editing_managed_dnf_packages: "{{ video_editing_packages }}"',
             DEFAULTS,
@@ -21,12 +21,15 @@ class VideoEditingRoleTests(unittest.TestCase):
         self.assertIn("ansible.builtin.dnf:", TASKS)
         self.assertIn('name: "{{ video_editing_packages }}"', TASKS)
         self.assertIn("state: present", TASKS)
+        self.assertIn("name: repo_rpmfusion", TASKS)
+        self.assertIn("apply:\n      tags: [video_editing]", TASKS)
 
     def test_lab_stack_exposes_video_editing_tag(self):
         self.assertIn("- role: video_editing\n      tags: [video_editing]", PLAYBOOK)
 
     def test_documentation_lists_run_command_checks_and_software_index(self):
         self.assertIn("--tags video_editing", DOCS)
+        self.assertIn("RPM Fusion", DOCS)
         self.assertIn("ffmpeg -version", DOCS)
         self.assertIn("kdenlive --version", DOCS)
         self.assertIn("[Kdenlive](kdenlive.qmd)", SOFTWARE_DOCS)
