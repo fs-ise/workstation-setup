@@ -1,0 +1,116 @@
+---
+- name: Install Docker Engine packages
+  ansible.builtin.dnf:
+    name: "{{ local_llm_docker_packages }}"
+    state: present
+    update_cache: true
+
+- name: Install Python Docker SDK dependency for Ansible modules
+  ansible.builtin.dnf:
+    name: "{{ local_llm_python_packages }}"
+    state: present
+
+- name: Enable and start Docker service
+  ansible.builtin.systemd:
+    name: docker
+    enabled: true
+    state: started
+
+- name: Create local LLM data directories
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+  loop:
+    - "{{ local_llm_data_dir }}"
+    - "{{ local_llm_ollama_models_dir }}"
+    - "{{ local_llm_webui_data_dir }}"
+
+- name: Inspect dedicated Docker network
+  community.docker.docker_network_info:
+    name: "{{ local_llm_network_name }}"
+  register: local_llm_network_info
+
+- name: Determine whether the Docker network needs migration
+  ansible.builtin.set_fact:
+    local_llm_network_subnets: >-
+      {{ (local_llm_network_info.network.IPAM.Config | default([]))
+         | selectattr('Subnet', 'defined') | map(attribute='Subnet') | list
+         if local_llm_network_info.exists else [] }}
+
+- name: Stop Open WebUI before replacing its network
+  community.docker.docker_container:
+    name: "{{ local_llm_webui_container_name }}"
+    state: stopped
+  when:
+    - local_llm_network_info.exists
+    - local_llm_network_subnets != [local_llm_network_subnet]
+
+- name: Stop Ollama before replacing its network
+  community.docker.docker_container:
+    name: "{{ local_llm_ollama_container_name }}"
+    state: stopped
+  when:
+    - local_llm_network_info.exists
+    - local_llm_network_subnets != [local_llm_network_subnet]
+
+- name: Remove existing Docker network with incorrect subnet
+  community.docker.docker_network:
+    name: "{{ local_llm_network_name }}"
+    state: absent
+    force: true
+  when:
+    - local_llm_network_info.exists
+    - local_llm_network_subnets != [local_llm_network_subnet]
+
+- name: Ensure dedicated Docker network exists with configured subnet
+  community.docker.docker_network:
+    name: "{{ local_llm_network_name }}"
+    state: present
+    ipam_config:
+      - subnet: "{{ local_llm_network_subnet }}"
+
+- name: Run Ollama container
+  community.docker.docker_container:
+    name: "{{ local_llm_ollama_container_name }}"
+    image: "{{ local_llm_ollama_image }}"
+    restart_policy: unless-stopped
+    state: started
+    recreate: true
+    published_ports:
+      - "127.0.0.1:{{ local_llm_ollama_port }}:11434"
+    volumes:
+      - "{{ local_llm_ollama_models_dir }}:/root/.ollama"
+    networks:
+      - name: "{{ local_llm_network_name }}"
+
+- name: Wait for Ollama API to be reachable
+  ansible.builtin.wait_for:
+    host: 127.0.0.1
+    port: "{{ local_llm_ollama_port }}"
+    timeout: 120
+
+- name: Run Open WebUI container
+  community.docker.docker_container:
+    name: "{{ local_llm_webui_container_name }}"
+    image: "{{ local_llm_webui_image }}"
+    restart_policy: unless-stopped
+    state: started
+    recreate: true
+    published_ports:
+      - "127.0.0.1:{{ local_llm_webui_port }}:8080"
+    volumes:
+      - "{{ local_llm_webui_data_dir }}:/app/backend/data"
+    env:
+      OLLAMA_BASE_URLS: "http://{{ local_llm_ollama_container_name }}:11434"
+      WEBUI_AUTH: "{{ local_llm_webui_auth | default('True') | string }}"
+      DEFAULT_MODELS: "{{ local_llm_webui_default_models | default('') | string }}"
+    networks:
+      - name: "{{ local_llm_network_name }}"
+
+- name: Pull configured Ollama models (optional)
+  ansible.builtin.command: "docker exec {{ local_llm_ollama_container_name }} ollama pull {{ item }}"
+  loop: "{{ local_llm_models }}"
+  changed_when: false

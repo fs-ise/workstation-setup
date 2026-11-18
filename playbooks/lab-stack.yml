@@ -60,6 +60,9 @@
     - role: development_containers
       tags: [never, development_containers]
 
+    - role: local_llm
+      tags: [local_llm]
+
     - role: grobid
       tags: [grobid]
 
