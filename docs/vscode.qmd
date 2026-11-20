@@ -3,6 +3,10 @@ title: "VS Code"
 ---
 
 Install Visual Studio Code for editing code, documentation, and lab automation files.
+The role prefers the RPM package and falls back to Flatpak if RPM installation
+fails. It installs missing managed extensions in the configured desktop user's
+VS Code profile and leaves already installed extensions untouched on subsequent
+runs.
 
 ```sh
 ansible-playbook -i inventory -K playbooks/lab-stack.yml --tags vscode

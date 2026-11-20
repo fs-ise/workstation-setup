@@ -50,30 +50,57 @@
     name: "{{ vscode_clipboard_packages }}"
     state: present
 
-- name: Install VS Code extensions with code CLI (best effort)
-  become: false
-  ansible.builtin.shell: |
-    set -euo pipefail
-    if command -v code >/dev/null 2>&1; then
-      {% for extension in vscode_extensions %}
-      code --install-extension {{ extension }} --force || true
-      {% endfor %}
-    fi
-  args:
-    executable: /bin/bash
+- name: List installed VS Code extensions from the RPM installation
+  become_user: "{{ target_user }}"
+  ansible.builtin.command:
+    argv: [code, --list-extensions]
+  register: vscode_rpm_extensions
   changed_when: false
-  failed_when: false
+  environment:
+    HOME: "{{ target_home }}"
+    XDG_CONFIG_HOME: "{{ target_home }}/.config"
+    XDG_DATA_HOME: "{{ target_home }}/.local/share"
+  when: vscode_install_method == 'rpm'
 
-- name: Install VS Code extensions for Flatpak (best effort)
-  become: false
-  ansible.builtin.shell: |
-    set -euo pipefail
-    if command -v flatpak >/dev/null 2>&1 && flatpak info {{ vscode_flatpak_id }} >/dev/null 2>&1; then
-      {% for extension in vscode_extensions %}
-      flatpak run {{ vscode_flatpak_id }} --install-extension {{ extension }} --force || true
-      {% endfor %}
-    fi
-  args:
-    executable: /bin/bash
+- name: Install missing VS Code extensions with code CLI
+  become_user: "{{ target_user }}"
+  ansible.builtin.command:
+    argv: [code, --install-extension, "{{ item }}"]
+  loop: "{{ vscode_extensions }}"
+  environment:
+    HOME: "{{ target_home }}"
+    XDG_CONFIG_HOME: "{{ target_home }}/.config"
+    XDG_DATA_HOME: "{{ target_home }}/.local/share"
+  when:
+    - vscode_install_method == 'rpm'
+    - item not in vscode_rpm_extensions.stdout_lines
+
+- name: List installed VS Code extensions from the Flatpak installation
+  become_user: "{{ target_user }}"
+  ansible.builtin.command:
+    argv: [flatpak, run, "{{ vscode_flatpak_id }}", --list-extensions]
+  register: vscode_flatpak_extensions
   changed_when: false
-  failed_when: false
+  environment:
+    HOME: "{{ target_home }}"
+    XDG_CONFIG_HOME: "{{ target_home }}/.config"
+    XDG_DATA_HOME: "{{ target_home }}/.local/share"
+  when: vscode_install_method == 'flatpak'
+
+- name: Install missing VS Code extensions for Flatpak
+  become_user: "{{ target_user }}"
+  ansible.builtin.command:
+    argv:
+      - flatpak
+      - run
+      - "{{ vscode_flatpak_id }}"
+      - --install-extension
+      - "{{ item }}"
+  loop: "{{ vscode_extensions }}"
+  environment:
+    HOME: "{{ target_home }}"
+    XDG_CONFIG_HOME: "{{ target_home }}/.config"
+    XDG_DATA_HOME: "{{ target_home }}/.local/share"
+  when:
+    - vscode_install_method == 'flatpak'
+    - item not in vscode_flatpak_extensions.stdout_lines
