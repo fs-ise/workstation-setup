@@ -57,6 +57,7 @@ website:
               - virtualbox.qmd
               - latex.qmd
               - quarto.qmd
+              - conversion.qmd
               - r.qmd
               - rstudio.qmd
               - obsidian.qmd

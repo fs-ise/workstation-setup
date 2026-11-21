@@ -24,6 +24,11 @@ nemo --version
 ```
 :::
 
+## Optional file-manager tips
+
+- Nautilus no longer supports type-ahead file selection. Use Nemo if type-ahead navigation is part of your workflow.
+- In Nemo, select a file and press `Ctrl+M` to create a symbolic link. Shortcut availability may depend on Nemo version and keybinding settings.
+
 ## Best practices and useful links
 
 - [Nemo project](https://github.com/linuxmint/nemo)

@@ -58,6 +58,51 @@ Expected: at least one action file exists (depending on your file manager).
 - **Batch behavior:** the wrapper accepts multiple files and processes each one in sequence
 - **Troubleshooting:** if the menu entry does not appear, restart Nautilus (`nautilus -q`) or relogin
 
+## Folder-based batch processing
+
+Use this standalone script to process all PDFs stored directly in `pdfs/` in one run. Folder-based batch processing is its purpose; Docker is simply the runtime used by this script. The file-manager action described above runs the locally installed OCRmyPDF and does not require Docker.
+
+### Standalone script
+
+The script uses the `jbarlow83/ocrmypdf` Docker image and English + German language data (`eng+deu`). Docker must be installed and running; see [Docker setup](docker.qmd). It writes the processed files to `ocr_output/`, does not recurse into subfolders, and leaves the originals unchanged. Save it as `ocr-pdf-folder.sh` in the directory containing `pdfs/`:
+
+```bash
+#!/usr/bin/env bash
+set -euo pipefail
+shopt -s nullglob
+
+pdf_dir="pdfs"
+output_dir="ocr_output"
+pdf_files=("$pdf_dir"/*.pdf)
+
+if ((${#pdf_files[@]} == 0)); then
+  printf 'No PDF files found in %s\n' "$pdf_dir" >&2
+  exit 1
+fi
+
+mkdir -p "$output_dir"
+
+for pdf_file in "${pdf_files[@]}"; do
+  base_name="${pdf_file##*/}"
+  output_file="$output_dir/${base_name%.pdf}_ocr.pdf"
+
+  docker run --rm --user "$(id -u):$(id -g)" \
+    --volume "$PWD:/mnt" \
+    jbarlow83/ocrmypdf \
+    --language eng+deu \
+    "/mnt/$pdf_file" "/mnt/$output_file"
+done
+```
+
+Run the script from its directory after placing the input files in `pdfs/`:
+
+```sh
+chmod +x ocr-pdf-folder.sh
+./ocr-pdf-folder.sh
+```
+
+The script uses English + German (`eng+deu`). Change the language code to match your documents; for example, use `--language eng` for English-only documents. This container workflow is separate from the installed wrapper, which defaults to German + English (`deu+eng`).
+
 ::: {.callout-note title="Rationale" collapse="true"}
 ## Why this software?
 

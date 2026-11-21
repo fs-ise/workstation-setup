@@ -48,4 +48,5 @@ test -f test.html && echo "Render successful"
 
 - [Quarto installation documentation](https://quarto.org/docs/get-started/)
 - [Quarto command-line reference](https://quarto.org/docs/reference/commands.html)
+- [File conversion workflows](conversion.qmd)
 - [Positron](https://positron.posit.co/) is a Quarto-capable editor.

@@ -1,0 +1,173 @@
+---
+title: "File conversion"
+---
+
+This page brings together document, bibliography, audio, video, and cross-media conversion workflows. Select a workflow below to jump to its instructions.
+
+| Workflow | Examples | Instructions |
+| --- | --- | --- |
+| Document formats | Word, Markdown, PowerPoint slides | [Document format conversion](#document-format-conversion) |
+| Bibliographic formats | RIS to BibTeX and other supported formats | [Bibliographic format conversion](#bibliographic-format-conversion) |
+| Video formats | Re-encode video and audio streams | [Video conversion](#video-conversion) |
+| Audio formats | Convert audio formats | [Audio conversion](#audio-conversion) |
+| Cross-media conversion | Transcribe audio or video to text | [Transcription](#cross-media-conversion) |
+
+## Document format conversion
+
+Use Pandoc for document conversion and `pptx2md` to extract slide content into Quarto Markdown. The Docker examples assume a local image named `pandoc_dockerfile` that contains Pandoc.
+
+### Word to Markdown
+
+Run this command in the directory containing `input.docx`. The converted file is written as `output.md` in that directory:
+
+```sh
+docker run --rm \
+  --volume "$PWD:/data" \
+  --workdir /data \
+  pandoc_dockerfile \
+  input.docx --from=docx --to=markdown --wrap=none --output=output.md
+```
+
+### Markdown to Word
+
+The user and group options make the generated file owned by the current host user:
+
+```sh
+docker run --rm --user "$(id -u):$(id -g)" \
+  --volume "$PWD:/data" \
+  --workdir /data \
+  pandoc_dockerfile \
+  input.md --from=markdown --to=docx --output=output.docx
+```
+
+### PowerPoint to Quarto Markdown
+
+Install `pptx2md` in an appropriate Python environment, then run it with the presentation in the current directory. The command extracts slide content and notes and places extracted images in `images/`:
+
+```sh
+pptx2md "slides.pptx" \
+  --output "slides_with_notes.qmd" \
+  --enable-slides \
+  --qmd \
+  --image-dir "images"
+```
+
+::: {.callout-tip title="Prompt to polish extracted slides" collapse="true"}
+
+After extraction, this prompt can be used with a language model to reformat the content for Reveal.js slides in Quarto while preserving its meaning:
+
+```text
+You are a formatter for Reveal.js / Quarto slides.
+
+Task: Convert the input into plain Markdown suitable for Reveal.js with Quarto.
+
+Rules:
+- Keep the existing YAML header exactly as it is.
+- Remove ALL HTML tags and inline CSS (e.g., <div>, <h3>, <ul>, <li>, <p>, style=...).
+- Preserve the slide structure:
+  - Keep slide titles as "## ...".
+- Ensure there is a blank newline before every list.
+- Convert lists to Markdown bullets ("- ...").
+- Convert quoted statements into Markdown blockquotes ("> ...").
+- Put all sources / attributions into a Quarto aside block in this exact form:
+
+  ::: aside
+  — Source
+  :::
+
+- Actively remove all figure captions.
+- Do NOT add new content and do NOT remove semantic content; only reformat.
+
+Image and layout rules (apply automatically):
+- If a slide contains one image only, format it as:
+
+  `![](path){fig-align="center" width="50%"}`
+
+- If a slide contains two images only, place them in a two-column layout:
+
+  ::: columns
+  ::: column
+  ![](path1)
+  :::
+  ::: column
+  ![](path2)
+  :::
+  :::
+
+- If a slide contains text and one image, place the text in the left column and the image in the right column:
+
+  ::: columns
+  ::: column
+  [text content]
+  :::
+  ::: column
+  ![](path){width="300px"}
+  :::
+  :::
+
+- If images are present without explicit widths, use 40% by default, unless overridden by the rules above.
+- Preserve existing explicit image widths when they do not conflict with these rules.
+
+- Output ONLY the converted Markdown.
+- Do not explain anything.
+```
+
+:::
+
+## Bibliographic format conversion
+
+[`bibliography-io`](https://colrev-environment.github.io/bibliography-io/) reads and writes bibliographic records in formats including BibTeX and RIS. It infers the file format from the filename extension. For example, convert an RIS file to BibTeX with:
+
+```sh
+uv run --with bibliography-io python - <<'PY'
+from bibliography_io import load_raw, write
+
+records = load_raw("references.ris")
+write(records, path="references.bib")
+PY
+```
+
+This example uses the library’s raw I/O API. Inspect converted records for fields that may not map directly between formats. Consult the project’s [format support table](https://colrev-environment.github.io/bibliography-io/usage.html#supported-formats) for current read/write capabilities and optional format dependencies.
+
+## Video conversion
+
+Use FFmpeg to re-encode a video into an MP4 file with H.264 video and AAC audio:
+
+```sh
+ffmpeg -i input.mov \
+  -c:v libx264 -crf 20 -preset medium \
+  -c:a aac -b:a 192k \
+  output.mp4
+```
+
+Adjust the quality and codec options to match the target device or sharing platform. Install FFmpeg using the [Kdenlive and FFmpeg setup](kdenlive.qmd).
+
+## Audio conversion
+
+Use FFmpeg to convert a WAV recording to MP3:
+
+```sh
+ffmpeg -i input.wav -c:a libmp3lame -q:a 2 output.mp3
+```
+
+For a lossless FLAC output, use:
+
+```sh
+ffmpeg -i input.wav output.flac
+```
+
+FFmpeg chooses an encoder based on the output extension unless you specify one. Check playback and metadata after conversion, especially when preparing files for a specific device or service. See [Kdenlive and FFmpeg setup](kdenlive.qmd) for installation and [FFmpeg documentation](https://ffmpeg.org/documentation.html) for codec options.
+
+## Cross-media conversion
+
+Transcription converts the spoken audio in an audio or video recording to text. Use the local `transcribe` helper described in the [audio and video transcription guide](whisper.qmd). Video is used as an audio source; its visual content is not analyzed.
+
+## Best practices and useful links
+
+- [Pandoc documentation](https://pandoc.org/MANUAL.html)
+- [bibliography-io documentation](https://colrev-environment.github.io/bibliography-io/)
+- [FFmpeg documentation](https://ffmpeg.org/documentation.html)
+- [Quarto presentations](https://quarto.org/docs/presentations/)
+- [pptx2md project](https://github.com/llimllib/pptx2md)
+- [Audio and video transcription](whisper.qmd)
+- [Quarto setup](quarto.qmd)

@@ -81,6 +81,16 @@ Use a dedicated waiting-for workflow for messages where you need a reply or exte
 
 - `F6`: cycles forward through Folder Pane → Message List → Message Pane → Spaces Toolbar.
 
+## Compose an email from the command line
+
+Use `--compose` to open a new compose window with fields prefilled. Review the message in Thunderbird and send it there:
+
+```sh
+thunderbird --compose "to='alice@example.org',subject='Hello',body='Hi Alice,\n\nJust a quick note.\n\nCheers'"
+```
+
+For email access through an MCP client, see [Thunderbird MCP](thunderbird-mcp.qmd).
+
 ## Best practices and useful links
 
 - [Thunderbird support](https://support.mozilla.org/products/thunderbird)
